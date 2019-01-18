@@ -29,6 +29,48 @@ AM.downloadAll(function () {
 		this.y = this.oldY = y;
 	}
 
+	function StatusBars() {
+		this.health = 100;
+		this.stamina = 100;
+	}
+
+	StatusBars.prototype.update = function(healthMod, staminaMod) {
+		var newHealth = this.health + healthMod;
+		var newStamina = this.stamina + staminaMod;
+		if (newHealth > 100) {
+			this.health = 100;
+		} else if (newHealth < 0) {
+			this.health = 0;
+		} else {
+			this.health += healthMod;
+		} 
+		if (newStamina > 100) {
+			this.stamina = 100;
+		} else if (newStamina < 0) {
+			this.stamina = 0;
+		} else {
+			this.stamina += staminaMod;
+		}
+	};
+
+	StatusBars.prototype.draw = function() {
+		//ctx.save();
+		ctx.beginPath();
+		ctx.strokeStyle = "black";
+		ctx.rect(20, 20, 500, 30);
+		ctx.rect(20, 60, 500, 20);
+		ctx.stroke();
+		ctx.beginPath();
+		ctx.fillStyle = "red";
+		ctx.rect(21, 21, this.health * 5 - 2, 28);
+		ctx.fill();
+		ctx.beginPath();
+		ctx.fillStyle = "yellow";
+		ctx.rect(21, 61, this.stamina * 5 - 2, 18);
+		ctx.fill();
+		//ctx.restore();
+	}
+
 	Particle.prototype.integrate = function() {
 		var velocity = this.getVelocity();
 		this.oldX = this.x;
@@ -68,6 +110,7 @@ AM.downloadAll(function () {
 
 	var sparks = [];
 	var flash = [];
+	var statusBars = new StatusBars();
 
 	function radialGradient(x, y, radius) {
 		this.lifespan = 20;
@@ -91,6 +134,7 @@ AM.downloadAll(function () {
 	}
 
 	function createSparks(x, y) {
+		statusBars.update(0, -10);
 		var particleCount = Math.random() * (3) + 2;
 		for (var i = 0; i < particleCount; i++) {
 			var spark = new Particle(x, y);
@@ -109,7 +153,7 @@ AM.downloadAll(function () {
 		while (sparks.length > 0 && sparks[0].lifespan <= 0.1) {
 			sparks.shift();
 		}
-		for (var i = 0; i < sparks.length; i++) {
+		for (var i = 0; i < sparks.length; i++) {	statusBars.draw();
 			sparks[i].move(0, GRAVITY);
 			sparks[i].integrate();
 			sparks[i].bounce();
@@ -122,6 +166,8 @@ AM.downloadAll(function () {
 		for (var i = 0; i < flash.length; i++) {
 			flash[i].draw();
 		}
+		statusBars.update(0.1, 0.1);
+		statusBars.draw();
 	}
 
 	canvas.addEventListener('click', function(event) {
@@ -130,4 +176,4 @@ AM.downloadAll(function () {
 		var y = event.clientY - rect.top;
 		createSparks(x, y);
 	}, false);
-});
+});this.stamina + staminaMod
