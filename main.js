@@ -16,6 +16,8 @@ canvas.addEventListener('click', function(event) {
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
     createSparks(x, y);
+		// var audio = new Audio('./sounds/LightsaberClash.wav');
+		// audio.play();
 }, false);
 
 //ctx.globalCompositeOperation = 'overlay';
