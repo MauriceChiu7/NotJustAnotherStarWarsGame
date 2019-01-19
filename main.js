@@ -7,6 +7,8 @@ AM.downloadAll(function () {
     var gameEngine = new GameEngine();
     gameEngine.init(ctx);
     gameEngine.start();
+    var audio = new Audio('./sounds/VaderVsLukeTheme.mp3');
+		audio.play();
     //gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
     console.log("All Done!");
 });
