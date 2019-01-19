@@ -15,9 +15,9 @@ canvas.addEventListener('click', function(event) {
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
-    createSparks(x, y);
-		var audio = new Audio('./sounds/LightsaberClash.wav');
+		var audio = new Audio('./sounds/Swing2.WAV');
 		audio.play();
+    createSparks(x, y);
 }, false);
 
 //ctx.globalCompositeOperation = 'overlay';
