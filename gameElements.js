@@ -1,6 +1,9 @@
 var statusBars = new StatusBars();
 var sparks = [];
 var flash = [];
+var stars = [];
+var fps = 30;
+var numStars = 500;
 
 function createSparks(x, y) {
     statusBars.update(0, -40);
@@ -31,7 +34,6 @@ function drawSparks() {
         flash[i].draw();
     }
 }
-
 
 function StatusBars() {
     this.health = 100;
@@ -135,9 +137,57 @@ radialGradient.prototype.draw = function() {
     ctx.globalAlpha = this.alpha;
     var grd = ctx.createRadialGradient(this.x, this.y, 5, this.x, this.y, this.radius);
     grd.addColorStop(0, 'white');
-    grd.addColorStop(1, 'lightskyblue');
+    grd.addColorStop(1, 'black');
     ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     ctx.fillStyle = grd;
     ctx.fill();
     ctx.restore();
+}
+
+function Star(x, y, length, opacity) {
+    this.x = parseInt(x);
+    this.y = parseInt(y);
+    this.opacity = opacity;
+    this.radius = Math.random() * 1.5;
+    this.factor = 1;
+    this.increment = Math.random() * .05;
+}
+
+Star.prototype.draw = function() {
+    ctx.save();
+    if(this.opacity > 1) {
+        this.factor = -1;
+    }
+    else if(this.opacity <= 0) {
+        this.factor = 1;
+        
+        this.x = Math.round(Math.random() * canvas.width);
+        this.y = Math.round(Math.random() * canvas.height);
+    }
+    this.opacity += this.increment * this.factor;
+    ctx.beginPath();
+    ctx.fillStyle = "white";
+    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "rgba(255, 255, 230, " + this.opacity + ")";
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#ffffff ';
+    ctx.fill();
+    ctx.restore();
+}
+
+function createStars() {
+    for(var i = 0; i < numStars; i++) {
+        var x = Math.round(Math.random() * canvas.width);
+        var y = Math.round(Math.random() * canvas.height);
+        var length = 0.5 + Math.random() * 2;
+        var opacity = Math.random();
+        var star = new Star(x, y, length, opacity);
+        stars.push(star);
+    }
+}
+
+function drawStars() {
+    for (var i = 0; i < stars.length; i++) {
+        stars[i].draw();
+    }
 }
