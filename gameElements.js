@@ -4,6 +4,7 @@ var flash = [];
 var stars = [];
 var fps = 30;
 var numStars = 500;
+var startScreenPrompt = new startScreenPrompt();
 
 function createSparks(x, y) {
     statusBars.update(0, -40);
@@ -190,4 +191,31 @@ function drawStars() {
     for (var i = 0; i < stars.length; i++) {
         stars[i].draw();
     }
+}
+
+function startScreenPrompt() {
+    this.alpha = 1;
+    this.decreasing = true;
+}
+
+startScreenPrompt.prototype.draw = function() {
+    ctx.save();
+    ctx.beginPath();
+    ctx.globalAlpha = this.alpha;
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "WHITE";
+    ctx.textAlign = "center";
+    ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 100); 
+    if (this.decreasing && this.alpha > 0) {
+        this.alpha -= 0.01;
+        if (this.alpha <= 0) {
+            this.decreasing = false;
+        }
+    } else if (!this,decreasing && this,alpha < 1) {
+        this.alpha += 0.01;
+        if (this.alpha >= 1) {
+            this.decreasing = true;
+        }
+    }
+    ctx.resume();
 }

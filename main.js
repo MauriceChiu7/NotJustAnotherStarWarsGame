@@ -58,6 +58,10 @@ function startScreenFrame() {
               948, 520, // width and height of source
               390, 50, // destination coordinates
               400, 300); // destination width and height
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "WHITE";
+    ctx.textAlign = "center";
+    ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 100); 
 }
 
 function startScreenClick(event) {
