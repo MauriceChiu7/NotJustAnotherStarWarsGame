@@ -1,6 +1,9 @@
 var AM = new AssetManager();
 var canvas = document.getElementById("gameWorld");
 var ctx = canvas.getContext("2d");
+var transition = false;
+var frameId;
+var transitionCounter = 0;
 
 AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/StarWarsLogo.png");
@@ -8,45 +11,32 @@ AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
 AM.downloadAll(function () {
-    //var gameEngine = new GameEngine();
-    //gameEngine.init(ctx);
-    //gameEngine.start();
-    //var audio = new Audio('./sounds/VaderVsLukeTheme.mp3');
-    //gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
-    //console.log("All Done!");
-
     startScreen();
 });
 
-function mainMenu() {
-    var audio = AM.getSound("./sounds/VaderVsLukeTheme.mp3");
-    audio.volume = 0.5;
-    audio.play();
-    canvas.addEventListener('click', mainMenuClick);
-    requestAnimationFrame(mainMenuframe);
+function screenTransition(nextScreen) {
+    if (transitionCounter == 20) {
+        nextScreen();
+        transitionCounter++;
+    } else if (transitionCounter < 20) {
+        ctx.globalAlpha -= 0.05;
+        transitionCounter++;
+    } else if (transitionCounter < 40) {
+        ctx.globalAlpha += 0.05;
+        transitionCounter++;
+    } else if (transitionCounter == 40) {
+        ctx.globalAlpha = 1;
+        transition = false;
+        transitionCounter = 0;
+    }
 }
 
-function mainMenuframe() {
-    requestAnimationFrame(mainMenuframe);
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawSparks();
-    statusBars.draw();
-}
-
-function mainMenuClick(event) {
-    var rect = canvas.getBoundingClientRect();
-    var x = event.clientX - rect.left;
-    var y = event.clientY - rect.top;
-    var audio = AM.getSound('./sounds/Swing2.WAV');
-    audio.volume = 0.1;
-    audio.play();
-    createSparks(x, y);
-}
-
+// --------------------- START SCREEN ----------------------------
 function startScreen() {
+    initializeMenuItems();
     createStars();
-    setInterval(startScreenFrame, 1000 / fps);
     canvas.addEventListener('click', startScreenClick);
+    frameId = requestAnimationFrame(startScreenFrame);
 }
 
 function startScreenFrame() {
@@ -58,16 +48,88 @@ function startScreenFrame() {
               948, 520, // width and height of source
               390, 50, // destination coordinates
               400, 300); // destination width and height
-    ctx.font = "20px Arial";
-    ctx.fillStyle = "WHITE";
+    startScreenPrompt.draw();
+    ctx.font = "15px Impact";
+    ctx.fillStyle = "#ffd700";
     ctx.textAlign = "center";
-    ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 100); 
+    ctx.fillText("Not Just Another", 450, 80); 
+    ctx.fillText("Game", 770, 333);
+    frameId = requestAnimationFrame(startScreenFrame);
+    if (transition) {
+        screenTransition(mainMenu);
+    }
 }
 
 function startScreenClick(event) {
     var audio = AM.getSound("./sounds/MenuSelect.wav");
     audio.play();
-    mainMenu();
-    clearInterval(startScreenFrame);
     canvas.removeEventListener('click', startScreenClick);
+    transition = true;
+}
+
+// --------------------- MAIN MENU ----------------------------
+function mainMenu() {
+    cancelAnimationFrame(frameId);
+    canvas.addEventListener('click', mainMenuClick);
+    frameId = requestAnimationFrame(mainMenuFrame);
+}
+
+function mainMenuFrame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawStars();
+    menuItemStoryMode.draw();
+    menuItemsCustomGame.draw();
+    menuItemsMultiplayer.draw();
+    menuItemsSettings.draw();
+    menuItemsCredits.draw();
+    frameId = requestAnimationFrame(mainMenuFrame);
+    if (transition) {
+        screenTransition(inGame);
+    }
+}
+
+function mainMenuClick(event) {
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    menuItems.forEach(function(item) {
+        if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+            var audio = AM.getSound("./sounds/MenuSelect.wav");
+            audio.play();
+            if (item.text == "Story Mode") {
+                canvas.removeEventListener('click', mainMenuClick);
+                transition = true; 
+            }
+        }
+    });
+}
+
+// --------------------- IN GAME ----------------------------
+function inGame() {
+    cancelAnimationFrame(frameId);
+    var audio = AM.getSound("./sounds/VaderVsLukeTheme.mp3");
+    audio.volume = 0.5;
+    audio.play();
+    canvas.addEventListener('click', inGameClick);
+    frameId = requestAnimationFrame(inGameFrame);
+}
+
+function inGameFrame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawSparks();
+    statusBars.draw();
+    frameId = requestAnimationFrame(inGameFrame);
+    if (transition) {
+        screenTransition(inGame);
+    }
+}
+
+function inGameClick(event) {
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    var audio = AM.getSound('./sounds/Swing2.WAV');
+    audio.volume = 0.1;
+    audio.play();
+    createSparks(x, y);
 }

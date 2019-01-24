@@ -4,7 +4,21 @@ var flash = [];
 var stars = [];
 var fps = 30;
 var numStars = 500;
-var startScreenPrompt = new startScreenPrompt();
+var startScreenPrompt = new StartScreenPrompt();
+var menuItems = [];
+var menuItemStoryMode;
+var menuItemsCustomGame;
+var menuItemsMultiplayer;
+var menuItemsSettings;
+var menuItemsCredits;
+
+function initializeMenuItems() {
+    menuItemStoryMode = new MenuItem("Story Mode", 600, 100, 30);
+    menuItemsCustomGame = new MenuItem("Custom Game", 600, 200, 30);
+    menuItemsMultiplayer = new MenuItem("Multiplayer", 600, 300, 30);
+    menuItemsSettings = new MenuItem("Settings", 600, 400, 30);
+    menuItemsCredits = new MenuItem("Credits", 600, 500, 30);
+}
 
 function createSparks(x, y) {
     statusBars.update(0, -40);
@@ -14,7 +28,7 @@ function createSparks(x, y) {
         spark.move(Math.random() * 5 - 2.5, Math.random() * -5);
         sparks.push(spark);
     }
-    flash.push(new radialGradient(x, y, Math.random() * 20 + 40));
+    flash.push(new RadialGradient(x, y, Math.random() * 20 + 40));
 }
 
 function drawSparks() {
@@ -124,7 +138,7 @@ Particle.prototype.draw = function() {
     ctx.stroke();
 };
 
-function radialGradient(x, y, radius) {
+function RadialGradient(x, y, radius) {
     this.lifespan = 20;
     this.alpha = 1;
     this.radius = radius;
@@ -132,7 +146,7 @@ function radialGradient(x, y, radius) {
     this.y = y;
 }
 
-radialGradient.prototype.draw = function() {
+RadialGradient.prototype.draw = function() {
     this.alpha = this.alpha - 0.1;
     ctx.save();
     ctx.globalAlpha = this.alpha;
@@ -193,29 +207,46 @@ function drawStars() {
     }
 }
 
-function startScreenPrompt() {
+function StartScreenPrompt() {
     this.alpha = 1;
     this.decreasing = true;
 }
 
-startScreenPrompt.prototype.draw = function() {
+StartScreenPrompt.prototype.draw = function() {
     ctx.save();
-    ctx.beginPath();
     ctx.globalAlpha = this.alpha;
     ctx.font = "20px Arial";
     ctx.fillStyle = "WHITE";
     ctx.textAlign = "center";
-    ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 100); 
-    if (this.decreasing && this.alpha > 0) {
-        this.alpha -= 0.01;
-        if (this.alpha <= 0) {
+    ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 150); 
+    if (this.decreasing && this.alpha > 0.2) {
+        this.alpha -= 0.03;
+        if (this.alpha <= 0.2) {
             this.decreasing = false;
         }
-    } else if (!this,decreasing && this,alpha < 1) {
-        this.alpha += 0.01;
-        if (this.alpha >= 1) {
+    } else if (!this.decreasing && this.alpha < 0.95) {
+        this.alpha += 0.03;
+        if (this.alpha >= 0.95) {
             this.decreasing = true;
         }
     }
-    ctx.resume();
+    ctx.restore();
+}
+
+function MenuItem(text, x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.size = size;
+    ctx.font = "" + this.size + "px Arial";
+    this.text = text;
+    menuItems.push({x: this.x, y: this.y, w: ctx.measureText(this.text).width, h: size, text: text});
+    console.log(menuItems);
+    //menuItems.push({})
+}
+
+MenuItem.prototype.draw = function() {
+    ctx.font = "" + this.size + "px Arial";
+    ctx.fillStyle = "WHITE";
+    ctx.textAlign = "center";
+    ctx.fillText(this.text, this.x, this.y); 
 }
