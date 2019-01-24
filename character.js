@@ -1,4 +1,6 @@
-var scale = 1.5;   //Scale size of character
+//Scale size of character
+var scale = 1.5;
+
 function Character(game){
     //Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     this.runAnimation = new Animation(AM.getAsset("./img/luke_spites.png"), 20, 2325, 96, 75, 0.05, 8, true, false);
@@ -6,6 +8,8 @@ function Character(game){
 
     this.standAnim = new Animation(AM.getAsset("./img/luke_spites.png"), 20, 1555, 96, 70, 1, 3, true, false);
     this.crouchAnim = new Animation(AM.getAsset("./img/luke_spites.png"), 20, 1633, 96, 60, 0.5, 3, true, false);
+
+    this.cursorAnim = new Animation(AM.getAsset("./img/blueLightsaber.png"), 0, 0, 1647, 1675, 0.5, 1, true, false);
 
     this.standing = true;
     this.jumping = false;
@@ -18,10 +22,8 @@ function Character(game){
     this.ctx = game.ctx;
     Entity.call(this, game, 500, 500);
 }
-
 Character.prototype = new Entity();
 Character.prototype.constructor = Character;
-
 Character.prototype.update = function () {
     //Running
     if (this.game.d){
@@ -49,7 +51,6 @@ Character.prototype.update = function () {
         var height = totalHeight*(-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = this.ground - height;
     }
-
     //crouching
     if (this.game.s){
       this.crouching = true;
@@ -61,7 +62,6 @@ Character.prototype.update = function () {
       this.running = false;
       this.crouching = false;
     }
-
     if (this.x > 1200 ){
       this.x=0;
     } else if (this.x < 0){
@@ -71,7 +71,7 @@ Character.prototype.update = function () {
 }
 
 Character.prototype.draw = function(){
-    requestAnimationFrame(frame);
+    this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 50, this.game.mouseMoveY - 110, 0.03);
     if (this.jumping){
       console.log("JUMP DRAW");
       this.jumpAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y, scale);
@@ -82,6 +82,5 @@ Character.prototype.draw = function(){
     } else if (this.crouching){
       this.crouchAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, scale);
     }
-
     Entity.prototype.draw.call(this);
 }

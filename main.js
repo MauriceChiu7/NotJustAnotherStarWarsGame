@@ -59,15 +59,13 @@ Animation.prototype.isDone = function () {
 // "Main" that starts the game
 //AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/luke_spites.png");
+AM.queueDownload("./img/blueLightsaber.png");
 AM.downloadAll(function () {
-
-
     var gameEngine = new GameEngine();
     gameEngine.init(ctx);
     gameEngine.start();
 
     //gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
-
     gameEngine.addEntity(new Character(gameEngine));
     console.log("All Done!");
 });

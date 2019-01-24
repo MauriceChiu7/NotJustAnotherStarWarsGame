@@ -76,6 +76,11 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("mousemove", function (e) {
         //console.log(e);
         that.mouse = getXandY(e);
+        that.mouseMoveX = e.clientX;
+        that.mouseMoveY = e.clientY;
+        that.saveX = that.mouseMoveX;
+        that.saveY = that.mouseMoveY;
+        // console.log(that.mouse);
         // console.log("MOUSE MOVE Event - X,Y " + e.clientX + ", " + e.clientY);
     }, false);
 
@@ -145,6 +150,8 @@ GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
     this.update();
     this.draw();
+    this.mouseMoveX = this.saveX;
+    this.mouseMoveY = this.saveY;
     this.d = null;
     this.a = null;
     this.w = null;
