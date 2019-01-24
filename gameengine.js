@@ -74,7 +74,6 @@ GameEngine.prototype.startInput = function () {
     }, false);
 
     this.ctx.canvas.addEventListener("mousemove", function (e) {
-        //console.log(e);
         that.mouse = getXandY(e);
         that.mouseMoveX = e.clientX;
         that.mouseMoveY = e.clientY;

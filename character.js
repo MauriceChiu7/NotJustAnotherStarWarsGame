@@ -71,7 +71,8 @@ Character.prototype.update = function () {
 }
 
 Character.prototype.draw = function(){
-    this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 50, this.game.mouseMoveY - 110, 0.03);
+    // this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 50, this.game.mouseMoveY - 110, 0.03);
+    this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 275 , this.game.mouseMoveY - 125, 0.03);
     if (this.jumping){
       console.log("JUMP DRAW");
       this.jumpAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y, scale);
