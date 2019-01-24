@@ -33,10 +33,15 @@ function drawSparks() {
 }
 
 
-function StatusBars() {
+// function StatusBars(game) {
+function StatusBars(){
     this.health = 100;
     this.stamina = 100;
+
+    // Entity.call(this, game, 0, 0);
 }
+// StatusBars.prototype = new Entity();
+// StatusBars.prototype.constructor = StatusBars;
 
 StatusBars.prototype.update = function(healthMod, staminaMod) {
     var newHealth = this.health + healthMod;
@@ -47,7 +52,7 @@ StatusBars.prototype.update = function(healthMod, staminaMod) {
         this.health = 0;
     } else {
         this.health += healthMod;
-    } 
+    }
     if (newStamina > 100) {
         this.stamina = 100;
     } else if (newStamina < 0) {
@@ -55,6 +60,7 @@ StatusBars.prototype.update = function(healthMod, staminaMod) {
     } else {
         this.stamina += staminaMod;
     }
+    // Entity.prototype.update.call(this);
 };
 
 StatusBars.prototype.draw = function() {
@@ -73,6 +79,7 @@ StatusBars.prototype.draw = function() {
     ctx.rect(11, 36, this.stamina * 3 - 2, 10);
     ctx.fill();
     statusBars.update(0, 0.5);
+    // Entity.prototype.draw.call(this);
 }
 
 var DAMPING = 0.9999;
