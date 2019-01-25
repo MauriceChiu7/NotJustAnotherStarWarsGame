@@ -28,10 +28,17 @@ Character.prototype.update = function () {
     //Running
     if (this.game.d){
       this.running = true;
-      this.x += this.game.clockTick * this.speed;
+      this.theD = true;
     } else if (this.game.a){
       this.running = true;
-      this.x -= this.game.clockTick * this.speed;
+      this.theD = false;
+    }
+    if (this.running){
+      if (this.theD){
+        this.x += this.game.clockTick * this.speed;
+      } else {
+        this.x -= this.game.clockTick * this.speed;
+      }
     }
     //Jumping
     if (this.game.w){
@@ -74,7 +81,6 @@ Character.prototype.draw = function(){
     // this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 50, this.game.mouseMoveY - 110, 0.03);
     this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 275 , this.game.mouseMoveY - 125, 0.03);
     if (this.jumping){
-      console.log("JUMP DRAW");
       this.jumpAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y, scale);
     } else if (this.running){
       this.runAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);

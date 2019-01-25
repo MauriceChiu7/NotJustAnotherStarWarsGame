@@ -90,17 +90,18 @@ GameEngine.prototype.startInput = function () {
     }, false);
 
     this.ctx.canvas.addEventListener("keydown", function (e) {
+      if (e.code === "KeyD"){
+        that.d = true;
+      }
+      if (e.code === "KeyA"){
+        that.a = true;
+      }
         // console.log(e);
         // console.log("Key Down Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
 
     this.ctx.canvas.addEventListener("keypress", function (e) {
-        if (e.code === "KeyD"){
-          that.d = true;
-        }
-        if (e.code === "KeyA"){
-          that.a = true;
-        }
+
         if (e.code === "KeyW"){
           that.w = true;
         }
@@ -109,12 +110,12 @@ GameEngine.prototype.startInput = function () {
         }
         // that.chars[e.code] = true;
         // console.log(e);
-        console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
+        // console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
     }, false);
 
     this.ctx.canvas.addEventListener("keyup", function (e) {
         // console.log(e);
-        console.log("KEY UP EVENT - Char " + e.code + " Code " + e.keyCode);
+        // console.log("KEY UP EVENT - Char " + e.code + " Code " + e.keyCode);
         that.keyup = true;
     }, false);
 
@@ -132,6 +133,7 @@ GameEngine.prototype.draw = function () {
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
     }
+    statusBars.draw();
     this.ctx.restore();
 }
 
