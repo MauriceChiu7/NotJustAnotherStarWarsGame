@@ -71,6 +71,7 @@ function startScreenClick(event) {
 function mainMenu() {
     cancelAnimationFrame(frameId);
     canvas.addEventListener('click', mainMenuClick);
+    canvas,addEventListener('mousemove', mainMenuMove);
     frameId = requestAnimationFrame(mainMenuFrame);
 }
 
@@ -89,6 +90,7 @@ function mainMenuFrame() {
 }
 
 function mainMenuClick(event) {
+    console.log("TEST");
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
@@ -98,8 +100,25 @@ function mainMenuClick(event) {
             audio.play();
             if (item.text == "Story Mode") {
                 canvas.removeEventListener('click', mainMenuClick);
+                canvas.removeEventListener('mousemove', mainMenuMove);
                 transition = true; 
             }
+        }
+    });
+}
+
+function mainMenuMove(event) {
+    console.log("ASGSAASGASG");
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    menuItems.forEach(function(item) {
+        if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+            var audio = AM.getSound("./sounds/MenuSelect.wav");
+            audio.play();
+            item.hover = true;
+        } else {
+            item.hover = false;
         }
     });
 }

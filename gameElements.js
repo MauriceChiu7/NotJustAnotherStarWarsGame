@@ -236,16 +236,27 @@ StartScreenPrompt.prototype.draw = function() {
 function MenuItem(text, x, y, size) {
     this.x = x;
     this.y = y;
+    this.hover = false;
     this.size = size;
     ctx.font = "" + this.size + "px Arial";
     this.text = text;
-    menuItems.push({x: this.x, y: this.y, w: ctx.measureText(this.text).width, h: size, text: text});
+    this.h = size;
+    this.w = ctx.measureText(this.text).width;
+    //menuItems.push({x: this.x, y: this.y, w: ctx.measureText(this.text).width, h: size, text: text});
+    menuItems.push(this);
+    
     console.log(menuItems);
     //menuItems.push({})
 }
 
 MenuItem.prototype.draw = function() {
-    ctx.font = "" + this.size + "px Arial";
+    if (this.hover) {
+        ctx.font = "" + this.size * 1.5 + "px Arial";
+        this.h = this.size * 1.5;
+        this.w = ctx.measureText(this.text).width;
+    } else {
+        ctx.font = "" + this.size + "px Arial";
+    }
     ctx.fillStyle = "WHITE";
     ctx.textAlign = "center";
     ctx.fillText(this.text, this.x, this.y); 
