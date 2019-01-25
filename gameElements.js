@@ -1,6 +1,24 @@
 var statusBars = new StatusBars();
 var sparks = [];
 var flash = [];
+var stars = [];
+var fps = 30;
+var numStars = 500;
+var startScreenPrompt = new StartScreenPrompt();
+var menuItems = [];
+var menuItemStoryMode;
+var menuItemsCustomGame;
+var menuItemsMultiplayer;
+var menuItemsSettings;
+var menuItemsCredits;
+
+function initializeMenuItems() {
+    menuItemStoryMode = new MenuItem("Story Mode", 600, 100, 30);
+    menuItemsCustomGame = new MenuItem("Custom Game", 600, 200, 30);
+    menuItemsMultiplayer = new MenuItem("Multiplayer", 600, 300, 30);
+    menuItemsSettings = new MenuItem("Settings", 600, 400, 30);
+    menuItemsCredits = new MenuItem("Credits", 600, 500, 30);
+}
 
 function createSparks(x, y) {
     statusBars.update(0, -40);
@@ -10,7 +28,7 @@ function createSparks(x, y) {
         spark.move(Math.random() * 5 - 2.5, Math.random() * -5);
         sparks.push(spark);
     }
-    flash.push(new radialGradient(x, y, Math.random() * 20 + 40));
+    flash.push(new RadialGradient(x, y, Math.random() * 20 + 40));
 }
 
 function drawSparks() {
@@ -31,7 +49,6 @@ function drawSparks() {
         flash[i].draw();
     }
 }
-
 
 function StatusBars() {
     this.health = 100;
@@ -121,7 +138,7 @@ Particle.prototype.draw = function() {
     ctx.stroke();
 };
 
-function radialGradient(x, y, radius) {
+function RadialGradient(x, y, radius) {
     this.lifespan = 20;
     this.alpha = 1;
     this.radius = radius;
@@ -129,15 +146,118 @@ function radialGradient(x, y, radius) {
     this.y = y;
 }
 
-radialGradient.prototype.draw = function() {
+RadialGradient.prototype.draw = function() {
     this.alpha = this.alpha - 0.1;
     ctx.save();
     ctx.globalAlpha = this.alpha;
     var grd = ctx.createRadialGradient(this.x, this.y, 5, this.x, this.y, this.radius);
     grd.addColorStop(0, 'white');
-    grd.addColorStop(1, 'lightskyblue');
+    grd.addColorStop(1, 'black');
     ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
     ctx.fillStyle = grd;
     ctx.fill();
     ctx.restore();
+}
+
+function Star(x, y, length, opacity) {
+    this.x = parseInt(x);
+    this.y = parseInt(y);
+    this.opacity = opacity;
+    this.radius = Math.random() * 1.5;
+    this.factor = 1;
+    this.increment = Math.random() * .05;
+}
+
+Star.prototype.draw = function() {
+    ctx.save();
+    if(this.opacity > 1) {
+        this.factor = -1;
+    }
+    else if(this.opacity <= 0) {
+        this.factor = 1;
+        
+        this.x = Math.round(Math.random() * canvas.width);
+        this.y = Math.round(Math.random() * canvas.height);
+    }
+    this.opacity += this.increment * this.factor;
+    ctx.beginPath();
+    ctx.fillStyle = "white";
+    ctx.arc(this.x, this.y, this.radius, 0, 2 * Math.PI);
+    ctx.fillStyle = "rgba(255, 255, 230, " + this.opacity + ")";
+    ctx.shadowBlur = 10;
+    ctx.shadowColor = '#ffffff ';
+    ctx.fill();
+    ctx.restore();
+}
+
+function createStars() {
+    for(var i = 0; i < numStars; i++) {
+        var x = Math.round(Math.random() * canvas.width);
+        var y = Math.round(Math.random() * canvas.height);
+        var length = 0.5 + Math.random() * 2;
+        var opacity = Math.random();
+        var star = new Star(x, y, length, opacity);
+        stars.push(star);
+    }
+}
+
+function drawStars() {
+    for (var i = 0; i < stars.length; i++) {
+        stars[i].draw();
+    }
+}
+
+function StartScreenPrompt() {
+    this.alpha = 1;
+    this.decreasing = true;
+}
+
+StartScreenPrompt.prototype.draw = function() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.font = "20px Arial";
+    ctx.fillStyle = "WHITE";
+    ctx.textAlign = "center";
+    ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 150); 
+    if (this.decreasing && this.alpha > 0.2) {
+        this.alpha -= 0.03;
+        if (this.alpha <= 0.2) {
+            this.decreasing = false;
+        }
+    } else if (!this.decreasing && this.alpha < 0.95) {
+        this.alpha += 0.03;
+        if (this.alpha >= 0.95) {
+            this.decreasing = true;
+        }
+    }
+    ctx.restore();
+}
+
+function MenuItem(text, x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.hover = false;
+    this.size = size;
+    ctx.font = "" + this.size + "px Arial";
+    this.text = text;
+    this.h = size;
+    this.w = ctx.measureText(this.text).width;
+    //menuItems.push({x: this.x, y: this.y, w: ctx.measureText(this.text).width, h: size, text: text});
+    menuItems.push(this);
+    
+    console.log(menuItems);
+    //menuItems.push({})
+}
+
+MenuItem.prototype.draw = function() {
+    if (this.hover) {
+        ctx.font = "" + this.size * 1.5 + "px Arial";
+        this.h = this.size * 1.5;
+        this.w = ctx.measureText(this.text).width;
+    } else {
+        ctx.font = "" + this.size + "px Arial";
+    }
+    ctx.fillStyle = "WHITE";
+    ctx.textAlign = "center";
+    ctx.fillText(this.text, this.x, this.y); 
 }
