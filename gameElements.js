@@ -13,11 +13,16 @@ var menuItemsSettings;
 var menuItemsCredits;
 
 function initializeMenuItems() {
-    menuItemStoryMode = new MenuItem("Story Mode", 600, 100, 30);
-    menuItemsCustomGame = new MenuItem("Custom Game", 600, 200, 30);
-    menuItemsMultiplayer = new MenuItem("Multiplayer", 600, 300, 30);
-    menuItemsSettings = new MenuItem("Settings", 600, 400, 30);
-    menuItemsCredits = new MenuItem("Credits", 600, 500, 30);
+    menuItemStoryMode = new MenuItem("STORY MODE", 600, 150, 25);
+    menuItemsCustomGame = new MenuItem("CUSTOM GAME", 600, 250, 25);
+    menuItemsMultiplayer = new MenuItem("MULTIPLAYER", 600, 350, 25);
+    menuItemsSettings = new MenuItem("SETTINGS", 600, 435, 20);
+    menuItemsCredits = new MenuItem("CREDITS", 600, 500, 20);
+    menuItemBack = new MenuItem("BACK", 600, 550, 20);
+    menuItemMusicPlus = new MenuItem("+", 700, 200, 20, "music");
+    menuItemMusicMinus = new MenuItem("-", 600, 203, 30, "music");
+    menuItemSFXPlus = new MenuItem("+", 700, 250, 20, "sfx");
+    menuItemSFXMinus = new MenuItem("-", 600, 253, 30, "sfx");
 }
 
 function createSparks(x, y) {
@@ -215,7 +220,7 @@ function StartScreenPrompt() {
 StartScreenPrompt.prototype.draw = function() {
     ctx.save();
     ctx.globalAlpha = this.alpha;
-    ctx.font = "20px Arial";
+    ctx.font = "20px monospace";
     ctx.fillStyle = "WHITE";
     ctx.textAlign = "center";
     ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 150);
@@ -238,26 +243,37 @@ function MenuItem(text, x, y, size) {
     this.y = y;
     this.hover = false;
     this.size = size;
-    ctx.font = "" + this.size + "px Arial";
+    ctx.font = "" + this.size + "px monospace";
     this.text = text;
     this.h = size;
     this.w = ctx.measureText(this.text).width;
-    //menuItems.push({x: this.x, y: this.y, w: ctx.measureText(this.text).width, h: size, text: text});
     menuItems.push(this);
+}
 
-    console.log(menuItems);
-    //menuItems.push({})
+function MenuItem(text, x, y, size, tag) {
+    this.x = x;
+    this.y = y;
+    this.tag = tag;
+    this.hover = false;
+    this.size = size;
+    ctx.font = "" + this.size + "px monospace";
+    this.text = text;
+    this.h = size;
+    this.w = ctx.measureText(this.text).width;
+    menuItems.push(this);
 }
 
 MenuItem.prototype.draw = function() {
+    ctx.save();
     if (this.hover) {
-        ctx.font = "" + this.size * 1.5 + "px Arial";
-        this.h = this.size * 1.5;
+        ctx.font = "" + this.size * 1.25 + "px monospace";
+        this.h = this.size * 1.25;
         this.w = ctx.measureText(this.text).width;
     } else {
-        ctx.font = "" + this.size + "px Arial";
+        ctx.font = "" + this.size + "px monospace";
     }
     ctx.fillStyle = "WHITE";
     ctx.textAlign = "center";
     ctx.fillText(this.text, this.x, this.y);
+    ctx.restore();
 }

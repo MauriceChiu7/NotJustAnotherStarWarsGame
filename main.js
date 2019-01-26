@@ -4,76 +4,20 @@ var ctx = canvas.getContext("2d");
 var transition = false;
 var frameId;
 var transitionCounter = 0;
-
-function Animation(spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse) {
-    this.spriteSheet = spriteSheet;
-    this.startX = startX;
-    this.startY = startY;
-    this.frameWidth = frameWidth;
-    this.frameDuration = frameDuration;
-    this.frameHeight = frameHeight;
-    this.frames = frames;
-    this.totalTime = frameDuration * frames;
-    this.elapsedTime = 0;
-    this.loop = loop;
-    this.reverse = reverse;
-}
-
-Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
-    var scaleBy = scaleBy || 1;
-    this.elapsedTime += tick;
-    if (this.loop) {
-        if (this.isDone()) {
-            this.elapsedTime = 0;
-        }
-    } else if (this.isDone()) {
-        return;
-    }
-    var index = this.reverse ? this.frames - this.currentFrame() - 1 : this.currentFrame();
-    var vindex = 0;
-    if ((index + 1) * this.frameWidth + this.startX > this.spriteSheet.width) {
-        index -= Math.floor((this.spriteSheet.width - this.startX) / this.frameWidth);
-        vindex++;
-    }
-    while ((index + 1) * this.frameWidth > this.spriteSheet.width) {
-        index -= Math.floor(this.spriteSheet.width / this.frameWidth);
-        vindex++;
-    }
-
-    var locX = x;
-    var locY = y;
-    var offset = vindex === 0 ? this.startX : 0;
-    ctx.drawImage(this.spriteSheet,
-                  index * this.frameWidth + offset, vindex * this.frameHeight + this.startY,  // source from sheet
-                  this.frameWidth, this.frameHeight,
-                  locX, locY,
-                  this.frameWidth * scaleBy,
-                  this.frameHeight * scaleBy);
-}
-
-Animation.prototype.currentFrame = function () {
-    return Math.floor(this.elapsedTime / this.frameDuration);
-}
-
-Animation.prototype.isDone = function () {
-    return (this.elapsedTime >= this.totalTime);
-}
+var menuSelection;
+var musicVolume = 1;
+var sfxVolume = 1;
 
 AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
+AM.queueSound("./sounds/VolumeUp.wav");
+AM.queueSound("./sounds/VolumeDown.wav");
 AM.queueDownload("./img/luke_spites.png");
 AM.queueDownload("./img/blueLightsaber.png");
 AM.downloadAll(function () {
-    // var gameEngine = new GameEngine();
-    // gameEngine.init(ctx);
-    // gameEngine.start();
-    //
-    // //gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
-    // gameEngine.addEntity(new Character(gameEngine));
-    // console.log("All Done!");
     startScreen();
 });
 
@@ -92,6 +36,19 @@ function screenTransition(nextScreen) {
         transition = false;
         transitionCounter = 0;
     }
+}
+
+function menuMouseMove(event) {
+    var rect = canvas.getBoundingClientRect();
+    var x = event.clientX - rect.left;
+    var y = event.clientY - rect.top;
+    menuItems.forEach(function(item) {
+        if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+            item.hover = true;
+        } else {
+            item.hover = false;
+        }
+    });
 }
 
 // --------------------- START SCREEN ----------------------------
@@ -115,8 +72,8 @@ function startScreenFrame() {
     ctx.font = "15px Impact";
     ctx.fillStyle = "#ffd700";
     ctx.textAlign = "center";
-    ctx.fillText("Not Just Another", 450, 80);
-    ctx.fillText("Game", 770, 333);
+    ctx.fillText("NOT JUST ANOTHER", 450, 80);
+    ctx.fillText("GAME", 770, 333);
     frameId = requestAnimationFrame(startScreenFrame);
     if (transition) {
         screenTransition(mainMenu);
@@ -124,17 +81,20 @@ function startScreenFrame() {
 }
 
 function startScreenClick(event) {
-    var audio = AM.getSound("./sounds/MenuSelect.wav");
-    audio.play();
-    canvas.removeEventListener('click', startScreenClick);
-    transition = true;
+    if (transitionCounter == 0) {
+        var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
+        audio.volume = sfxVolume;
+        audio.play();
+        canvas.removeEventListener('click', startScreenClick);
+        transition = true;
+    }
 }
 
 // --------------------- MAIN MENU ----------------------------
 function mainMenu() {
     cancelAnimationFrame(frameId);
     canvas.addEventListener('click', mainMenuClick);
-    canvas,addEventListener('mousemove', mainMenuMove);
+    canvas.addEventListener('mousemove', menuMouseMove);
     frameId = requestAnimationFrame(mainMenuFrame);
 }
 
@@ -148,65 +108,201 @@ function mainMenuFrame() {
     menuItemsCredits.draw();
     frameId = requestAnimationFrame(mainMenuFrame);
     if (transition) {
-        screenTransition(inGame);
+        if (menuSelection == "STORY MODE" || menuSelection == "CUSTOM GAME" || menuSelection == "MULTIPLAYER") {
+            screenTransition(inGame);
+        } else if (menuSelection == "SETTINGS") {
+            screenTransition(settings);
+        } else if (menuSelection == "CREDITS") {
+            screenTransition(credits);
+        } else {
+            screenTransition(mainMenu);
+        }
     }
 }
 
 function mainMenuClick(event) {
-    console.log("TEST");
-    var rect = canvas.getBoundingClientRect();
-    var x = event.clientX - rect.left;
-    var y = event.clientY - rect.top;
-    menuItems.forEach(function(item) {
-        if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
-            var audio = AM.getSound("./sounds/MenuSelect.wav");
-            audio.play();
-            if (item.text == "Story Mode") {
-                canvas.removeEventListener('click', mainMenuClick);
-                canvas.removeEventListener('mousemove', mainMenuMove);
-                transition = true;
+    if (transitionCounter == 0) {
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        menuItems.forEach(function(item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+                menuSelection = item.text;
+                if (menuSelection == "STORY MODE" || menuSelection == "CUSTOM GAME" || menuSelection == "MULTIPLAYER" ||
+                    menuSelection == "SETTINGS" || menuSelection == "CREDITS") {
+                    var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
+                    canvas.removeEventListener('click', mainMenuClick);
+                    transition = true;
+                }
             }
-        }
-    });
+        });
+    }
 }
 
-function mainMenuMove(event) {
-    console.log("ASGSAASGASG");
-    var rect = canvas.getBoundingClientRect();
-    var x = event.clientX - rect.left;
-    var y = event.clientY - rect.top;
-    menuItems.forEach(function(item) {
-        if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
-            var audio = AM.getSound("./sounds/MenuSelect.wav");
-            audio.play();
-            item.hover = true;
-        } else {
-            item.hover = false;
-        }
-    });
+// --------------------- SETTINGS ----------------------------
+function settings() {
+    cancelAnimationFrame(frameId);
+    canvas.addEventListener('click', settingsClick);
+    frameId = requestAnimationFrame(settingsFrame);
+}
+
+
+function settingsFrame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawStars();
+    ctx.save();
+    ctx.font = "30px monospace";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("SETTINGS", 600, 100);
+    ctx.font = "15px monospace";
+    ctx.fillText("MUSIC:", 500, 200);
+    ctx.fillText("SFX:", 500, 250);
+    ctx.fillText(Math.round(musicVolume * 100), 650, 200);
+    ctx.fillText(Math.round(sfxVolume * 100), 650, 250);
+    ctx.restore();
+    menuItemMusicPlus.draw();
+    menuItemMusicMinus.draw();
+    menuItemSFXPlus.draw();
+    menuItemSFXMinus.draw();
+    menuItemBack.draw();
+    frameId = requestAnimationFrame(settingsFrame);
+    if (transition) {
+        screenTransition(mainMenu);
+    }
+}
+
+function settingsClick(event) {
+    if (transitionCounter == 0) {
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        menuItems.forEach(function(item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+                menuSelection = item.text;
+                if (menuSelection == "BACK") {
+                    var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
+                    canvas.removeEventListener('click', settingsClick);
+                    transition = true;
+                } else {
+                    if (item.tag == "music") {
+                        if (menuSelection == "+") {
+                            if (musicVolume < 1) {
+                                musicVolume += 0.05;
+                                if (musicVolume > 1) {
+                                    musicVolume = 1;
+                                }
+                                var audio = AM.getSound("./sounds/VolumeUp.wav").cloneNode();
+                                audio.volume = sfxVolume;
+                                audio.play();
+                            }
+                        } else {
+                            if (musicVolume > 0) {
+                                musicVolume -= 0.05;
+                                if (musicVolume < 0) {
+                                    musicVolume = 0;
+                                }
+                                var audio = AM.getSound("./sounds/VolumeDown.wav").cloneNode();
+                                audio.volume = sfxVolume;
+                                audio.play();
+                            }
+                        }
+                    } else if (item.tag == "sfx") {
+                        if (menuSelection == "+") {
+                            if (sfxVolume < 1) {
+                                sfxVolume += 0.05;
+                                if (sfxVolume > 1) {
+                                    sfxVolume = 1;
+                                }
+                                var audio = AM.getSound("./sounds/VolumeUp.wav").cloneNode();
+                                audio.volume = sfxVolume;
+                                audio.play();
+                            }
+                        } else {
+                            if (sfxVolume > 0) {
+                                sfxVolume -= 0.05;
+                                if (sfxVolume < 0) {
+                                    sfxVolume = 0;
+                                }
+                                var audio = AM.getSound("./sounds/VolumeDown.wav").cloneNode();
+                                audio.volume = sfxVolume;
+                                audio.play();
+                            }
+                        }
+                    } 
+                }
+            }
+        });
+    }
+}
+
+// --------------------- CREDITS ----------------------------
+function credits() {
+    cancelAnimationFrame(frameId);
+    canvas.addEventListener('click', creditsClick);
+    frameId = requestAnimationFrame(creditsFrame);
+}
+
+function creditsFrame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawStars();
+    ctx.save();
+    ctx.font = "30px monospace";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("CREDITS", 600, 100);
+    ctx.fillStyle = "#ffd700";
+    ctx.font = "20px arial";
+    ctx.fillText("Maurice Chiu", 600, 225);
+    ctx.fillText("Steven Huang", 600, 275);
+    ctx.fillText("Jake Yang", 600, 325);
+    ctx.fillText("Benjamin Yuen", 600, 375);
+    ctx.restore();
+    menuItemBack.draw();
+    frameId = requestAnimationFrame(creditsFrame);
+    if (transition) {
+        screenTransition(mainMenu);
+    }
+}
+
+function creditsClick(event) {
+    if (transitionCounter == 0) {
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        menuItems.forEach(function(item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+                menuSelection = item.text;
+                if (menuSelection == "BACK") {
+                    var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
+                    canvas.removeEventListener('click', creditsClick);
+                    transition = true;
+                }
+            }
+        });
+    }
 }
 
 // --------------------- IN GAME ----------------------------
 function inGame() {
+    canvas.removeEventListener('mousemove', menuMouseMove);
     cancelAnimationFrame(frameId);
     var audio = AM.getSound("./sounds/VaderVsLukeTheme.mp3");
-    audio.volume = 0.5;
+    audio.volume = musicVolume;
     audio.play();
     canvas.addEventListener('click', inGameClick);
     frameId = requestAnimationFrame(inGameFrame);
     var gameEngine = new GameEngine();
     gameEngine.init(ctx);
     gameEngine.start();
-
-    //gameEngine.addEntity(new Background(gameEngine, AM.getAsset("./img/background.jpg")));
     gameEngine.addEntity(new Character(gameEngine));
-    console.log("All Done!");
 }
 
 function inGameFrame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawSparks();
-    statusBars.draw();
     frameId = requestAnimationFrame(inGameFrame);
     if (transition) {
         screenTransition(inGame);
@@ -214,11 +310,13 @@ function inGameFrame() {
 }
 
 function inGameClick(event) {
-    var rect = canvas.getBoundingClientRect();
-    var x = event.clientX - rect.left;
-    var y = event.clientY - rect.top;
-    var audio = AM.getSound('./sounds/Swing2.WAV');
-    audio.volume = 0.1;
-    audio.play();
-    createSparks(x, y);
+    if (transitionCounter == 0) {
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
+        audio.volume = sfxVolume * 0.2;
+        audio.play();
+        createSparks(x, y);
+    }
 }
