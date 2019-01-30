@@ -54,7 +54,7 @@ function menuMouseMove(event) {
 
 // --------------------- START SCREEN ----------------------------
 function startScreen() {
-    initializeMenuItems();
+    // initializeMenuItems();
     createStars();
     canvas.addEventListener('click', startScreenClick);
     frameId = requestAnimationFrame(startScreenFrame);
@@ -93,6 +93,7 @@ function startScreenClick(event) {
 
 // --------------------- MAIN MENU ----------------------------
 function mainMenu() {
+    initializeMenuItems();
     cancelAnimationFrame(frameId);
     canvas.addEventListener('click', mainMenuClick);
     canvas.addEventListener('mousemove', menuMouseMove);
@@ -103,14 +104,16 @@ function mainMenuFrame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
     menuItemStoryMode.draw();
-    menuItemsCustomGame.draw();
-    menuItemsMultiplayer.draw();
-    menuItemsSettings.draw();
-    menuItemsCredits.draw();
+    menuItemCustomGame.draw();
+    menuItemMultiplayer.draw();
+    menuItemSettings.draw();
+    menuItemCredits.draw();
     frameId = requestAnimationFrame(mainMenuFrame);
     if (transition) {
-        if (menuSelection == "STORY MODE" || menuSelection == "CUSTOM GAME" || menuSelection == "MULTIPLAYER") {
+        if (menuSelection == "STORY MODE" || menuSelection == "MULTIPLAYER") {
             screenTransition(inGame);
+        } else if (menuSelection == "CUSTOM GAME") {
+            screenTransition(customGame);
         } else if (menuSelection == "SETTINGS") {
             screenTransition(settings);
         } else if (menuSelection == "CREDITS") {
@@ -141,6 +144,50 @@ function mainMenuClick(event) {
         });
     }
 }
+
+// --------------------- CUSTOM GAME ----------------------------
+function customGame() {
+    initializeCustomGameItems();
+    cancelAnimationFrame(frameId);
+    canvas.addEventListener('click', customGameClick);
+    frameId = requestAnimationFrame(customGameFrame);
+}
+
+function customGameFrame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawStars();
+    menuItemCustomBack.draw();
+    frameId = requestAnimationFrame(customGameFrame);
+    if (transition) {
+        if (menuSelection == "BACK") {
+            screenTransition(mainMenu);
+        } else {
+            screenTransition(customGame);
+        }
+    }
+}
+
+
+function customGameClick(event) {
+    if (transitionCounter == 0) {
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        menuItems.forEach(function(item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+                menuSelection = item.text;
+                if (menuSelection == "BACK") {
+                    var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
+                    canvas.removeEventListener('click', customGameClick);
+                    transition = true;
+                }
+            }
+        });
+    }
+}
+
 
 // --------------------- SETTINGS ----------------------------
 function settings() {

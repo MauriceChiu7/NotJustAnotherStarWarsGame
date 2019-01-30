@@ -7,22 +7,28 @@ var numStars = 500;
 var startScreenPrompt = new StartScreenPrompt();
 var menuItems = [];
 var menuItemStoryMode;
-var menuItemsCustomGame;
-var menuItemsMultiplayer;
-var menuItemsSettings;
-var menuItemsCredits;
+var menuItemCustomGame;
+var menuItemMultiplayer;
+var menuItemSettings;
+var menuItemCredits;
 
 function initializeMenuItems() {
+    menuItems = [];
     menuItemStoryMode = new MenuItem("STORY MODE", 600, 150, 25);
-    menuItemsCustomGame = new MenuItem("CUSTOM GAME", 600, 250, 25);
-    menuItemsMultiplayer = new MenuItem("MULTIPLAYER", 600, 350, 25);
-    menuItemsSettings = new MenuItem("SETTINGS", 600, 435, 20);
-    menuItemsCredits = new MenuItem("CREDITS", 600, 500, 20);
+    menuItemCustomGame = new MenuItem("CUSTOM GAME", 600, 250, 25);
+    menuItemMultiplayer = new MenuItem("MULTIPLAYER", 600, 350, 25);
+    menuItemSettings = new MenuItem("SETTINGS", 600, 435, 20);
+    menuItemCredits = new MenuItem("CREDITS", 600, 500, 20);
     menuItemBack = new MenuItem("BACK", 600, 550, 20);
     menuItemMusicPlus = new MenuItem("+", 700, 200, 20, "music");
     menuItemMusicMinus = new MenuItem("-", 600, 203, 30, "music");
     menuItemSFXPlus = new MenuItem("+", 700, 250, 20, "sfx");
     menuItemSFXMinus = new MenuItem("-", 600, 253, 30, "sfx");
+}
+
+function initializeCustomGameItems() {
+    menuItems = [];
+    menuItemCustomBack = new MenuItem("BACK", 600, 550, 20);
 }
 
 function createSparks(x, y) {
