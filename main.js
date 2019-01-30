@@ -7,6 +7,7 @@ var transitionCounter = 0;
 var menuSelection;
 var musicVolume = 1;
 var sfxVolume = 1;
+var gameEngine = new GameEngine();
 
 AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/StarWarsLogo.png");
@@ -15,7 +16,7 @@ AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
 AM.queueSound("./sounds/VolumeUp.wav");
 AM.queueSound("./sounds/VolumeDown.wav");
-AM.queueDownload("./img/luke_spites.png");
+AM.queueDownload("./img/luke_sprites.png");
 AM.queueDownload("./img/blueLightsaber.png");
 AM.downloadAll(function () {
     startScreen();
@@ -232,7 +233,7 @@ function settingsClick(event) {
                                 audio.play();
                             }
                         }
-                    } 
+                    }
                 }
             }
         });
@@ -294,9 +295,9 @@ function inGame() {
     var audio = AM.getSound("./sounds/VaderVsLukeTheme.mp3");
     audio.volume = musicVolume;
     audio.play();
-    canvas.addEventListener('click', inGameClick);
+    //canvas.addEventListener('click', inGameClick);
     frameId = requestAnimationFrame(inGameFrame);
-    var gameEngine = new GameEngine();
+    // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
     gameEngine.start();
     gameEngine.addEntity(new Character(gameEngine));
@@ -309,14 +310,17 @@ function inGameFrame() {
     }
 }
 
-function inGameClick(event) {
-    if (transitionCounter == 0) {
-        var rect = canvas.getBoundingClientRect();
-        var x = event.clientX - rect.left;
-        var y = event.clientY - rect.top;
-        var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
-        audio.volume = sfxVolume * 0.2;
-        audio.play();
-        createSparks(x, y);
-    }
-}
+// function inGameClick(event) {
+//     console.log(event + 'here');
+//     if (transitionCounter == 0) { // Keep this but move this whole thing to the character class.
+//         var rect = canvas.getBoundingClientRect();
+//         var x = event.clientX - rect.left;
+//         var y = event.clientY - rect.top;
+//         var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
+//         audio.volume = sfxVolume * 0.2;
+//         audio.play();
+//         createSparks(x, y);
+//         console.log(gameEngine.entities[0]);
+//         gameEngine.entities[0].attacking = true; // entities[0] is luke because we only have one character rn.
+//     }
+// }
