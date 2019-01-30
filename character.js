@@ -1,8 +1,17 @@
-//Scale size of character
+/* Scale size of character */
 var scale = 1.5;
+/* This is used to toggle between attacking poses. 1 is default if the character only has 1 attack pose. */
 var attkNum = 1;
 var canvas = document.getElementById("gameWorld");
+/*
+Use this height difference whenever you are using luke_sprites.png and that when the height of
+the frame is 2-high. This value is intentionally set to negative. When you apply it to y coordinates, just "+" them.
+*/
 const LUKE_2_HIGH_DIFF = -105;
+/*
+The ground height can be changed depending on which platform the character is on. This value
+is intentionally set to negative. When you apply it to y coordinates, just "+" them.
+*/
 var groundHeight = -30;
 
 function Character(game){
