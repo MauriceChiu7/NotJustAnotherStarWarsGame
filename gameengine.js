@@ -113,6 +113,9 @@ GameEngine.prototype.startInput = function () {
         if (e.code === "KeyS"){
           that.s = true;
         }
+        if (e.code === "Space"){
+            that.spacebar = true;
+        }
         // that.chars[e.code] = true;
         // console.log(e);
         // console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
@@ -162,6 +165,7 @@ GameEngine.prototype.loop = function () {
     this.a = null;
     this.w = null;
     this.s = null;
+    this.spacebar = null;
     this.click = null;
     this.keyup = null;
 }
