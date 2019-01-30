@@ -9,7 +9,7 @@ function Character(game){
     this.standAnim = new Animation(AM.getAsset("./img/luke_spites.png"), 20, 1555, 96, 70, 1, 3, true, false);
     this.crouchAnim = new Animation(AM.getAsset("./img/luke_spites.png"), 20, 1633, 96, 60, 0.5, 3, true, false);
 
-    this.cursorAnim = new Animation(AM.getAsset("./img/blueLightsaber.png"), 0, 0, 1647, 1675, 0.5, 1, true, false);
+    // this.cursorAnim = new Animation(AM.getAsset("./img/blueLightsaber.png"), 0, 0, 1647, 1675, 0.5, 1, true, false);
 
     this.standing = true;
     this.jumping = false;
@@ -33,6 +33,7 @@ Character.prototype.update = function () {
       this.running = true;
       this.theD = false;
     }
+
     if (this.running){
       if (this.theD){
         this.x += this.game.clockTick * this.speed;
@@ -78,8 +79,7 @@ Character.prototype.update = function () {
 }
 
 Character.prototype.draw = function(){
-    // this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 50, this.game.mouseMoveY - 110, 0.03);
-    this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 275 , this.game.mouseMoveY - 125, 0.03);
+    // this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 275 , this.game.mouseMoveY - 125, 0.03);
     if (this.jumping){
       this.jumpAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y, scale);
     } else if (this.running){

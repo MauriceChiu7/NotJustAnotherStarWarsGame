@@ -232,7 +232,7 @@ function settingsClick(event) {
                                 audio.play();
                             }
                         }
-                    } 
+                    }
                 }
             }
         });
@@ -300,6 +300,9 @@ function inGame() {
     gameEngine.init(ctx);
     gameEngine.start();
     gameEngine.addEntity(new Character(gameEngine));
+
+    document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
+    // document.getElementById("gameWorld").cursor =  "url(./img/blueLightsaber.png), default";
 }
 
 function inGameFrame() {

@@ -90,18 +90,23 @@ GameEngine.prototype.startInput = function () {
     }, false);
 
     this.ctx.canvas.addEventListener("keydown", function (e) {
-      if (e.code === "KeyD"){
-        that.d = true;
-      }
-      if (e.code === "KeyA"){
-        that.a = true;
-      }
+        if (e.code === "KeyD"){
+          that.d = true;
+        }
+        if (e.code === "KeyA"){
+          that.a = true;
+        }
         // console.log(e);
         // console.log("Key Down Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
 
     this.ctx.canvas.addEventListener("keypress", function (e) {
-
+        if (e.code === "KeyD"){
+          that.d = true;
+        }
+        if (e.code === "KeyA"){
+          that.a = true;
+        }
         if (e.code === "KeyW"){
           that.w = true;
         }
