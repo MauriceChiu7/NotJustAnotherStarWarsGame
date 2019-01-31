@@ -14,6 +14,10 @@ is intentionally set to negative. When you apply it to y coordinates, just "+" t
 */
 var groundHeight = -30;
 
+document.oncontextmenu = function() {
+    return false;
+}
+
 function Character(game){
     canvas.addEventListener("click", inGameClick);
 
