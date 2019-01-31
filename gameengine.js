@@ -116,6 +116,12 @@ GameEngine.prototype.startInput = function () {
         if (e.code === "Space"){
             that.spacebar = true;
         }
+        if (e.code === "KeyR") {
+            that.r = true;
+        }
+        if (e.code === "KeyI") {
+            that.i = true;
+        }
         // that.chars[e.code] = true;
         // console.log(e);
         // console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
@@ -165,6 +171,8 @@ GameEngine.prototype.loop = function () {
     this.a = null;
     this.w = null;
     this.s = null;
+    this.r = null;//for swithing the weapon
+    this.i = null;//for dying
     this.spacebar = null;
     this.click = null;
     this.keyup = null;
