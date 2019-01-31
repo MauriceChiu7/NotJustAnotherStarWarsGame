@@ -11,14 +11,15 @@ var gameEngine = new GameEngine();
 
 AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/StarWarsLogo.png");
+AM.queueDownload("./img/luke_sprites.png");
+AM.queueDownload("./img/vader_1560x1040.png");
+AM.queueDownload("./img/blueLightsaber.png");
 AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
 AM.queueSound("./sounds/VolumeUp.wav");
 AM.queueSound("./sounds/VolumeDown.wav");
 AM.queueSound("./sounds/CycleMenu.wav");
-AM.queueDownload("./img/luke_sprites.png");
-AM.queueDownload("./img/blueLightsaber.png");
 AM.downloadAll(function () {
     startScreen();
 });
@@ -55,7 +56,7 @@ function menuMouseMove(event) {
 
 // --------------------- START SCREEN ----------------------------
 function startScreen() {
-    // initializeMenuItems();
+    initializeCharacterData();
     createStars();
     canvas.addEventListener('click', startScreenClick);
     frameId = requestAnimationFrame(startScreenFrame);
@@ -161,49 +162,38 @@ function customGameFrame() {
     ctx.fillStyle = "#ffffff";
     ctx.fillText("CUSTOM GAME", 600, 75);
     ctx.font = "15px monospace";
-    ctx.fillText(characters[playerCharacter], 738, 128);
+    ctx.fillText(characterData[playerCharacter].name, 738, 128);
     ctx.font = "13px monospace";
-    ctx.fillText(characters[computerCharacter1], 738, 376);
-    ctx.fillText(characters[computerCharacter2], 868, 376);
-    ctx.fillText(characters[computerCharacter3], 998, 376);
-    ctx.fillText(characters[computerCharacter4], 1128, 376);
+    ctx.fillText(characterData[computerCharacter1].name, 738, 378);
+    ctx.fillText(characterData[computerCharacter2].name, 868, 378);
+    ctx.fillText(characterData[computerCharacter3].name, 998, 378);
+    ctx.fillText(characterData[computerCharacter4].name, 1128, 378);
     ctx.strokeStyle = "white";
     ctx.rect(20, 200, 500, 250);
     ctx.stroke();
 
     ctx.rect(680, 150, 115, 160);
     ctx.stroke();
-    // img , clip start x, clip start y, width, height, x canvas coord, y canvas coord, stretch width, stretch height
-    if (playerCharacter == 1) {
-        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 650, 170, 168, 122.5);
-    }
+    drawCharacterFromData(650, 170, playerCharacter);
+
     ctx.rect(810, 150, 375, 160);
     ctx.stroke();
 
-
     ctx.rect(680, 400, 115, 160);
     ctx.stroke();
-    if (computerCharacter1 == 1) {
-        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 650, 420, 168, 122.5);
-    }
+    drawCharacterFromData(650, 420, computerCharacter1);
 
     ctx.rect(810, 400, 115, 160);
     ctx.stroke();
-    if (computerCharacter2 == 1) {
-        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 780, 420, 168, 122.5);
-    }
+    drawCharacterFromData(780, 420, computerCharacter2);
 
     ctx.rect(940, 400, 115, 160);
     ctx.stroke();
-    if (computerCharacter3 == 1) {
-        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 910, 420, 168, 122.5);
-    }
+    drawCharacterFromData(910, 420, computerCharacter3);
 
     ctx.rect(1070, 400, 115, 160);
     ctx.stroke();
-    if (computerCharacter4 == 1) {
-        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 1040, 420, 168, 122.5);
-    }
+    drawCharacterFromData(1040, 420, computerCharacter4);
 
     ctx.font = "20px monospace";    
     ctx.fillText("MAP", 35, 150);
@@ -215,6 +205,7 @@ function customGameFrame() {
     menuItems.forEach(function(item) {
         item.draw();
     });
+    updateCharacterData();
     frameId = requestAnimationFrame(customGameFrame);
     if (transition) {
         if (menuSelection == "BACK") {
@@ -226,7 +217,6 @@ function customGameFrame() {
         }
     }
 }
-
 
 function customGameClick(event) {
     if (transitionCounter == 0) {
@@ -259,6 +249,7 @@ function customGameClick(event) {
                     } else if (item.tag == "computer1<") {
                         computerCharacter1--;
                         computerCharacter1 = (computerCharacter1 % characters.length + characters.length) % characters.length;
+
                     } else if (item.tag == "computer1>") {
                         computerCharacter1++;
                         computerCharacter1 %= characters.length;

@@ -7,11 +7,36 @@ var numStars = 500;
 var startScreenPrompt = new StartScreenPrompt();
 var menuItems = [];
 var characters = ["", "Luke", "Vader"];
+var characterData = [];
 var playerCharacter = 1;
 var computerCharacter1 = 0;
 var computerCharacter2 = 0;
 var computerCharacter3 = 0;
 var computerCharacter4 = -0;
+
+// --------------------- CHARACTER SELECTION STUFF ----------------------------
+function initializeCharacterData() {
+    characterData.push({name: ""});
+    characterData.push({name: "Luke", spritesheet: AM.getAsset("./img/luke_sprites.png"), sx: 0, sy: 1550, swidth: 96, sheight: 70, width: 159, height: 116, frameCount: 3, totalTime: 150, currentTime: 0, xBalance: 5, yBalance: 10});
+    characterData.push({name: "Vader", spritesheet: AM.getAsset("./img/vader_1560x1040.png"), sx: 0, sy: 160, swidth: 120, sheight: 80, width: 168, height: 122.5, frameCount: 8, totalTime: 80, currentTime: 0, xBalance: 10, yBalance: -10});
+}
+
+function drawCharacterFromData(x, y, index) {
+    if (index == 1 || index == 2) {
+        ctx.drawImage(characterData[index].spritesheet, characterData[index].sx + Math.floor(characterData[index].currentTime / (characterData[index].totalTime / characterData[index].frameCount)) * 
+                      characterData[index].swidth, characterData[index].sy, characterData[index].swidth, characterData[index].sheight, x + characterData[index].xBalance, y + characterData[index].yBalance, 
+                      characterData[index].width, characterData[index].height);
+    }
+}
+
+function updateCharacterData() {
+    for (var i = 1; i < characterData.length; i++) {
+        characterData[i].currentTime++;
+        if (characterData[i].currentTime >= characterData[i].totalTime) {
+            characterData[i].currentTime = 0;
+        }
+    }
+}
 
 // --------------------- MENU THINGS ----------------------------
 function initializeMenuItems() {

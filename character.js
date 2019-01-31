@@ -275,7 +275,6 @@ function inGameClick(event) {
         var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
         audio.volume = sfxVolume * 0.2;
         audio.play();
-        console.log(statusBars.stamina);
         statusBars.update(0, -40);
         //console.log(gameEngine.entities[0]);
         gameEngine.entities[0].attacking = true; // entities[0] is luke because we only have one character rn.
