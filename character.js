@@ -3,6 +3,7 @@ var scale = 1.5;
 /* This is used to toggle between attacking poses. 1 is default if the character only has 1 attack pose. */
 var attkNum = 1;
 var canvas = document.getElementById("gameWorld");
+/* Set to true when debugging */
 var debug = false;
 /*
 Use this height difference whenever you are using luke_sprites_right.png and that when the height of
@@ -14,6 +15,7 @@ The ground height can be changed depending on which platform the character is on
 is intentionally set to negative. When you apply it to y coordinates, just "+" them.
 */
 var groundHeight = -30;
+/* Character's center. Used to calculate the angle at which the characters should aim their weapon at. */
 
 document.oncontextmenu = function() {
     if (debug) {
@@ -49,6 +51,10 @@ function Character(game){
     // ********************** //
     //this.gunRunAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 20, 140, 96, 70, 0.05, 8, true, true);
     //this.gunJumpAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 20, 490, 96, 70, 0.1, 8, false, true);
+
+    // ********************** //
+    // Frame
+
 
     this.mouse = 1;
     this.primaryWeapon = true;
@@ -130,6 +136,7 @@ Character.prototype.update = function () {
     if (this.jumping){
         this.crouching = false;
         this.attacking = false;
+        this.switching = false;
         // this.running = false;
         var jumpDistance;
         if (this.primaryWeapon) {
@@ -187,6 +194,12 @@ Character.prototype.update = function () {
         this.jumping = false;
         this.attacking = false;
     } // Could have else if (this.crouching && this.attacking) for crouch attack
+
+    if (this.switching) {
+        this.crouching = false;
+        this.standing = false;
+        // this.jumping = false;
+    }
 
     // World wrapping
     if (this.x > 1200){
