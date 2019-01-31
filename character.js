@@ -1,7 +1,15 @@
+/*
+Todo:
+Turn on and off the lightsaber when facing left.
+*/
+
+
 /* Scale size of character */
 var scale = 1.5;
 /* This is used to toggle between attacking poses. 1 is default if the character only has 1 attack pose. */
 var attkNum = 1;
+const mauriceDiff = 144;
+const stevenDiff = 48;
 var canvas = document.getElementById("gameWorld");
 /* Set to true when debugging */
 var debug = false;
@@ -15,6 +23,11 @@ The ground height can be changed depending on which platform the character is on
 is intentionally set to negative. When you apply it to y coordinates, just "+" them.
 */
 var groundHeight = -30;
+// var facingRight = true;
+var center_x;
+var center_y;
+var degree;
+
 /* Character's center. Used to calculate the angle at which the characters should aim their weapon at. */
 
 document.oncontextmenu = function() {
@@ -47,6 +60,14 @@ function Character(game){
     this.gunJumpAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 490, 96, 70, 0.1, 8, false, false);
     this.dyingAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 630, 96, 70, 0.5, 6, false, false);
 
+    this.gunAim0Right = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 576, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim22Right = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 480, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim45Right = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 384, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim67Right = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 288, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim90Right = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 192, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim135Right = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim157Right = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 96, 210, 96, 70, 0.5, 1, true, false);
+
     // ********************** //
     // Left-Facing Animations //
     // ********************** //
@@ -55,6 +76,14 @@ function Character(game){
     this.gunStandLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 0, -96, 70, 1, 3, true, false);
     this.gunRunLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 140, -96, 70, 0.05, 8, true, false);
     this.gunJumpLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 490, -96, 70, 0.1, 8, false, false);
+
+    this.gunAim0Left = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 960, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim22Left = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1056, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim45Left = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1152, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim67Left = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1248, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim90Left = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim135Left = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1536, 210, 96, 70, 0.5, 1, true, false);
+    this.gunAim157Left = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1440, 210, 96, 70, 0.5, 1, true, false);
 
     // ************************ //
     // Aiming                   //
@@ -72,6 +101,7 @@ function Character(game){
     this.crouching = false;
     this.attacking = false;
     this.switching = false;
+    // this.aiming = false;
 
     this.ground = 500;
     this.speed = 500;
@@ -114,6 +144,7 @@ Character.prototype.update = function () {
         this.switching = true;
         this.standing = false;
         this.attacking = false;
+        // this.aiming = true;
         this.primaryWeapon = !this.primaryWeapon;
     }
     if (this.game.i) {                                  // Key I: Dying
@@ -186,6 +217,7 @@ Character.prototype.update = function () {
         }
     }
 
+    // Turning on / off Lightsaber
     if (this.saberOnAnim.isDone() || this.saberOffAnim.isDone()) {
         this.saberOnAnim.elapsedTime = 0;
         this.saberOffAnim.elapsedTime = 0;
@@ -205,6 +237,10 @@ Character.prototype.update = function () {
         // this.jumping = false;
     }
 
+    // if (this.aiming) {
+    //     // if (this.gunAim0Right.isDone() || this.gunAim22Right.isDone() || this.gunAim45Right.isDone() || this.gunAim67Right.isDone() || this.gunAim90Right.isDone() || this.gunAim)
+    // }
+
     // World wrapping
     if (this.x > 1200){
       this.x=0;
@@ -212,14 +248,20 @@ Character.prototype.update = function () {
       this.x = 1200;
     }
 
+    center_x = this.x;
+    center_y = this.y;
+
     Entity.prototype.update.call(this);
 }
 
 Character.prototype.draw = function(){
-    if (this.game.mouseMoveX > this.x - 48)
+    if (this.game.mouseMoveX > this.x + mauriceDiff) {
+        // this.facingRight = true;
         this.drawRight();
-    else
+    } else {
+        // this.facingRight = false;
         this.drawLeft();
+    }
 }
 
 Character.prototype.drawRight = function() {
@@ -258,7 +300,8 @@ Character.prototype.drawRight = function() {
             this.saberOffAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.standing) {
-            this.gunStandAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+            this.drawStanding();
+            // this.gunStandAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.crouching) {
             // This will actually not play the crouch animation.
@@ -295,7 +338,7 @@ Character.prototype.drawLeft = function() {
             this.saberOnAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.standing) {
-            this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 140, this.y + groundHeight, scale);
+            this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + mauriceDiff, this.y + groundHeight, scale);
         }
         if (this.crouching) {
             // This will actually not play the crouch animation.
@@ -317,15 +360,16 @@ Character.prototype.drawLeft = function() {
             this.dyingAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.running && !this.jumping && !this.attacking) {
-            this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 140, this.y + groundHeight, scale);
+            this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + mauriceDiff, this.y + groundHeight, scale);
+            console.log(this.x + ", " + this.game.mouseMoveX);
         }
     } else { // If the character is using their secondary weapon
         if (this.switching) {
             this.saberOffAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.standing) {
-            //drawStanding();
-            this.gunStandLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 140, this.y + groundHeight, scale);
+            this.drawStanding();
+            //this.gunStandLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + mauriceDiff, this.y + groundHeight, scale);
         }
         if (this.crouching) {
             // This will actually not play the crouch animation.
@@ -355,27 +399,88 @@ Character.prototype.drawLeft = function() {
     Entity.prototype.draw.call(this);
 }
 
-function drawStanding()
-{
-    switch () {
-        case expression:
-
-            break;
-        default:
-
+Character.prototype.drawStanding = function () {
+    absDegree = Math.abs(degree);
+    if (absDegree >= 0 && absDegree < 11) {
+        if (degree > 0) {
+            this.gunAim0Right.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        } else {
+            this.gunAim0Left.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+    } else if (absDegree >= 11 && absDegree < 33) {
+        if (degree > 0) {
+            this.gunAim22Right.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        } else {
+            this.gunAim22Left.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+    } else if (absDegree >= 33 && absDegree < 56) {
+        if (degree > 0) {
+            this.gunAim45Right.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        } else {
+            this.gunAim45Left.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+    } else if (absDegree >= 56 && absDegree < 78) {
+        if (degree > 0) {
+            this.gunAim67Right.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        } else {
+            this.gunAim67Left.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+    } else if (absDegree >= 78 && absDegree < 112) {
+        if (degree > 0) {
+            this.gunAim90Right.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        } else {
+            this.gunAim90Left.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+    } else if (absDegree >= 112 && absDegree < 146) {
+        if (degree > 0) {
+            this.gunAim135Right.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        } else {
+            this.gunAim135Left.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+    } else if (absDegree >= 146 && absDegree <= 180) {
+        if (degree > 0) {
+            this.gunAim157Right.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        } else {
+            this.gunAim157Left.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+    } else {
+        if (degree > 0) {
+            this.gunAim157Right.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        } else {
+            this.gunAim157Left.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
     }
 }
 
 function aimDirection(event) {
-    var delta_x = event.clientX - this.center_x;
-    var delta_y = event.clientY - this.center_y;
+    center_x += 144;
+    center_y += 200;
+    var delta_x;
+    var delta_y;
+
+    delta_x = (event.clientX - center_x);
+    delta_y = (event.clientY - center_y);
+
     var hypotenuse = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
-    var radian = Math.asin(delta_y/hypotenuse);
-    var degree = radian * 180 / Math.PI;
-    //(debug) ? console.log(degree) : ;
-    //console.log(event.clientX + ", " + event.clientY + ", " + this)
-    console.log("aiming here: " + degree);
-    return degree;
+    var radian = Math.asin(delta_x/hypotenuse);
+    degree = radian * 180 / Math.PI;
+
+    if (debug) {
+        console.log("mouse x: " + event.clientX + ", mouse y: " + event.clientY);
+        console.log("this.x: " + center_x + ", this.y: " + center_y);
+        console.log("dx: " + delta_x + ", dy: " + delta_y);
+        console.log("Mouse X: " + event.clientX + "Mouse Y: " + event.clientY);
+    }
+    if (event.clientY > center_y) {
+        if (event.clientX > center_x) {
+            degree = 180 - degree;
+        } else {
+            degree = -180 - degree;
+        }
+        // console.log("mouse Y > center Y ");
+    }
+    // console.log("aiming here: " + degree + " DEGREE");
+    // return degree;
 }
 
 function stand() {
