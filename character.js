@@ -27,6 +27,7 @@ document.oncontextmenu = function() {
 
 function Character(game){
     canvas.addEventListener("click", inGameClick);
+    canvas.addEventListener("mousemove", aimDirection);
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     // *********************** //
     // Right-Facing Animations //
@@ -53,9 +54,9 @@ function Character(game){
     this.gunRunLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1612, 140, -96, 70, 0.05, 8, true, false);
     this.gunJumpLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1612, 490, -96, 70, 0.1, 8, false, false);
 
-    // ********************** //
-    // Frame
-
+    // ************************ //
+    // Aiming                   //
+    // ************************ //
 
     this.mouse = 1;
     this.primaryWeapon = true;
@@ -354,11 +355,25 @@ Character.prototype.drawLeft = function() {
 
 function drawStanding()
 {
+    switch () {
+        case expression:
 
+            break;
+        default:
+
+    }
 }
 
-function slope() {
-
+function aimDirection(event) {
+    var delta_x = event.clientX - this.center_x;
+    var delta_y = event.clientY - this.center_y;
+    var hypotenuse = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
+    var radian = Math.asin(delta_y/hypotenuse);
+    var degree = radian * 180 / Math.PI;
+    //(debug) ? console.log(degree) : ;
+    //console.log(event.clientX + ", " + event.clientY + ", " + this)
+    console.log("aiming here: " + degree);
+    return degree;
 }
 
 function stand() {
