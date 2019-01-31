@@ -68,8 +68,6 @@ function Character(game){
 Character.prototype = new Entity();
 Character.prototype.constructor = Character;
 Character.prototype.update = function () {
-
-
     // ************************************** //
     // Key A, S, D, F.                        //
     // Moving the Character.                  //
@@ -80,43 +78,30 @@ Character.prototype.update = function () {
     // Keyboard Events              //
     // **************************** //
 
-    if (this.game.d){               // Key D: Running Right
+    if (this.game.d){                                   // Key D: Running Right
         this.running = true;
         this.standing = false;
         this.theD = true;
-    } else if (this.game.a){        // Key A: Running Left
+    } else if (this.game.a){                            // Key A: Running Left
         this.running = true;
         this.standing = false;
         this.theD = false;
     }
-
     if (this.game.w){               // Key W: Jumping
         this.jumping = true;
         this.standing = false;
-        // this.running = false;
-        // this.crouching = false;
     }
-
-    if (this.game.s){               // Key S: Crouching
+    if (this.game.s){                                   // Key S: Crouching
         this.crouching = true;
         this.standing = false;
     }
-
-    if (this.game.r) {              // Key R: Switch between primary and secondary weapon
+    if (this.game.r) {                                  // Key R: Switch between primary and secondary weapon
         this.primaryWeapon = !this.primaryWeapon;
     }
-
-    if (this.game.i) {              // Key I: Dying
-      this.dying = !this.dying;
+    if (this.game.i) {                                  // Key I: Dying
+        this.dying = !this.dying;
     }
-
-    if (this.game.keyup){           // Keyup: Standing
-        this.standing = true;
-        this.running = false;
-        this.crouching = false;
-    }
-
-    if (this.game.click) {          // Click: Attacking
+    if (this.game.keyup && !this.jumping){              // Keyup: Standing
         this.standing = true;
         this.running = false;
         this.crouching = false;
@@ -124,6 +109,8 @@ Character.prototype.update = function () {
 
     // Running
     if (this.running){
+        this.crouching = false;
+        this.standing = false;
         if (this.theD){
             this.x += this.game.clockTick * this.speed;
         } else {
@@ -133,11 +120,14 @@ Character.prototype.update = function () {
 
     // Jumping
     if (this.jumping){
+        this.crouching = false;
+        // this.running = false;
         var jumpDistance;
         if (this.primaryWeapon) {
             if (this.jumpAnim.isDone()) {
                 this.jumpAnim.elapsedTime = 0;
                 this.jumping = false;
+                this.running = false;
                 this.standing = true;
             }
             jumpDistance = this.jumpAnim.elapsedTime / this.jumpAnim.totalTime;
@@ -145,6 +135,7 @@ Character.prototype.update = function () {
             if (this.gunJumpAnim.isDone()) {
                 this.gunJumpAnim.elapsedTime = 0;
                 this.jumping = false;
+                this.running = false;
                 this.standing = true;
             }
             jumpDistance = this.gunJumpAnim.elapsedTime / this.gunJumpAnim.totalTime;
@@ -160,18 +151,33 @@ Character.prototype.update = function () {
 
     // Attacking
     if (this.attacking) {
-        if (this.attk1Anim.isDone() || this.attk2Anim.isDone()) {
-            this.attk1Anim.elapsedTime = 0;
-            this.attk2Anim.elapsedTime = 0;
-        }
         this.standing = false;
+        if (this.attk1Anim.isDone()) {
+            this.attk1Anim.elapsedTime = 0;
+            attkNum = 2;
+            this.attacking = false;
+            this.standing = true;
+        }
+        if (this.attk2Anim.isDone()) {
+            this.attk2Anim.elapsedTime = 0;
+            attkNum = 1;
+            this.attacking = false;
+            this.standing = true;
+        }
     }
 
+    // Crouching
+    if (this.crouching) {
+        this.jumping = false;
+    }
+
+    // World wrapping
     if (this.x > 1200){
       this.x=0;
     } else if (this.x < 0){
       this.x = 1200;
     }
+
     Entity.prototype.update.call(this);
 }
 
@@ -181,103 +187,59 @@ Character.prototype.draw = function(){
         this.saberOnAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         if (this.standing) {
             this.standAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
-        } else if (this.running) {
-            this.runAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
-        } else if (this.crouching) {
+        }
+        if (this.crouching) {
             // This will actually not play the crouch animation.
             // Instead, it will call a function which takes in mouse
             // coords and character coords and return the proper frame to draw.
             this.crouchAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
-        } else if (this.attacking) {
+        }
+        if (this.attacking) {
             if (attkNum === 1) {
                 this.attk1Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
-                if (this.attk1Anim.isDone()) {
-                    attkNum = 2;
-                    this.attacking = false;
-                }
             } else {
                 this.attk2Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight + 5, scale);
-                if (this.attk2Anim.isDone()) {
-                    attkNum = 1;
-                    this.attacking = false;
-                }
             }
-        } else if (!this.attacking) {
-            this.attacking = false;
-            this.standing = true;
-        } else if (this.jumping) {
+        }
+        if (this.jumping) {
             this.jumpAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y + groundHeight, scale);
-        } else if (this.dying) {
+        }
+        if (this.dying) {
             this.dyingAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.running && !this.jumping) {
+            this.runAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
     } else { // If the character is using their secondary weapon
         this.saberOffAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         if (this.standing) {
             this.gunStandAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
-        } else if (this.running) {
-            this.gunRunAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
-        } else if (this.crouching) {
+        }
+        if (this.crouching) {
             // This will actually not play the crouch animation.
             // Instead, it will call a function which takes in mouse
             // coords and character coords and return the proper frame to draw.
             this.gunCrouchAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
-        } else if (this.attacking) {
+        }
+        if (this.attacking) {
             // Todo: Need to implement attacking with gun.
             // Todo: Need to remove if else statement below.
             if (attkNum === 1) {
                 this.attk1Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
-                if (this.attk1Anim.isDone()) {
-                    attkNum = 2;
-                    this.attacking = false;
-                }
             } else {
                 this.attk2Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight + 5, scale);
-                if (this.attk2Anim.isDone()) {
-                    attkNum = 1;
-                    this.attacking = false;
-                }
             }
-        } else if (!this.attacking) {
-            this.attacking = false;
-            this.standing = true;
-        } else if (this.jumping) {
+        }
+        if (this.jumping) {
             this.gunJumpAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
-        } else if (this.dying) {
+        }
+        if (this.dying) {
             this.dyingAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
+        if (this.running && !this.jumping) {
+            this.gunRunAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
     }
-    //
-    // if (this.jumping){
-    //     if (!this.gun) {
-    //
-    //     } else {
-    //
-    //     }
-    // }else if (this.running){
-    //     if (!this.gun)
-    //
-    //     else
-    //
-    // } else if (this.standing){
-    //     if (this.dying) {
-    //
-    //     } else if (!this.gun) {
-    //
-    //     } else {
-    //
-    //     }
-    //  } else if (this.crouching){
-    //      if (!this.gun)
-    //
-    //      else
-    //
-    // } else if (this.attacking){
-    //
-    // } else if (!this.attacking) {
-    //
-    // } else if (this.dying) {
-    //
-    // }
     Entity.prototype.draw.call(this);
 }
 
@@ -289,7 +251,7 @@ function stand() {
 
 function inGameClick(event) {
     console.log(event + 'click');
-    if (transitionCounter == 0) { // Keep this but move this whole thing to the character class.
+    if (transitionCounter == 0) {
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
