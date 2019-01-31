@@ -29,7 +29,7 @@ function Character(game){
     // *********************** //
     // Right-Facing Animations //
     // *********************** //
-    this.runAnimation = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 2310, 96, 70, 0.05, 8, true, false);
+    this.runAnimation = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 2310, 96, 70, 0.1, 8, true, false);
     this.jumpAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 2100, 144, 140, 0.1, 9, false, false);
     this.standAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1540, 96, 70, 1, 3, true, false);
     this.crouchAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1610, 96, 70, 0.5, 3, true, false);
@@ -47,9 +47,11 @@ function Character(game){
     // ********************** //
     // Left-Facing Animations //
     // ********************** //
-    this.gunStandLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1612, 0, -96, 70, 1, 3, true, false);
-    this.gunRunLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1612, 140, -96, 70, 0.05, 8, true, false);
-    this.gunJumpLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1612, 490, -96, 70, 0.1, 8, false, false);
+    this.standLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 1540, -96, 70, 1, 3, true, false);
+    this.runLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 2310, -96, 70, 0.1, 8, true, false);
+    this.gunStandLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 0, -96, 70, 1, 3, true, false);
+    this.gunRunLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 140, -96, 70, 0.05, 8, true, false);
+    this.gunJumpLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 490, -96, 70, 0.1, 8, false, false);
 
     this.mouse = 1;
     this.primaryWeapon = true;
@@ -65,7 +67,7 @@ function Character(game){
     this.switching = false;
 
     this.ground = 500;
-    this.speed = 1000;
+    this.speed = 500;
 
     this.game = game;
     this.ctx = game.ctx;
@@ -200,7 +202,7 @@ Character.prototype.update = function () {
 }
 
 Character.prototype.draw = function(){
-    if (this.game.mouseMoveX > this.x)
+    if (this.game.mouseMoveX > this.x - 48)
         this.drawRight();
     else
         this.drawLeft();
@@ -279,7 +281,7 @@ Character.prototype.drawLeft = function() {
             this.saberOnAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.standing) {
-            this.standAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+            this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 140, this.y + groundHeight, scale);
         }
         if (this.crouching) {
             // This will actually not play the crouch animation.
@@ -301,7 +303,7 @@ Character.prototype.drawLeft = function() {
             this.dyingAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.running && !this.jumping && !this.attacking) {
-            this.runAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+            this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 140, this.y + groundHeight, scale);
         }
     } else { // If the character is using their secondary weapon
         if (this.switching) {
@@ -309,7 +311,7 @@ Character.prototype.drawLeft = function() {
         }
         if (this.standing) {
             //drawStanding();
-            this.gunStandLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+            this.gunStandLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 140, this.y + groundHeight, scale);
         }
         if (this.crouching) {
             // This will actually not play the crouch animation.
