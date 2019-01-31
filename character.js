@@ -49,8 +49,9 @@ function Character(game){
     // ********************** //
     // Left-Facing Animations //
     // ********************** //
-    //this.gunRunAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 20, 140, 96, 70, 0.05, 8, true, true);
-    //this.gunJumpAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 20, 490, 96, 70, 0.1, 8, false, true);
+    this.gunStandLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1612, 0, -96, 70, 1, 3, true, false);
+    this.gunRunLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1612, 140, -96, 70, 0.05, 8, true, false);
+    this.gunJumpLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1612, 490, -96, 70, 0.1, 8, false, false);
 
     // ********************** //
     // Frame
@@ -212,7 +213,14 @@ Character.prototype.update = function () {
 }
 
 Character.prototype.draw = function(){
-    // this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 275 , this.game.mouseMoveY - 125, 0.03);
+    if (this.game.mouseMoveX > this.x)
+        this.drawRight();
+    else
+        this.drawLeft();
+}
+
+Character.prototype.drawRight = function() {
+// this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 275 , this.game.mouseMoveY - 125, 0.03);
     if (this.primaryWeapon) { // If the character is using their primaryWeapon
         if (this.switching) {
             this.saberOnAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
@@ -275,6 +283,82 @@ Character.prototype.draw = function(){
         }
     }
     Entity.prototype.draw.call(this);
+}
+
+Character.prototype.drawLeft = function() {
+// this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 275 , this.game.mouseMoveY - 125, 0.03);
+    if (this.primaryWeapon) { // If the character is using their primaryWeapon
+        if (this.switching) {
+            this.saberOnAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.standing) {
+            this.standAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.crouching) {
+            // This will actually not play the crouch animation.
+            // Instead, it will call a function which takes in mouse
+            // coords and character coords and return the proper frame to draw.
+            this.crouchAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.attacking) {
+            if (attkNum === 1) {
+                this.attk1Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
+            } else {
+                this.attk2Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
+            }
+        }
+        if (this.jumping) {
+            this.jumpAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y + groundHeight, scale);
+        }
+        if (this.dying) {
+            this.dyingAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.running && !this.jumping && !this.attacking) {
+            this.runAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+    } else { // If the character is using their secondary weapon
+        if (this.switching) {
+            this.saberOffAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.standing) {
+            //drawStanding();
+            this.gunStandLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.crouching) {
+            // This will actually not play the crouch animation.
+            // Instead, it will call a function which takes in mouse
+            // coords and character coords and return the proper frame to draw.
+            this.gunCrouchAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.attacking) {
+            // Todo: Need to implement attacking with gun.
+            // Todo: Need to remove if else statement below.
+            if (attkNum === 1) {
+                this.attk1Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
+            } else {
+                this.attk2Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
+            }
+        }
+        if (this.jumping) {
+            this.gunJumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.dying) {
+            this.dyingAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+        if (this.running && !this.jumping && !this.attacking) {
+            this.gunRunLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
+    }
+    Entity.prototype.draw.call(this);
+}
+
+function drawStanding()
+{
+
+}
+
+function slope() {
+
 }
 
 function stand() {
