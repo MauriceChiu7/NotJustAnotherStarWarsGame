@@ -16,7 +16,8 @@ AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
 AM.queueSound("./sounds/VolumeUp.wav");
 AM.queueSound("./sounds/VolumeDown.wav");
-AM.queueDownload("./img/luke_sprites.png");
+AM.queueDownload("./img/luke_sprites_right.png");
+AM.queueDownload("./img/luke_sprites_left.png");
 AM.queueDownload("./img/blueLightsaber.png");
 AM.downloadAll(function () {
     startScreen();

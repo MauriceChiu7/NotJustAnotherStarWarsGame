@@ -5,7 +5,7 @@ var attkNum = 1;
 var canvas = document.getElementById("gameWorld");
 var debug = false;
 /*
-Use this height difference whenever you are using luke_sprites.png and that when the height of
+Use this height difference whenever you are using luke_sprites_right.png and that when the height of
 the frame is 2-high. This value is intentionally set to negative. When you apply it to y coordinates, just "+" them.
 */
 const LUKE_2_HIGH_DIFF = -105;
@@ -25,27 +25,31 @@ document.oncontextmenu = function() {
 
 function Character(game){
     canvas.addEventListener("click", inGameClick);
-
-    //Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
-    this.runAnimation = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 2310, 96, 70, 0.05, 8, true, false);
-    this.jumpAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 2100, 144, 140, 0.1, 9, false, false);
-    this.standAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1540, 96, 70, 1, 3, true, false);
-    this.crouchAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1610, 96, 70, 0.5, 3, true, false);
-    this.attk1Anim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1820, 144, 140, 0.07, 5, false, false);
-    this.attk2Anim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1960, 144, 140, 0.07, 5, false, false);
-
-    this.saberOnAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1750, 96, 70, 0.1, 3, false, false);
-    this.saberOffAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1750, 96, 70, 0.1, 3, false, true);
-
+    // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
+    // *********************** //
+    // Right-Facing Animations //
+    // *********************** //
+    this.runAnimation = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 2310, 96, 70, 0.05, 8, true, false);
+    this.jumpAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 2100, 144, 140, 0.1, 9, false, false);
+    this.standAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1540, 96, 70, 1, 3, true, false);
+    this.crouchAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1610, 96, 70, 0.5, 3, true, false);
+    this.attk1Anim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1820, 144, 140, 0.07, 5, false, false);
+    this.attk2Anim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1960, 144, 140, 0.07, 5, false, false);
+    this.saberOnAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1750, 96, 70, 0.1, 3, false, false);
+    this.saberOffAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1750, 96, 70, 0.1, 3, false, true);
     /** Edit by Steven **/
-    this.gunStandAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 0, 96, 70, 1, 3, true, false);
-    this.gunCrouchAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 280, 96, 70, 0.5, 3, true, false);
-    this.gunRunAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 140, 96, 70, 0.05, 8, true, false);
-    this.gunJumpAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 490, 96, 70, 0.15, 8, false, false);
-    this.dyingAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 630, 96, 70, 0.5, 6, false, false);
-    // Facing left
-    //this.gunRunAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 20, 140, 96, 70, 0.05, 8, true, true);
-    //this.gunJumpAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 20, 490, 96, 70, 0.1, 8, false, true);
+    this.gunStandAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 0, 96, 70, 1, 3, true, false);
+    this.gunCrouchAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 280, 96, 70, 0.5, 3, true, false);
+    this.gunRunAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 140, 96, 70, 0.05, 8, true, false);
+    this.gunJumpAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 490, 96, 70, 0.1, 8, false, false);
+    this.dyingAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 630, 96, 70, 0.5, 6, false, false);
+
+    // ********************** //
+    // Left-Facing Animations //
+    // ********************** //
+    //this.gunRunAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 20, 140, 96, 70, 0.05, 8, true, true);
+    //this.gunJumpAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 20, 490, 96, 70, 0.1, 8, false, true);
+
     this.mouse = 1;
     this.primaryWeapon = true;
     this.dying = false;
