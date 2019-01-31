@@ -34,8 +34,8 @@ function Character(game){
     this.attk1Anim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1820, 144, 140, 0.07, 5, false, false);
     this.attk2Anim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1960, 144, 140, 0.07, 5, false, false);
 
-    this.saberOnAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1890, 96, 70, 0.1, 3, false, false);
-    this.saberOffAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1890, 96, 70, 0.1, 3, false, true);
+    this.saberOnAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1750, 96, 70, 0.1, 3, false, false);
+    this.saberOffAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 1750, 96, 70, 0.1, 3, false, true);
 
     /** Edit by Steven **/
     this.gunStandAnim = new Animation(AM.getAsset("./img/luke_sprites.png"), 0, 0, 96, 70, 1, 3, true, false);
@@ -57,6 +57,7 @@ function Character(game){
     this.running = false;
     this.crouching = false;
     this.attacking = false;
+    this.switching = false;
 
     this.ground = 500;
     this.speed = 1000;
@@ -87,7 +88,7 @@ Character.prototype.update = function () {
         this.standing = false;
         this.theD = false;
     }
-    if (this.game.w){               // Key W: Jumping
+    if (this.game.w){                                   // Key W: Jumping
         this.jumping = true;
         this.standing = false;
     }
@@ -95,7 +96,10 @@ Character.prototype.update = function () {
         this.crouching = true;
         this.standing = false;
     }
-    if (this.game.r) {                                  // Key R: Switch between primary and secondary weapon
+    if (this.game.r) {                                  // Key R: Switching between primary and secondary weapon
+        this.switching = true;
+        this.standing = false;
+        this.attacking = false;
         this.primaryWeapon = !this.primaryWeapon;
     }
     if (this.game.i) {                                  // Key I: Dying
@@ -121,6 +125,7 @@ Character.prototype.update = function () {
     // Jumping
     if (this.jumping){
         this.crouching = false;
+        this.attacking = false;
         // this.running = false;
         var jumpDistance;
         if (this.primaryWeapon) {
@@ -166,10 +171,18 @@ Character.prototype.update = function () {
         }
     }
 
+    if (this.saberOnAnim.isDone() || this.saberOffAnim.isDone()) {
+        this.saberOnAnim.elapsedTime = 0;
+        this.saberOffAnim.elapsedTime = 0;
+        this.switching = false;
+        this.standing = true;
+    }
+
     // Crouching
     if (this.crouching) {
         this.jumping = false;
-    }
+        this.attacking = false;
+    } // Could have else if (this.crouching && this.attacking) for crouch attack
 
     // World wrapping
     if (this.x > 1200){
@@ -184,7 +197,9 @@ Character.prototype.update = function () {
 Character.prototype.draw = function(){
     // this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 275 , this.game.mouseMoveY - 125, 0.03);
     if (this.primaryWeapon) { // If the character is using their primaryWeapon
-        this.saberOnAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        if (this.switching) {
+            this.saberOnAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
         if (this.standing) {
             this.standAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
@@ -198,7 +213,7 @@ Character.prototype.draw = function(){
             if (attkNum === 1) {
                 this.attk1Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
             } else {
-                this.attk2Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight + 5, scale);
+                this.attk2Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
             }
         }
         if (this.jumping) {
@@ -207,11 +222,13 @@ Character.prototype.draw = function(){
         if (this.dying) {
             this.dyingAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
-        if (this.running && !this.jumping) {
+        if (this.running && !this.jumping && !this.attacking) {
             this.runAnimation.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
     } else { // If the character is using their secondary weapon
-        this.saberOffAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        if (this.switching) {
+            this.saberOffAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+        }
         if (this.standing) {
             this.gunStandAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
@@ -227,7 +244,7 @@ Character.prototype.draw = function(){
             if (attkNum === 1) {
                 this.attk1Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
             } else {
-                this.attk2Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight + 5, scale);
+                this.attk2Anim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
             }
         }
         if (this.jumping) {
@@ -236,7 +253,7 @@ Character.prototype.draw = function(){
         if (this.dying) {
             this.dyingAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
-        if (this.running && !this.jumping) {
+        if (this.running && !this.jumping && !this.attacking) {
             this.gunRunAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
     }
@@ -260,5 +277,6 @@ function inGameClick(event) {
         audio.play();
         //console.log(gameEngine.entities[0]);
         gameEngine.entities[0].attacking = true; // entities[0] is luke because we only have one character rn.
+        gameEngine.entities[0].switching = false;
     }
 }
