@@ -6,61 +6,122 @@ var fps = 30;
 var numStars = 500;
 var startScreenPrompt = new StartScreenPrompt();
 var menuItems = [];
-var menuItemStoryMode;
-var menuItemCustomGame;
-var menuItemMultiplayer;
-var menuItemSettings;
-var menuItemCredits;
+var characters = ["", "Luke", "Vader"];
+var playerCharacter = 1;
+var computerCharacter1 = 0;
+var computerCharacter2 = 0;
+var computerCharacter3 = 0;
+var computerCharacter4 = -0;
 
+// --------------------- MENU THINGS ----------------------------
 function initializeMenuItems() {
     menuItems = [];
-    menuItemStoryMode = new MenuItem("STORY MODE", 600, 150, 25);
-    menuItemCustomGame = new MenuItem("CUSTOM GAME", 600, 250, 25);
-    menuItemMultiplayer = new MenuItem("MULTIPLAYER", 600, 350, 25);
-    menuItemSettings = new MenuItem("SETTINGS", 600, 435, 20);
-    menuItemCredits = new MenuItem("CREDITS", 600, 500, 20);
-    menuItemBack = new MenuItem("BACK", 600, 550, 20);
-    menuItemMusicPlus = new MenuItem("+", 700, 200, 20, "music");
-    menuItemMusicMinus = new MenuItem("-", 600, 203, 30, "music");
-    menuItemSFXPlus = new MenuItem("+", 700, 250, 20, "sfx");
-    menuItemSFXMinus = new MenuItem("-", 600, 253, 30, "sfx");
+    new MenuItem("STORY MODE", 600, 150, 25);
+    new MenuItem("CUSTOM GAME", 600, 250, 25);
+    new MenuItem("MULTIPLAYER", 600, 350, 25);
+    new MenuItem("SETTINGS", 600, 435, 20);
+    new MenuItem("CREDITS", 600, 500, 20);
 }
 
 function initializeCustomGameItems() {
     menuItems = [];
-    menuItemCustomBack = new MenuItem("BACK", 600, 550, 20);
+    new MenuItem("START", 600, 325, 25);
+    new MenuItem("<", 120, 152, 30, "map<");
+    new MenuItem(">", 400, 152, 30, "map>");
+    new MenuItem("<", 685, 132, 30, "player<");
+    new MenuItem(">", 790, 132, 30, "player>");
+    new MenuItem("<", 690, 380, 20, "computer1<");
+    new MenuItem(">", 785, 380, 20, "computer1>");
+    new MenuItem("<", 820, 380, 20, "computer2<");
+    new MenuItem(">", 915, 380, 20, "computer2>");
+    new MenuItem("<", 950, 380, 20, "computer3<");
+    new MenuItem(">", 1045, 380, 20, "computer3>");
+    new MenuItem("<", 1080, 380, 20, "computer4<");
+    new MenuItem(">", 1175, 380, 20, "computer4>");
+    new MenuItem("BACK", 600, 550, 20);
 }
 
-function createSparks(x, y) {
-    statusBars.update(0, -40);
-    var particleCount = Math.random() * (3) + 2;
-    for (var i = 0; i < particleCount; i++) {
-        var spark = new Particle(x, y);
-        spark.move(Math.random() * 5 - 2.5, Math.random() * -5);
-        sparks.push(spark);
-    }
-    flash.push(new RadialGradient(x, y, Math.random() * 20 + 40));
+function initializeSettingsItems() {
+    menuItems = [];
+    new MenuItem("+", 700, 200, 20, "music+");
+    new MenuItem("-", 600, 203, 30, "music-");
+    new MenuItem("+", 700, 250, 20, "sfx+");
+    new MenuItem("-", 600, 253, 30, "sfx-");
+    new MenuItem("BACK", 600, 550, 20);
 }
 
-function drawSparks() {
-    while (sparks.length > 0 && sparks[0].lifespan <= 0.1) {
-        sparks.shift();
-    }
-    for (var i = 0; i < sparks.length; i++) {
-        sparks[i].move(0, GRAVITY);
-        sparks[i].integrate();
-        sparks[i].bounce();
-        sparks[i].draw();
-        sparks[i].lifespan--;
-    }
-    while (flash.length > 0 && flash[0].alpha < 0.1) {
-        flash.shift();
-    }
-    for (var i = 0; i < flash.length; i++) {
-        flash[i].draw();
-    }
+function initializeCreditsItems() {
+    menuItems = [];
+    menuItemBack = new MenuItem("BACK", 600, 550, 20);
 }
 
+function StartScreenPrompt() {
+    this.alpha = 1;
+    this.decreasing = true;
+}
+
+StartScreenPrompt.prototype.draw = function() {
+    ctx.save();
+    ctx.globalAlpha = this.alpha;
+    ctx.font = "20px monospace";
+    ctx.fillStyle = "WHITE";
+    ctx.textAlign = "center";
+    ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 150);
+    if (this.decreasing && this.alpha > 0.2) {
+        this.alpha -= 0.03;
+        if (this.alpha <= 0.2) {
+            this.decreasing = false;
+        }
+    } else if (!this.decreasing && this.alpha < 0.95) {
+        this.alpha += 0.03;
+        if (this.alpha >= 0.95) {
+            this.decreasing = true;
+        }
+    }
+    ctx.restore();
+}
+
+function MenuItem(text, x, y, size) {
+    this.x = x;
+    this.y = y;
+    this.hover = false;
+    this.size = size;
+    ctx.font = "" + this.size + "px monospace";
+    this.text = text;
+    this.h = size;
+    this.w = ctx.measureText(this.text).width;
+    menuItems.push(this);
+}
+
+function MenuItem(text, x, y, size, tag) {
+    this.x = x;
+    this.y = y;
+    this.tag = tag;
+    this.hover = false;
+    this.size = size;
+    ctx.font = "" + this.size + "px monospace";
+    this.text = text;
+    this.h = size;
+    this.w = ctx.measureText(this.text).width;
+    menuItems.push(this);
+}
+
+MenuItem.prototype.draw = function() {
+    ctx.save();
+    if (this.hover) {
+        ctx.font = "" + this.size * 1.25 + "px monospace";
+        this.h = this.size * 1.25;
+        this.w = ctx.measureText(this.text).width;
+    } else {
+        ctx.font = "" + this.size + "px monospace";
+    }
+    ctx.fillStyle = "WHITE";
+    ctx.textAlign = "center";
+    ctx.fillText(this.text, this.x, this.y);
+    ctx.restore();
+}
+
+// --------------------- STATUS BARS ----------------------------
 function StatusBars() {
     this.health = 100;
     this.stamina = 100;
@@ -101,6 +162,37 @@ StatusBars.prototype.draw = function() {
     ctx.rect(11, 36, this.stamina * 3 - 2, 10);
     ctx.fill();
     statusBars.update(0, 0.5);
+}
+
+// --------------------- SPARKS ----------------------------
+function createSparks(x, y) {
+    statusBars.update(0, -40);
+    var particleCount = Math.random() * (3) + 2;
+    for (var i = 0; i < particleCount; i++) {
+        var spark = new Particle(x, y);
+        spark.move(Math.random() * 5 - 2.5, Math.random() * -5);
+        sparks.push(spark);
+    }
+    flash.push(new RadialGradient(x, y, Math.random() * 20 + 40));
+}
+
+function drawSparks() {
+    while (sparks.length > 0 && sparks[0].lifespan <= 0.1) {
+        sparks.shift();
+    }
+    for (var i = 0; i < sparks.length; i++) {
+        sparks[i].move(0, GRAVITY);
+        sparks[i].integrate();
+        sparks[i].bounce();
+        sparks[i].draw();
+        sparks[i].lifespan--;
+    }
+    while (flash.length > 0 && flash[0].alpha < 0.1) {
+        flash.shift();
+    }
+    for (var i = 0; i < flash.length; i++) {
+        flash[i].draw();
+    }
 }
 
 var DAMPING = 0.9999;
@@ -170,6 +262,7 @@ RadialGradient.prototype.draw = function() {
     ctx.restore();
 }
 
+// --------------------- STARS ----------------------------
 function Star(x, y, length, opacity) {
     this.x = parseInt(x);
     this.y = parseInt(y);
@@ -216,70 +309,4 @@ function drawStars() {
     for (var i = 0; i < stars.length; i++) {
         stars[i].draw();
     }
-}
-
-function StartScreenPrompt() {
-    this.alpha = 1;
-    this.decreasing = true;
-}
-
-StartScreenPrompt.prototype.draw = function() {
-    ctx.save();
-    ctx.globalAlpha = this.alpha;
-    ctx.font = "20px monospace";
-    ctx.fillStyle = "WHITE";
-    ctx.textAlign = "center";
-    ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 150);
-    if (this.decreasing && this.alpha > 0.2) {
-        this.alpha -= 0.03;
-        if (this.alpha <= 0.2) {
-            this.decreasing = false;
-        }
-    } else if (!this.decreasing && this.alpha < 0.95) {
-        this.alpha += 0.03;
-        if (this.alpha >= 0.95) {
-            this.decreasing = true;
-        }
-    }
-    ctx.restore();
-}
-
-function MenuItem(text, x, y, size) {
-    this.x = x;
-    this.y = y;
-    this.hover = false;
-    this.size = size;
-    ctx.font = "" + this.size + "px monospace";
-    this.text = text;
-    this.h = size;
-    this.w = ctx.measureText(this.text).width;
-    menuItems.push(this);
-}
-
-function MenuItem(text, x, y, size, tag) {
-    this.x = x;
-    this.y = y;
-    this.tag = tag;
-    this.hover = false;
-    this.size = size;
-    ctx.font = "" + this.size + "px monospace";
-    this.text = text;
-    this.h = size;
-    this.w = ctx.measureText(this.text).width;
-    menuItems.push(this);
-}
-
-MenuItem.prototype.draw = function() {
-    ctx.save();
-    if (this.hover) {
-        ctx.font = "" + this.size * 1.25 + "px monospace";
-        this.h = this.size * 1.25;
-        this.w = ctx.measureText(this.text).width;
-    } else {
-        ctx.font = "" + this.size + "px monospace";
-    }
-    ctx.fillStyle = "WHITE";
-    ctx.textAlign = "center";
-    ctx.fillText(this.text, this.x, this.y);
-    ctx.restore();
 }

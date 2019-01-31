@@ -16,6 +16,7 @@ AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
 AM.queueSound("./sounds/VolumeUp.wav");
 AM.queueSound("./sounds/VolumeDown.wav");
+AM.queueSound("./sounds/CycleMenu.wav");
 AM.queueDownload("./img/luke_sprites.png");
 AM.queueDownload("./img/blueLightsaber.png");
 AM.downloadAll(function () {
@@ -103,11 +104,9 @@ function mainMenu() {
 function mainMenuFrame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
-    menuItemStoryMode.draw();
-    menuItemCustomGame.draw();
-    menuItemMultiplayer.draw();
-    menuItemSettings.draw();
-    menuItemCredits.draw();
+    menuItems.forEach(function(item) {
+        item.draw();
+    });
     frameId = requestAnimationFrame(mainMenuFrame);
     if (transition) {
         if (menuSelection == "STORY MODE" || menuSelection == "MULTIPLAYER") {
@@ -156,11 +155,72 @@ function customGame() {
 function customGameFrame() {
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
-    menuItemCustomBack.draw();
+
+    ctx.save();
+    ctx.font = "30px monospace";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("CUSTOM GAME", 600, 75);
+    ctx.font = "15px monospace";
+    ctx.fillText(characters[playerCharacter], 738, 128);
+    ctx.font = "13px monospace";
+    ctx.fillText(characters[computerCharacter1], 738, 376);
+    ctx.fillText(characters[computerCharacter2], 868, 376);
+    ctx.fillText(characters[computerCharacter3], 998, 376);
+    ctx.fillText(characters[computerCharacter4], 1128, 376);
+    ctx.strokeStyle = "white";
+    ctx.rect(20, 200, 500, 250);
+    ctx.stroke();
+
+    ctx.rect(680, 150, 115, 160);
+    ctx.stroke();
+    // img , clip start x, clip start y, width, height, x canvas coord, y canvas coord, stretch width, stretch height
+    if (playerCharacter == 1) {
+        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 650, 170, 168, 122.5);
+    }
+    ctx.rect(810, 150, 375, 160);
+    ctx.stroke();
+
+
+    ctx.rect(680, 400, 115, 160);
+    ctx.stroke();
+    if (computerCharacter1 == 1) {
+        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 650, 420, 168, 122.5);
+    }
+
+    ctx.rect(810, 400, 115, 160);
+    ctx.stroke();
+    if (computerCharacter2 == 1) {
+        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 780, 420, 168, 122.5);
+    }
+
+    ctx.rect(940, 400, 115, 160);
+    ctx.stroke();
+    if (computerCharacter3 == 1) {
+        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 910, 420, 168, 122.5);
+    }
+
+    ctx.rect(1070, 400, 115, 160);
+    ctx.stroke();
+    if (computerCharacter4 == 1) {
+        ctx.drawImage(AM.getAsset("./img/luke_sprites.png"), 0, 1550, 96, 70, 1040, 420, 168, 122.5);
+    }
+
+    ctx.font = "20px monospace";    
+    ctx.fillText("MAP", 35, 150);
+    ctx.textAlign = "right"; 
+    ctx.fillText("PLAYER", 1180, 130);
+    ctx.fillText("COMPUTER", 1180, 350);
+    ctx.restore();
+
+    menuItems.forEach(function(item) {
+        item.draw();
+    });
     frameId = requestAnimationFrame(customGameFrame);
     if (transition) {
         if (menuSelection == "BACK") {
             screenTransition(mainMenu);
+        } else if (menuSelection == "START") {
+            screenTransition(inGame);
         } else {
             screenTransition(customGame);
         }
@@ -176,12 +236,51 @@ function customGameClick(event) {
         menuItems.forEach(function(item) {
             if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
                 menuSelection = item.text;
-                if (menuSelection == "BACK") {
+                if (menuSelection == "BACK" || menuSelection == "START") {
                     var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
                     audio.volume = sfxVolume;
                     audio.play();
                     canvas.removeEventListener('click', customGameClick);
                     transition = true;
+                } else {
+                    var audio = AM.getSound("./sounds/CycleMenu.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
+                    if (item.tag == "player<") {
+                        playerCharacter--;
+                        if (playerCharacter == 0) {
+                            playerCharacter = characters.length - 1;
+                        }
+                    } else if (item.tag == "player>") {
+                        playerCharacter++;
+                        if (playerCharacter == characters.length) {
+                            playerCharacter = 1;
+                        }
+                    } else if (item.tag == "computer1<") {
+                        computerCharacter1--;
+                        computerCharacter1 = (computerCharacter1 % characters.length + characters.length) % characters.length;
+                    } else if (item.tag == "computer1>") {
+                        computerCharacter1++;
+                        computerCharacter1 %= characters.length;
+                    } else if (item.tag == "computer2<") {
+                        computerCharacter2--;
+                        computerCharacter2 = (computerCharacter2 % characters.length + characters.length) % characters.length;
+                    } else if (item.tag == "computer2>") {
+                        computerCharacter2++;
+                        computerCharacter2 %= characters.length;
+                    } else if (item.tag == "computer3<") {
+                        computerCharacter3--;
+                        computerCharacter3 = (computerCharacter3 % characters.length + characters.length) % characters.length;
+                    } else if (item.tag == "computer3>") {
+                        computerCharacter3++;
+                        computerCharacter3 %= characters.length;
+                    } else if (item.tag == "computer4<") {
+                        computerCharacter4--;
+                        computerCharacter4 = (computerCharacter4 % characters.length + characters.length) % characters.length;
+                    } else if (item.tag == "computer4>") {
+                        computerCharacter4++;
+                        computerCharacter4 %= characters.length;
+                    }
                 }
             }
         });
@@ -191,6 +290,7 @@ function customGameClick(event) {
 
 // --------------------- SETTINGS ----------------------------
 function settings() {
+    initializeSettingsItems();
     cancelAnimationFrame(frameId);
     canvas.addEventListener('click', settingsClick);
     frameId = requestAnimationFrame(settingsFrame);
@@ -210,11 +310,9 @@ function settingsFrame() {
     ctx.fillText(Math.round(musicVolume * 100), 650, 200);
     ctx.fillText(Math.round(sfxVolume * 100), 650, 250);
     ctx.restore();
-    menuItemMusicPlus.draw();
-    menuItemMusicMinus.draw();
-    menuItemSFXPlus.draw();
-    menuItemSFXMinus.draw();
-    menuItemBack.draw();
+    menuItems.forEach(function(item) {
+        item.draw();
+    });
     frameId = requestAnimationFrame(settingsFrame);
     if (transition) {
         screenTransition(mainMenu);
@@ -236,49 +334,45 @@ function settingsClick(event) {
                     canvas.removeEventListener('click', settingsClick);
                     transition = true;
                 } else {
-                    if (item.tag == "music") {
-                        if (menuSelection == "+") {
-                            if (musicVolume < 1) {
-                                musicVolume += 0.05;
-                                if (musicVolume > 1) {
-                                    musicVolume = 1;
-                                }
-                                var audio = AM.getSound("./sounds/VolumeUp.wav").cloneNode();
-                                audio.volume = sfxVolume;
-                                audio.play();
+                    if (item.tag == "music+") {
+                        if (musicVolume < 1) {
+                            musicVolume += 0.05;
+                            if (musicVolume > 1) {
+                                musicVolume = 1;
                             }
-                        } else {
-                            if (musicVolume > 0) {
-                                musicVolume -= 0.05;
-                                if (musicVolume < 0) {
-                                    musicVolume = 0;
-                                }
-                                var audio = AM.getSound("./sounds/VolumeDown.wav").cloneNode();
-                                audio.volume = sfxVolume;
-                                audio.play();
-                            }
+                            var audio = AM.getSound("./sounds/VolumeUp.wav").cloneNode();
+                            audio.volume = sfxVolume;
+                            audio.play();
                         }
-                    } else if (item.tag == "sfx") {
-                        if (menuSelection == "+") {
-                            if (sfxVolume < 1) {
-                                sfxVolume += 0.05;
-                                if (sfxVolume > 1) {
-                                    sfxVolume = 1;
-                                }
-                                var audio = AM.getSound("./sounds/VolumeUp.wav").cloneNode();
-                                audio.volume = sfxVolume;
-                                audio.play();
+                    } else if (item.tag == "music-") {
+                        if (musicVolume > 0) {
+                            musicVolume -= 0.05;
+                            if (musicVolume < 0) {
+                                musicVolume = 0;
                             }
-                        } else {
-                            if (sfxVolume > 0) {
-                                sfxVolume -= 0.05;
-                                if (sfxVolume < 0) {
-                                    sfxVolume = 0;
-                                }
-                                var audio = AM.getSound("./sounds/VolumeDown.wav").cloneNode();
-                                audio.volume = sfxVolume;
-                                audio.play();
+                            var audio = AM.getSound("./sounds/VolumeDown.wav").cloneNode();
+                            audio.volume = sfxVolume;
+                            audio.play();
+                        }
+                    } else if (item.tag == "sfx+") {
+                        if (sfxVolume < 1) {
+                            sfxVolume += 0.05;
+                            if (sfxVolume > 1) {
+                                sfxVolume = 1;
                             }
+                            var audio = AM.getSound("./sounds/VolumeUp.wav").cloneNode();
+                            audio.volume = sfxVolume;
+                            audio.play();
+                        }
+                    } else if (item.tag =="sfx-") {
+                        if (sfxVolume > 0) {
+                            sfxVolume -= 0.05;
+                            if (sfxVolume < 0) {
+                                sfxVolume = 0;
+                            }
+                            var audio = AM.getSound("./sounds/VolumeDown.wav").cloneNode();
+                            audio.volume = sfxVolume;
+                            audio.play();
                         }
                     }
                 }
@@ -289,6 +383,7 @@ function settingsClick(event) {
 
 // --------------------- CREDITS ----------------------------
 function credits() {
+    initializeCreditsItems();
     cancelAnimationFrame(frameId);
     canvas.addEventListener('click', creditsClick);
     frameId = requestAnimationFrame(creditsFrame);
@@ -308,7 +403,9 @@ function creditsFrame() {
     ctx.fillText("Jake Yang", 600, 325);
     ctx.fillText("Benjamin Yuen", 600, 375);
     ctx.restore();
-    menuItemBack.draw();
+    menuItems.forEach(function(item) {
+        item.draw();
+    });
     frameId = requestAnimationFrame(creditsFrame);
     if (transition) {
         screenTransition(mainMenu);
@@ -342,7 +439,6 @@ function inGame() {
     var audio = AM.getSound("./sounds/VaderVsLukeTheme.mp3");
     audio.volume = musicVolume;
     audio.play();
-    //canvas.addEventListener('click', inGameClick);
     frameId = requestAnimationFrame(inGameFrame);
     // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
@@ -359,18 +455,3 @@ function inGameFrame() {
         screenTransition(inGame);
     }
 }
-
-// function inGameClick(event) {
-//     console.log(event + 'here');
-//     if (transitionCounter == 0) { // Keep this but move this whole thing to the character class.
-//         var rect = canvas.getBoundingClientRect();
-//         var x = event.clientX - rect.left;
-//         var y = event.clientY - rect.top;
-//         var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
-//         audio.volume = sfxVolume * 0.2;
-//         audio.play();
-//         createSparks(x, y);
-//         console.log(gameEngine.entities[0]);
-//         gameEngine.entities[0].attacking = true; // entities[0] is luke because we only have one character rn.
-//     }
-// }
