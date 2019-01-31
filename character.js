@@ -16,7 +16,7 @@ const mauriceDiff = 144;
 const stevenDiff = 48;
 var canvas = document.getElementById("gameWorld");
 /* Set to true when debugging */
-var debug = true;
+var debug = false;
 /*
 Use this height difference whenever you are using luke_sprites_right.png and that when the height of
 the frame is 2-high. This value is intentionally set to negative. When you apply it to y coordinates, just "+" them.
@@ -92,6 +92,8 @@ function Character(game){
     this.standLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 1540, -96, 70, 1, 3, true, false);
     this.runLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 2310, -96, 70, 0.1, 8, true, false);
     this.crouchLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 1610, 96, 70, 1, 3, true, false);
+    this.saberOnLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 1344, 1750, 96, 70, 0.1, 3, false, false);
+    this.saberOffLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 1344, 1750, 96, 70, 0.1, 3, false, true);
 
     // Secondary weapon animations
     this.gunStandLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 0, -96, 70, 1, 3, true, false);
@@ -250,9 +252,11 @@ Character.prototype.update = function () {
     }
 
     // Turning on / off Lightsaber
-    if (this.saberOnRightAnim.isDone() || this.saberOffRightAnim.isDone()) {
+    if (this.saberOnRightAnim.isDone() || this.saberOffRightAnim.isDone() || this.saberOnLeftAnim.isDone() || this.saberOffLeftAnim.isDone()) {
         this.saberOnRightAnim.elapsedTime = 0;
         this.saberOffRightAnim.elapsedTime = 0;
+        this.saberOnLeftAnim.elapsedTime = 0;
+        this.saberOffLeftAnim.elapsedTime = 0;
         this.switching = false;
         this.standing = true;
     }
@@ -369,7 +373,7 @@ Character.prototype.drawLeft = function() {
 // this.cursorAnim.drawFrame(this.game.clockTick, this.ctx, this.game.mouseMoveX - 275 , this.game.mouseMoveY - 125, 0.03);
     if (this.primaryWeapon) { // If the character is using their primaryWeapon
         if (this.switching) {
-            this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+            this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.standing) {
             this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + mauriceDiff, this.y + groundHeight, scale);
@@ -395,11 +399,10 @@ Character.prototype.drawLeft = function() {
         }
         if (this.running && !this.jumping && !this.attacking) {
             this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + mauriceDiff, this.y + groundHeight, scale);
-            console.log(this.x + ", " + this.game.mouseMoveX);
         }
     } else { // If the character is using their secondary weapon
         if (this.switching) {
-            this.saberOffRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+            this.saberOffLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.standing) {
             this.drawGunStanding();
@@ -514,7 +517,8 @@ function stand() {
 }
 
 function inGameClick(event) {
-    console.log(event + 'click');
+    if (debug)
+        console.log(event + 'click');
     if (transitionCounter == 0) {
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
