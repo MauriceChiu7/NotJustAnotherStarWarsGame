@@ -12,8 +12,8 @@ Todo:
 var scale = 1.5;
 /* This is used to toggle between attacking poses. 1 is default if the character only has 1 attack pose. */
 var attkNum = 1;
-const rightToLeftOffset = 144;
-const cursorOffset = -80; // -20 // Question
+const rightToLeftOffset = 144;//144
+const cursorOffset = -48; // -20 // Question
 var canvas = document.getElementById("gameWorld");
 /* Set to true when debugging */
 var debug = false;
@@ -64,7 +64,7 @@ function Character(game){
 
     /** Edit by Steven **/
     // Secondary weapon animations
-    this.gunStandRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 0, 96, 70, 1, 3, true, false);
+    //this.gunStandRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 0, 96, 70, 1, 3, true, false);
     this.gunCrouchRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 280, 96, 70, 1, 3, true, false);
     this.gunRunRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 140, 96, 70, 0.05, 8, true, false);
     this.gunJumpRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 490, 96, 70, 0.1, 8, false, false);
@@ -512,27 +512,29 @@ Character.prototype.drawGunCrouching = function () {
 
 function aimDirection(event) {
     if (primaryWeapon) {
-        center_x += 150; // Question
+        center_x += 48; // Question
     } else {
-        center_x += 65;
+        center_x += 48;
     }
-    center_y += 210;
+    //center_y += 210;
     // console.log("center_x: " + center_x + ", center_y: " + center_y);
+    var x = event.clientX - canvas.getBoundingClientRect().left;
+    var y = event.clientY - canvas.getBoundingClientRect().top;
 
-    var delta_x = (event.clientX - center_x);
-    var delta_y = (event.clientY - center_y);
+    var delta_x = (x - center_x);
+    var delta_y = (y- center_y);
     var hypotenuse = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
     var radian = Math.asin(delta_x/hypotenuse);
     degree = radian * 180 / Math.PI;
 
     // if (debug) {
         // console.log("mouse x: " + event.clientX + ", mouse y: " + event.clientY);
-        console.log("center_x: " + center_x + ", center_y: " + center_y);
+        //console.log("center_x: " + center_x + ", center_y: " + center_y);
         // console.log("standing: " + this.standing)
         // console.log("dx: " + delta_x + ", dy: " + delta_y);
     // }
-    if (event.clientY > center_y) {
-        if (event.clientX > center_x) {
+    if (y > center_y) {
+        if (x > center_x) {
             degree = 180 - degree;
         } else {
             degree = -180 - degree;
@@ -549,8 +551,8 @@ function stand() {
 }
 
 function inGameClick(event) {
-    if (debug)
-        console.log(event + 'click');
+    //if (debug)
+        //console.log(event + 'click');
     if (transitionCounter == 0) {
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;

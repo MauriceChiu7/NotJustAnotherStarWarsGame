@@ -40,12 +40,6 @@ GameEngine.prototype.startInput = function () {
     var getXandY = function (e) {
         var x = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
         var y = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
-
-        if (x < 1024) {
-            x = Math.floor(x / 32);
-            y = Math.floor(y / 32);
-        }
-
         return { x: x, y: y };
     }
 
@@ -55,15 +49,14 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("click", function (e) {
         that.clickPos = getXandY(e);
         that.click = true;
-        // console.log(e);
-        console.log("Left Click Event - X,Y " + e.clientX + ", " + e.clientY);
+        console.log("Left Click Event - X,Y " + getXandY(e).x + ", " + getXandY(e).y);
     }, false);
 
     this.ctx.canvas.addEventListener("mouseup", function (e) {
         that.clickPos = getXandY(e);
         // that.click = false;
         // console.log(e);
-        console.log("MOUSE UP EVENT - X,Y " + e.clientX + ", " + e.clientY);
+        //console.log("MOUSE UP EVENT - X,Y " + e.clientX + ", " + e.clientY);
     }, false);
 
     this.ctx.canvas.addEventListener("contextmenu", function (e) {
@@ -74,13 +67,14 @@ GameEngine.prototype.startInput = function () {
     }, false);
 
     this.ctx.canvas.addEventListener("mousemove", function (e) {
+        var rect = that.ctx.canvas.getBoundingClientRect();
         that.mouse = getXandY(e);
-        that.mouseMoveX = e.clientX;
-        that.mouseMoveY = e.clientY;
+        that.mouseMoveX = getXandY(e).x;
+        that.mouseMoveY = getXandY(e).y;
         that.saveX = that.mouseMoveX;
         that.saveY = that.mouseMoveY;
-        // console.log(that.mouse);
-        // console.log("MOUSE MOVE Event - X,Y " + e.clientX + ", " + e.clientY);
+        console.log(that.mouse);
+        //console.log("MOUSE MOVE Event - X,Y " + e.clientX + ", " + e.clientY);
     }, false);
 
     this.ctx.canvas.addEventListener("mousewheel", function (e) {
