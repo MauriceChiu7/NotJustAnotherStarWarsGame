@@ -76,8 +76,9 @@ Vader.prototype.draw = function() {
 }
 
 function vaderClick(event) {
-    // console.log("clicked");
-    // this.attacking = true;
+    var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
+    audio.volume = sfxVolume * 0.2;
+    audio.play();
     gameEngine.entities[0].attacking = true;
     // console.log(this.attacking/)
 }
