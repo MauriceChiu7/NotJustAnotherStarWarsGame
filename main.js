@@ -431,7 +431,11 @@ function inGame() {
     // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
     gameEngine.start();
-    gameEngine.addEntity(new Character(gameEngine));
+    if (playerCharacter == 1) {
+        gameEngine.addEntity(new Character(gameEngine));
+    } else if (playerCharacter == 2) {
+        gameEngine.addEntity(new Vader());
+    }
 
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
     // document.getElementById("gameWorld").cursor =  "url(./img/blueLightsaber.png), default";
