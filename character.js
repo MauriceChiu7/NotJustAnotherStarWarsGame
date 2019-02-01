@@ -197,9 +197,17 @@ Character.prototype.update = function () {
         this.crouching = false;
         this.standing = false;
         if (this.theD){
-            this.x += this.game.clockTick * this.speed;
+            if (this.x > this.game.mouseMoveX) {
+                this.x += this.game.clockTick * (this.speed * 0.5);
+            } else {
+                this.x += this.game.clockTick * this.speed;
+            }
         } else {
-            this.x -= this.game.clockTick * this.speed;
+            if (this.x < this.game.mouseMoveX) {
+                this.x -= this.game.clockTick * (this.speed * 0.5);
+            } else {
+                this.x -= this.game.clockTick * this.speed
+            }
         }
     }
 
