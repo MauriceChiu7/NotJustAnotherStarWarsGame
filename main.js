@@ -11,7 +11,8 @@ var gameEngine = new GameEngine();
 
 AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/StarWarsLogo.png");
-AM.queueDownload("./img/luke_sprites.png");
+AM.queueDownload("./img/luke_sprites_right.png");
+AM.queueDownload("./img/luke_sprites_left.png");
 AM.queueDownload("./img/vader_1560x1040.png");
 AM.queueDownload("./img/blueLightsaber.png");
 AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
