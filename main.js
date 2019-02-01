@@ -196,9 +196,9 @@ function customGameFrame() {
     ctx.stroke();
     drawCharacterFromData(1040, 420, computerCharacter4);
 
-    ctx.font = "20px monospace";    
+    ctx.font = "20px monospace";
     ctx.fillText("MAP", 35, 150);
-    ctx.textAlign = "right"; 
+    ctx.textAlign = "right";
     ctx.fillText("PLAYER", 1180, 130);
     ctx.fillText("COMPUTER", 1180, 350);
     ctx.restore();
