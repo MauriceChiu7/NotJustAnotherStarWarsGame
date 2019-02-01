@@ -13,7 +13,7 @@ var scale = 1.5;
 /* This is used to toggle between attacking poses. 1 is default if the character only has 1 attack pose. */
 var attkNum = 1;
 const rightToLeftOffset = 144;
-const cursorOffset = -20;
+const cursorOffset = -80; // -20 // Question
 var canvas = document.getElementById("gameWorld");
 /* Set to true when debugging */
 var debug = false;
@@ -326,10 +326,10 @@ Character.prototype.update = function () {
 
 Character.prototype.draw = function(){
     if (this.game.mouseMoveX + cursorOffset > this.x) {
-        // console.log("this.x: " + this.x + ", mouseX: " + mouseX);
+        console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
         this.drawRight();
     } else {
-        // console.log("this.x: " + this.x + ", mouseX: " + mouseX);
+        console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
         this.drawLeft();
     }
 }
@@ -462,7 +462,7 @@ Character.prototype.drawLeft = function() {
             this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.running && !this.jumping && !this.attacking) {
-            this.gunRunLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
+            this.gunRunLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, scale);
         }
     }
     Entity.prototype.draw.call(this);
@@ -511,8 +511,11 @@ Character.prototype.drawGunCrouching = function () {
 }
 
 function aimDirection(event) {
-    if (primaryWeapon)
-        center_x += 144;
+    if (primaryWeapon) {
+        center_x += 150; // Question
+    } else {
+        center_x += 65;
+    }
     center_y += 210;
     // console.log("center_x: " + center_x + ", center_y: " + center_y);
 
@@ -522,12 +525,12 @@ function aimDirection(event) {
     var radian = Math.asin(delta_x/hypotenuse);
     degree = radian * 180 / Math.PI;
 
-    if (debug) {
-        console.log("mouse x: " + event.clientX + ", mouse y: " + event.clientY);
+    // if (debug) {
+        // console.log("mouse x: " + event.clientX + ", mouse y: " + event.clientY);
         console.log("center_x: " + center_x + ", center_y: " + center_y);
-        console.log("standing: " + this.standing)
-        console.log("dx: " + delta_x + ", dy: " + delta_y);
-    }
+        // console.log("standing: " + this.standing)
+        // console.log("dx: " + delta_x + ", dy: " + delta_y);
+    // }
     if (event.clientY > center_y) {
         if (event.clientX > center_x) {
             degree = 180 - degree;

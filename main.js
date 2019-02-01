@@ -172,28 +172,24 @@ function customGameFrame() {
     ctx.strokeStyle = "white";
     ctx.rect(20, 200, 500, 250);
     ctx.stroke();
-
-    ctx.rect(680, 150, 115, 160);
-    ctx.stroke();
-    drawCharacterFromData(650, 170, playerCharacter);
-
     ctx.rect(810, 150, 375, 160);
     ctx.stroke();
 
+    ctx.rect(680, 150, 115, 160);
+    ctx.stroke();
     ctx.rect(680, 400, 115, 160);
     ctx.stroke();
-    drawCharacterFromData(650, 420, computerCharacter1);
-
     ctx.rect(810, 400, 115, 160);
     ctx.stroke();
-    drawCharacterFromData(780, 420, computerCharacter2);
-
     ctx.rect(940, 400, 115, 160);
     ctx.stroke();
-    drawCharacterFromData(910, 420, computerCharacter3);
-
     ctx.rect(1070, 400, 115, 160);
     ctx.stroke();
+
+    drawCharacterFromData(650, 170, playerCharacter);
+    drawCharacterFromData(650, 420, computerCharacter1);
+    drawCharacterFromData(780, 420, computerCharacter2);
+    drawCharacterFromData(910, 420, computerCharacter3);
     drawCharacterFromData(1040, 420, computerCharacter4);
 
     ctx.font = "20px monospace";
@@ -240,38 +236,38 @@ function customGameClick(event) {
                     if (item.tag == "player<") {
                         playerCharacter--;
                         if (playerCharacter == 0) {
-                            playerCharacter = characters.length - 1;
+                            playerCharacter = characterData.length - 1;
                         }
                     } else if (item.tag == "player>") {
                         playerCharacter++;
-                        if (playerCharacter == characters.length) {
+                        if (playerCharacter == characterData.length) {
                             playerCharacter = 1;
                         }
                     } else if (item.tag == "computer1<") {
                         computerCharacter1--;
-                        computerCharacter1 = (computerCharacter1 % characters.length + characters.length) % characters.length;
+                        computerCharacter1 = (computerCharacter1 % characterData.length + characterData.length) % characterData.length;
 
                     } else if (item.tag == "computer1>") {
                         computerCharacter1++;
-                        computerCharacter1 %= characters.length;
+                        computerCharacter1 %= characterData.length;
                     } else if (item.tag == "computer2<") {
                         computerCharacter2--;
-                        computerCharacter2 = (computerCharacter2 % characters.length + characters.length) % characters.length;
+                        computerCharacter2 = (computerCharacter2 % characterData.length + characterData.length) % characterData.length;
                     } else if (item.tag == "computer2>") {
                         computerCharacter2++;
-                        computerCharacter2 %= characters.length;
+                        computerCharacter2 %= characterData.length;
                     } else if (item.tag == "computer3<") {
                         computerCharacter3--;
-                        computerCharacter3 = (computerCharacter3 % characters.length + characters.length) % characters.length;
+                        computerCharacter3 = (computerCharacter3 % characterData.length + characterData.length) % characterData.length;
                     } else if (item.tag == "computer3>") {
                         computerCharacter3++;
-                        computerCharacter3 %= characters.length;
+                        computerCharacter3 %= characterData.length;
                     } else if (item.tag == "computer4<") {
                         computerCharacter4--;
-                        computerCharacter4 = (computerCharacter4 % characters.length + characters.length) % characters.length;
+                        computerCharacter4 = (computerCharacter4 % characterData.length + characterData.length) % characterData.length;
                     } else if (item.tag == "computer4>") {
                         computerCharacter4++;
-                        computerCharacter4 %= characters.length;
+                        computerCharacter4 %= characterData.length;
                     }
                 }
             }

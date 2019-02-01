@@ -6,7 +6,7 @@ var fps = 30;
 var numStars = 500;
 var startScreenPrompt = new StartScreenPrompt();
 var menuItems = [];
-var characters = ["", "Luke", "Vader"];
+// var characters = ["", "Luke", "Vader"];
 var characterData = [];
 var playerCharacter = 1;
 var computerCharacter1 = 0;
@@ -17,12 +17,24 @@ var computerCharacter4 = -0;
 // --------------------- CHARACTER SELECTION STUFF ----------------------------
 function initializeCharacterData() {
     characterData.push({name: ""});
-    characterData.push({name: "Luke", spritesheet: AM.getAsset("./img/luke_sprites_right.png"), sx: 0, sy: 1550, swidth: 96, sheight: 70, width: 159, height: 116, frameCount: 3, totalTime: 150, currentTime: 0, xBalance: 5, yBalance: 10});
-    characterData.push({name: "Vader", spritesheet: AM.getAsset("./img/vader_1560x1040.png"), sx: 0, sy: 160, swidth: 120, sheight: 80, width: 168, height: 122.5, frameCount: 8, totalTime: 80, currentTime: 0, xBalance: 10, yBalance: -10});
+    characterData.push({name: "Luke", alignment: 0, spritesheet: AM.getAsset("./img/luke_sprites_right.png"), sx: 0, sy: 1550, swidth: 96, sheight: 70, width: 159, height: 116, frameCount: 3, totalTime: 150, currentTime: 0, xBalance: 5, yBalance: 10});
+    characterData.push({name: "Vader", alignment: 1, spritesheet: AM.getAsset("./img/vader_1560x1040.png"), sx: 0, sy: 160, swidth: 120, sheight: 80, width: 168, height: 122.5, frameCount: 8, totalTime: 80, currentTime: 0, xBalance: 10, yBalance: -10});
 }
 
 function drawCharacterFromData(x, y, index) {
-    if (index == 1 || index == 2) {
+    if (index != 0) {
+        ctx.save();
+        var grd = ctx.createLinearGradient(x, y + 20, x + 115, y + 160);
+        grd.addColorStop(0, "black");
+        if (characterData[index].alignment == 0) {
+            grd.addColorStop(1, "blue");
+        } else {
+            grd.addColorStop(1, "red");
+        }
+        ctx.globalAlpha = 0.5;
+        ctx.fillStyle = grd;
+        ctx.fillRect(x + 30, y - 20, 115, 160);
+        ctx.restore();
         ctx.drawImage(characterData[index].spritesheet, characterData[index].sx + Math.floor(characterData[index].currentTime / (characterData[index].totalTime / characterData[index].frameCount)) *
                       characterData[index].swidth, characterData[index].sy, characterData[index].swidth, characterData[index].sheight, x + characterData[index].xBalance, y + characterData[index].yBalance,
                       characterData[index].width, characterData[index].height);
