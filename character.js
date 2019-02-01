@@ -146,6 +146,7 @@ function Character(game){
     this.ctx = game.ctx;
     Entity.call(this, game, 500, 500);
 }
+
 Character.prototype = new Entity();
 Character.prototype.constructor = Character;
 Character.prototype.update = function () {
@@ -558,6 +559,7 @@ function inGameClick(event) {
         var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
         audio.volume = sfxVolume * 0.2;
         audio.play();
+        statusBars.update(0, -40);
         //console.log(gameEngine.entities[0]);
         gameEngine.entities[0].attacking = true; // entities[0] is luke because we only have one character rn.
         gameEngine.entities[0].switching = false;
