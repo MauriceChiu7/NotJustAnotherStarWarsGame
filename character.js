@@ -327,10 +327,10 @@ Character.prototype.update = function () {
 
 Character.prototype.draw = function(){
     if (this.game.mouseMoveX + cursorOffset > this.x) {
-        console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
+        //console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
         this.drawRight();
     } else {
-        console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
+        //console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
         this.drawLeft();
     }
 }

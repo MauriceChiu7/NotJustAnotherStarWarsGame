@@ -1,37 +1,40 @@
-## Welcome to GitHub Pages
+# Not Just Another Star Wars Game
+## Gold Six to Gold Leader, below is a summary of our progress.
+Contributors: Ben, Jake, Steven, Maurice
 
-You can use the [editor on GitHub](https://github.com/MauriceChiu7/NotJustAnotherStarWarsGame/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+# Prototype:
+## Completed Parts:
+### Menu Screen
+1. Story Mode
+    - Starts a new game and play as Luke Skywalker
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+2. Custom Game
+    - You can choose which characters you'd like to play as
 
-### Markdown
+3. Settings
+    - You can change the volume of the music
+    - You can change the volume of the sound effects
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+4. Credits
+    - Shows credits
 
-```markdown
-Syntax highlighted code block
+### Playable Characters
+1. Luke Skywalker
+    - The character can do both left and right movements
+    - The character can:
+        - Run                           (Key A / Key D)
+        - Jump                          (Key W)
+        - Crouch                        (Key S)
+        - 2 Attacks (with Lightsaber)   (Left Mouse Click)
+        - Switch between Weapons        (Key R)
 
-# Header 1
-## Header 2
-### Header 3
+2. Darth Vader
+- The character can:
+    - Run                           (Key A / Key D)
+    - Jump                          (Key W)
+    - Crouch                        (Key S)
+    - 2 Attacks (with Lightsaber)   (Left Mouse Click)
 
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/MauriceChiu7/NotJustAnotherStarWarsGame/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## Bugs:
+1. Jumping is glitchy for Luke when you change the facing direction while jumping.
+2. Vader’s run animation has not yet been set up properly.

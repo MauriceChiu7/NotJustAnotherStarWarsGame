@@ -73,7 +73,7 @@ GameEngine.prototype.startInput = function () {
         that.mouseMoveY = getXandY(e).y;
         that.saveX = that.mouseMoveX;
         that.saveY = that.mouseMoveY;
-        console.log(that.mouse);
+        // console.log(that.mouse);
         //console.log("MOUSE MOVE Event - X,Y " + e.clientX + ", " + e.clientY);
     }, false);
 
