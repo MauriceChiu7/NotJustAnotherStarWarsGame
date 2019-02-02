@@ -10,6 +10,8 @@ Contributors: Ben, Jake, Steven, Maurice
 
 2. Custom Game
     - You can choose which characters you'd like to play as
+    - Pick your main character then click **START** to play as that character
+    - You could also chose up to 4 computer opponents but they will not show up in the game just yet
 
 3. Settings
     - You can change the volume of the music
