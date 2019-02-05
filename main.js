@@ -432,8 +432,8 @@ function inGame() {
     gameEngine.init(ctx);
     gameEngine.start();
     if (playerCharacter == 1) {
-        gameEngine.addEntity(new Vader());
-        // gameEngine.addEntity(new Character(gameEngine));
+        // gameEngine.addEntity(new Vader());
+        gameEngine.addEntity(new Character(gameEngine));
     } else if (playerCharacter == 2) {
         gameEngine.addEntity(new Vader());
     }
