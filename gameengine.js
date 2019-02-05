@@ -125,6 +125,7 @@ GameEngine.prototype.startInput = function () {
         // console.log(e);
         // console.log("KEY UP EVENT - Char " + e.code + " Code " + e.keyCode);
         that.keyup = true;
+        that.keyReleased = e.key;
     }, false);
 
     console.log('Input started');
@@ -170,6 +171,7 @@ GameEngine.prototype.loop = function () {
     this.spacebar = null;
     this.click = null;
     this.keyup = null;
+    this.keyReleased = null;
 }
 
 function Timer() {

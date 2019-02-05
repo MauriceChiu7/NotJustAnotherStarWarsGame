@@ -7,11 +7,14 @@ function Vader() {
 // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     this.attack1Anim = new Animation(this.spritesheet, 0, 320, 120, 80, 0.05, 13, false, false);
     this.attack2Anim = new Animation(this.spritesheet, 0, 480, 120, 80, 0.05, 11, false, false);
-    this.idleAnim = new Animation(this.spritesheet, 840, 160, 120, 80, 1, 1, true, false);
+    // this.idleAnim = new Animation(this.spritesheet, 720, 160, 120, 80, 1, 2, true, false);
+    this.idleAnim = new Animation(this.spritesheet, 720, 160, 120, 80, 1, 2, true, false);
     this.jumpAnim = new Animation(this.spritesheet, 0, 720, 120, 169, 0.3, 5, false, false);
     this.attacking = false;
     this.switchAttack = true;
     this.jumping = false;
+    this.movingRight = false;
+    this.movingLeft = false;
 }
 
 Vader.prototype = new Entity();
@@ -23,10 +26,21 @@ Vader.prototype.update = function() {
     }
 
     if (gameEngine.d) {
-        this.x += 5;
+        this.movingRight = true;
+        this.movingLeft = false;
     }
+
     if (gameEngine.a) {
-        this.x -= 5;
+        this.movingRight = false;
+        this.movingLeft = true;
+    }
+
+    if (gameEngine.keyup) {
+        if (gameEngine.keyReleased == 'd') {
+            this.movingRight = false;
+        } else if (gameEngine.keyReleased == 'a') {
+            this.movingLeft = false;
+        }
     }
 
     if (this.attack1Anim.isDone() || this.attack2Anim.isDone()) {
@@ -49,20 +63,25 @@ Vader.prototype.update = function() {
         }
         var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
         this.y = 500 - height;
-        // if (this.y == 500) {
-        //     this.jumping = false;
-        // }
     }
-    
-    // if (this.idleAnim.isDone()) {
-    //     this.idleAnim.elpasedTime = 0;
-    // }
+
+    if (this.movingLeft) {
+        if (this.attacking) {
+            this.x -= 2;
+        } else {
+            this.x -= 5;
+        }
+    } else if (this.movingRight) {
+        if (this.attacking) {
+            this.x += 2;
+        } else {
+            this.x += 5;
+        }
+    }
 }
 
 Vader.prototype.draw = function() {
-    // console.log(this.attacking);
     if (this.attacking) {
-        // ctx.drawImage(this.spritesheet, 0, 320, 120, 80, this.x, this.y, 120, 80);
         if (this.switchAttack) {
             this.attack1Anim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
         } else {
@@ -79,6 +98,6 @@ function vaderClick(event) {
     var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
     audio.volume = sfxVolume * 0.2;
     audio.play();
+    statusBars.update(0, -40);
     gameEngine.entities[0].attacking = true;
-    // console.log(this.attacking/)
 }

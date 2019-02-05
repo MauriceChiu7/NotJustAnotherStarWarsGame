@@ -207,7 +207,7 @@ Character.prototype.update = function () {
             if (this.x < this.game.mouseMoveX) {
                 this.x -= this.game.clockTick * (this.speed * 0.5);
             } else {
-                this.x -= this.game.clockTick * this.speed
+                this.x -= this.game.clockTick * this.speed;
             }
         }
     }
