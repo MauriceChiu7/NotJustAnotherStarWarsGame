@@ -6,7 +6,6 @@ var fps = 30;
 var numStars = 500;
 var startScreenPrompt = new StartScreenPrompt();
 var menuItems = [];
-// var characters = ["", "Luke", "Vader"];
 var characterData = [];
 var playerCharacter = 1;
 var computerCharacter1 = 0;
@@ -99,7 +98,9 @@ function StartScreenPrompt() {
 
 StartScreenPrompt.prototype.draw = function() {
     ctx.save();
-    ctx.globalAlpha = this.alpha;
+    if (!transition) {
+        ctx.globalAlpha = this.alpha;
+    }
     ctx.font = "20px monospace";
     ctx.fillStyle = "WHITE";
     ctx.textAlign = "center";

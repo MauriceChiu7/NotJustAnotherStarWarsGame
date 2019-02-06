@@ -424,14 +424,15 @@ function creditsClick(event) {
 function inGame() {
     canvas.removeEventListener('mousemove', menuMouseMove);
     cancelAnimationFrame(frameId);
-    var audio = AM.getSound("./sounds/VaderVsLukeTheme.mp3");
-    audio.volume = musicVolume;
-    audio.play();
+    // var audio = AM.getSound("./sounds/VaderVsLukeTheme.mp3");
+    // audio.volume = musicVolume;
+    // audio.play();
     frameId = requestAnimationFrame(inGameFrame);
     // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
     gameEngine.start();
     if (playerCharacter == 1) {
+        // gameEngine.addEntity(new Vader());
         gameEngine.addEntity(new Character(gameEngine));
     } else if (playerCharacter == 2) {
         gameEngine.addEntity(new Vader());
