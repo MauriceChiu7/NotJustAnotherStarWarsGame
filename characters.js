@@ -40,7 +40,7 @@ Vader.prototype.update = function() {
         this.jumpAnim.elapsedTime = 0;
         this.jumping = false;
     }
-    
+
     if (this.jumping) {
         var totalHeight = 200;
         var jumpDistance = this.jumpAnim.elapsedTime / this.jumpAnim.totalTime;
@@ -53,7 +53,7 @@ Vader.prototype.update = function() {
         //     this.jumping = false;
         // }
     }
-    
+
     // if (this.idleAnim.isDone()) {
     //     this.idleAnim.elpasedTime = 0;
     // }

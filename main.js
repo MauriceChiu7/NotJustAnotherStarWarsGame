@@ -436,7 +436,6 @@ function inGame() {
     } else if (playerCharacter == 2) {
         gameEngine.addEntity(new Vader());
     }
-
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
     // document.getElementById("gameWorld").cursor =  "url(./img/blueLightsaber.png), default";
 }
