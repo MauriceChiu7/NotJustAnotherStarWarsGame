@@ -1,6 +1,6 @@
 function Vader() {
     canvas.addEventListener("click", vaderClick);
-    this.spritesheet = AM.getAsset("./img/vader_1560x1040.png");
+    this.spritesheet = AM.getAsset("./img/vader_sprites_left - Copy.png");
     this.x = 600;
     this.y = 500;
 
@@ -9,7 +9,8 @@ function Vader() {
     this.attack2Anim = new Animation(this.spritesheet, 0, 480, 120, 80, 0.05, 11, false, false);
     // this.idleAnim = new Animation(this.spritesheet, 720, 160, 120, 80, 1, 2, true, false);
     this.idleAnim = new Animation(this.spritesheet, 720, 160, 120, 80, 1, 2, true, false);
-    this.jumpAnim = new Animation(this.spritesheet, 0, 720, 120, 169, 0.3, 5, false, false);
+    this.jumpAnim = new Animation(this.spritesheet, 0, 720, 120, 169, 0.2, 5, false, false);
+    this.walkLeftAnim = new Animation(this.spritesheet, 0, 940, 80, 80, 0.15, 8, true, false);
     this.attacking = false;
     this.switchAttack = true;
     this.jumping = false;
@@ -69,13 +70,13 @@ Vader.prototype.update = function() {
         if (this.attacking) {
             this.x -= 2;
         } else {
-            this.x -= 5;
+            this.x -= 4;
         }
     } else if (this.movingRight) {
         if (this.attacking) {
             this.x += 2;
         } else {
-            this.x += 5;
+            this.x += 4;
         }
     }
 }
@@ -89,6 +90,8 @@ Vader.prototype.draw = function() {
         }
     } else if (this.jumping) {
         this.jumpAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y - 80, 1);
+    } else if (this.movingLeft) {
+        this.walkLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
     } else {
         this.idleAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
     }
