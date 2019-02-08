@@ -435,6 +435,7 @@ function inGame() {
         // gameEngine.addEntity(new Vader());
         gameEngine.addEntity(new Character(gameEngine));
     } else if (playerCharacter == 2) {
+        gameEngine.addEntity(new Platform(0, 500, 1200, 100, AM.getAsset("./img/StarWarsLogo.png"), 0, 0, 200, 200));
         gameEngine.addEntity(new Vader());
     }
 

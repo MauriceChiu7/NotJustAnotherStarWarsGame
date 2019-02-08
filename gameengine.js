@@ -221,17 +221,15 @@ Entity.prototype.checkCollisions = function() {
         if (current != this) {
             if (this.x < current.x + current.width && this.x > current.x &&
                 this.y < current.y + current.height && this.y > current.y) {
-                    this.collide(current);
-                    console.log(this);
-                    console.log("TESTERINO");
+                    // this.collide(current);
             }
         }
     }
 }
 
-Entity.prototype.collide = function() {
-    console.log("collided");
-}
+// Entity.prototype.collide = function() {
+//     // console.log("collided");
+// }
 
 Entity.prototype.rotateAndCache = function (image, angle) {
     var offscreenCanvas = document.createElement('canvas');
