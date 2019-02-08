@@ -348,3 +348,31 @@ function drawStars() {
         stars[i].draw();
     }
 }
+
+// --------------------- ENTITIES ----------------------------
+function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.spritesheet = spritesheet;
+    this.spritesheetX = spritesheetX;
+    this.spritesheetY = spritesheetY;
+    this.spritesheetWidth = spritesheetWidth;
+    this.spritesheetHeight = spritesheetHeight;
+}
+
+Platform.prototype = new Entity();
+Platform.prototype.constructor = Platform;
+
+Platform.prototype.update = function() {
+
+}
+
+Platform.prototype.draw = function() {
+    ctx.drawImage(this.spritesheet,
+        this.spritesheetX, this.spritesheetY,  // source from sheet
+        this.spritesheetWidth, this.spritesheetHeight, // width and height of source
+        this.x, this.y, // destination coordinates
+        this.width, this.height); // destination width and height
+}

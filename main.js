@@ -438,6 +438,10 @@ function inGame() {
         gameEngine.addEntity(new Vader());
     }
 
+    // unction Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight)
+    gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/StarWarsLogo.png"), 0, 0, 200, 200));
+    // gameEngine.addEntity(new Platform());
+
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
     // document.getElementById("gameWorld").cursor =  "url(./img/blueLightsaber.png), default";
 }

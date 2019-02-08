@@ -3,6 +3,8 @@ function Vader() {
     this.spritesheet = AM.getAsset("./img/vader_sprites_left - Copy.png");
     this.x = 600;
     this.y = 500;
+    this.width = 50;
+    this.height = 50;
 
 // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     this.attack1Anim = new Animation(this.spritesheet, 0, 320, 120, 80, 0.05, 13, false, false);
@@ -20,6 +22,10 @@ function Vader() {
 
 Vader.prototype = new Entity();
 Vader.prototype.constructor = Vader;
+
+Vader.prototype.onCollision = function(entity) {
+    
+}
 
 Vader.prototype.update = function() {
     if (gameEngine.w) {
