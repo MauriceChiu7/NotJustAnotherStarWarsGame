@@ -13,7 +13,7 @@ AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
 AM.queueDownload("./img/luke_sprites_left.png");
-AM.queueDownload("./img/vader_1560x1040.png");
+AM.queueDownload("./img/vader_sprites_left - Copy.png");
 AM.queueDownload("./img/blueLightsaber.png");
 AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
 AM.queueSound("./sounds/Swing2.WAV");
@@ -437,6 +437,11 @@ function inGame() {
     } else if (playerCharacter == 2) {
         gameEngine.addEntity(new Vader());
     }
+
+    // unction Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight)
+    gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/StarWarsLogo.png"), 0, 0, 200, 200));
+    // gameEngine.addEntity(new Platform());
+
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
     // document.getElementById("gameWorld").cursor =  "url(./img/blueLightsaber.png), default";
 }

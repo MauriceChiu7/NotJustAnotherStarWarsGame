@@ -17,7 +17,7 @@ var computerCharacter4 = -0;
 function initializeCharacterData() {
     characterData.push({name: ""});
     characterData.push({name: "Luke", alignment: 0, spritesheet: AM.getAsset("./img/luke_sprites_right.png"), sx: 0, sy: 1550, swidth: 96, sheight: 70, width: 159, height: 116, frameCount: 3, totalTime: 150, currentTime: 0, xBalance: 5, yBalance: 10});
-    characterData.push({name: "Vader", alignment: 1, spritesheet: AM.getAsset("./img/vader_1560x1040.png"), sx: 0, sy: 160, swidth: 120, sheight: 80, width: 168, height: 122.5, frameCount: 8, totalTime: 80, currentTime: 0, xBalance: 10, yBalance: -10});
+    characterData.push({name: "Vader", alignment: 1, spritesheet: AM.getAsset("./img/vader_sprites_left - Copy.png"), sx: 0, sy: 160, swidth: 120, sheight: 80, width: 168, height: 122.5, frameCount: 8, totalTime: 80, currentTime: 0, xBalance: 10, yBalance: -10});
 }
 
 function drawCharacterFromData(x, y, index) {
@@ -347,4 +347,32 @@ function drawStars() {
     for (var i = 0; i < stars.length; i++) {
         stars[i].draw();
     }
+}
+
+// --------------------- ENTITIES ----------------------------
+function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.spritesheet = spritesheet;
+    this.spritesheetX = spritesheetX;
+    this.spritesheetY = spritesheetY;
+    this.spritesheetWidth = spritesheetWidth;
+    this.spritesheetHeight = spritesheetHeight;
+}
+
+Platform.prototype = new Entity();
+Platform.prototype.constructor = Platform;
+
+Platform.prototype.update = function() {
+
+}
+
+Platform.prototype.draw = function() {
+    ctx.drawImage(this.spritesheet,
+        this.spritesheetX, this.spritesheetY,  // source from sheet
+        this.spritesheetWidth, this.spritesheetHeight, // width and height of source
+        this.x, this.y, // destination coordinates
+        this.width, this.height); // destination width and height
 }

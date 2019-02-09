@@ -140,11 +140,14 @@ GameEngine.prototype.draw = function () {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
     for (var i = 0; i < this.entities.length; i++) {
+        this.entities[i].checkCollisions();
         this.entities[i].draw(this.ctx);
     }
     statusBars.draw();
     this.ctx.restore();
 }
+
+
 
 GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
@@ -190,10 +193,12 @@ Timer.prototype.tick = function () {
     return gameDelta;
 }
 
-function Entity(game, x, y) {
+function Entity(game, x, y, width, height) {
     this.game = game;
     this.x = x;
     this.y = y;
+    this.width = width;
+    this.height = height;
     this.removeFromWorld = false;
 }
 
@@ -208,6 +213,24 @@ Entity.prototype.draw = function (ctx) {
         this.game.ctx.stroke();
         this.game.ctx.closePath();
     }
+}
+
+Entity.prototype.checkCollisions = function() {
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var current = gameEngine.entities[i]; 
+        if (current != this) {
+            if (this.x < current.x + current.width && this.x > current.x &&
+                this.y < current.y + current.height && this.y > current.y) {
+                    this.collide(current);
+                    console.log(this);
+                    console.log("TESTERINO");
+            }
+        }
+    }
+}
+
+Entity.prototype.collide = function() {
+    console.log("collided");
 }
 
 Entity.prototype.rotateAndCache = function (image, angle) {
