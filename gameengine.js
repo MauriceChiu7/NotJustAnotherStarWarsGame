@@ -49,7 +49,7 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("click", function (e) {
         that.clickPos = getXandY(e);
         that.click = true;
-        console.log("Left Click Event - X,Y " + getXandY(e).x + ", " + getXandY(e).y);
+        // console.log("Left Click Event - X,Y " + getXandY(e).x + ", " + getXandY(e).y);
     }, false);
 
     this.ctx.canvas.addEventListener("mouseup", function (e) {
@@ -95,6 +95,10 @@ GameEngine.prototype.startInput = function () {
     }, false);
 
     this.ctx.canvas.addEventListener("keypress", function (e) {
+        // if (e.code === "KeyE"){
+        //   var rect = that.ctx.canvas.getBoundingClientRect();
+        //   that.e = {pressed: true, x: event.clientX - rect.left, y: event.clientY - rect.top}
+        // }
         if (e.code === "KeyD"){
           that.d = true;
         }
