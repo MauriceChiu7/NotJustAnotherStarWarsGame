@@ -56,7 +56,6 @@ LaserBeam.prototype.update = function(){
 
   Entity.prototype.update.call(this);
 }
-
 LaserBeam.prototype.draw = function(){
   absDegree = Math.abs(degree);
   if (absDegree >= 0 && absDegree < 11) {
