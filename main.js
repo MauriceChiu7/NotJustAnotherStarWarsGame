@@ -16,6 +16,8 @@ AM.queueDownload("./img/vader_sprites_left - Copy.png");
 AM.queueDownload("./img/blueLightsaber.png");
 AM.queueDownload("./img/laserbeams_angle.png");
 AM.queueDownload("./img/laserbeams_angle_left.png");
+AM.queueDownload("./img/macewindu_left.png");
+AM.queueDownload("./img/macewindu_right.png");
 AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
@@ -441,6 +443,7 @@ function inGame() {
     } else if (playerCharacter == 2) {
         gameEngine.addEntity(new Vader());
     }
+    gameEngine.addEntity(new Dummy(gameEngine));
 
     // unction Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight)
     gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/StarWarsLogo.png"), 0, 0, 200, 200));
