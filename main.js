@@ -15,6 +15,7 @@ AM.queueDownload("./img/luke_sprites_right.png");
 AM.queueDownload("./img/luke_sprites_left.png");
 AM.queueDownload("./img/vader_sprites_left - Copy.png");
 AM.queueDownload("./img/blueLightsaber.png");
+AM.queueDownload("./img/mapAssets1.png");
 AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
