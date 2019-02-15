@@ -2,7 +2,7 @@ function Vader() {
     canvas.addEventListener("click", vaderClick);
     this.spritesheet = AM.getAsset("./img/vader_sprites_left - Copy.png");
     this.x = 600;
-    this.y = 400;
+    this.y = 300;
     this.width = 50;
     this.height = 50;
     this.xAcceleration = 0;
@@ -31,17 +31,17 @@ Vader.prototype.collide = function(xDisplacement, yDisplacement, tag) {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var current = gameEngine.entities[i]; 
         if (current.tag == tag) {
-            if (this.x + xDisplacement < current.x + current.width && this.x + xDisplacement > current.x &&
-                this.y + yDisplacement < current.y + current.height && this.y + yDisplacement > current.y) {
+            if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
+                this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
                 var direction = [];
-                if (this.y > current.y + current.height) {
+                if (this.y > current.collisionY + current.collisionHeight) {
                     direction = "top";
-                } else if (this.y + this.height > current.y) {
+                } else if (this.y + this.height > current.collisionY) {
                     direction = "bottom";
                 }
-                if (this.x > current.x + current.width && this.x + xDisplacement < current.x + current.width && this.x + xDisplacement > current.x) {
+                if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
                     direction = "right";
-                } else if (this.x < current.x && this.x + xDisplacement < current.x + current.width && this.x + xDisplacement > current.x) {
+                } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
                     direction = "left";
                 }
                 collisions.push({entity: current, direction: direction});
@@ -66,16 +66,16 @@ Vader.prototype.update = function() {
 
     // stops movement if collision encountered
     if (this.getCollision("right") != null) {
-        this.x = this.getCollision("right").entity.x + this.getCollision("right").entity.width + 2;
+        this.x = this.getCollision("right").entity.collisionX + this.getCollision("right").entity.collisionWidth + 2;
         this.xAcceleration = 0;
     } else if (this.getCollision("left") != null) {
-        this.x = this.getCollision("left").entity.x - 2;
+        this.x = this.getCollision("left").entity.collisionWidth - 2;
         this.xAcceleration = 0;
     }
     if (this.getCollision("top") != null) {
         this.yAcceleration = 0;
     } else if (this.getCollision("bottom") != null) {
-        this.y = this.getCollision("bottom").entity.y + 1;
+        this.y = this.getCollision("bottom").entity.collisionY + 1;
         this.yAcceleration = 0;
     } else {
         this.yAcceleration += 0.4;

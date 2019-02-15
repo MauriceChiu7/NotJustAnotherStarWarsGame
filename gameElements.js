@@ -350,7 +350,7 @@ function drawStars() {
 }
 
 // --------------------- ENTITIES ----------------------------
-function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight) {
+function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight, collisionX, collisionY, collisionWidth, collisionHeight) {
     this.tag = "Platform";
     this.x = x;
     this.y = y;
@@ -361,6 +361,10 @@ function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, 
     this.spritesheetY = spritesheetY;
     this.spritesheetWidth = spritesheetWidth;
     this.spritesheetHeight = spritesheetHeight;
+    this.collisionX = collisionX;
+    this.collisionY = collisionY;
+    this.collisionWidth = collisionWidth;
+    this.collisionHeight = collisionHeight;
 }
 
 Platform.prototype = new Entity();
