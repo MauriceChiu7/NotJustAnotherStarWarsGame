@@ -188,6 +188,9 @@ Character.prototype.update = function () {
         if (!primaryWeapon){
           var audio = AM.getSound('./sounds/LightsaberTurnOn.wav').cloneNode();
           audio.play();
+        } else {
+          var audio = AM.getSound('./sounds/LightsaberTurnOff.wav').cloneNode();
+          audio.play();
         }
         primaryWeapon = !primaryWeapon;
     }

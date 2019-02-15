@@ -28,6 +28,7 @@ AM.queueSound("./sounds/CycleMenu.wav");
 AM.queueSound("./sounds/laser_blaster_sound.wav");
 AM.queueSound("./sounds/LightsaberThrow.WAV");
 AM.queueSound("./sounds/LightsaberTurnOn.wav");
+AM.queueSound("./sounds/LightsaberTurnOff.wav");
 AM.downloadAll(function () {
     startScreen();
 });
