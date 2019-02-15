@@ -1,13 +1,18 @@
-var scale = 1.5;
+var scale = 1;
 var canvas = document.getElementById("gameWorld");
 
 function Dummy(game) {
 
-  this.startAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 1655, 67, 85, 0.3, 4, true, false);
-  this.walkAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 886 ,625, -36, 60, 0.2, 11, true, false);
+   //right
+  this.walkRightAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 886 ,625, -36, 60, 0.2, 11, true, false);
   this.standAnim = new Animation(AM.getAsset("./img/macewindu_right.png") , 886, 75, -30, 65, 1, 1, true, false);
-  this.thinkAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 0, 50, 66, 0.7, 4, true, false);
   this.attackAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 889, 1745, -80, 78, 0.2, 3, true, false);
+
+  //left
+  this.walkLeftAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 10   ,625, 35, 60, 0.2, 11, true, false);
+  this.startAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 1655, 67, 85, 0.3, 4, true, false);
+  this.thinkAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 0, 50, 66, 0.7, 4, true, false);
+
   this.begin = true;
   this.speed = 100;
   this.walking = null;
@@ -18,17 +23,28 @@ function Dummy(game) {
   this.attack = null
   this.newMap = null;
   this.attackCount = 0;
+  this.distance = null;
+  this.player = this.game.entities[0];
    
   this.game = game;
   this.ctx = game.ctx;
-  Entity.call(this, game, 70, 110);//70 515
+  Entity.call(this, game, 770, 490);
 }
 
 Dummy.prototype = new Entity();
 Dummy.prototype.constructor = Dummy;
 
 Dummy.prototype.update = function (){
-  
+   this.distance = player.x + 50 - this.x; 
+
+   if (this.distance > 50) {
+      this.x += this.game.clockTick * this.speed;
+   } else if (this.distance < -50) {
+      this.x -= this.game.clockTick * this.speed;
+   }
+
+   console.log(this.game.entities);
+
   
 
   Entity.prototype.update.call(this);
@@ -36,8 +52,20 @@ Dummy.prototype.update = function (){
 
 Dummy.prototype.draw = function() {
 
-   this.walkAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 700 , this.y + 385, scale);
+   if (player.x + 50> this.x) {
+      this.drawRight();
+   } else {
+      this.drawLeft();
+   }
+}
 
+Dummy.prototype.drawRight = function() {
 
-  Entity.prototype.draw.call(this);
+   this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y, scale);
+   Entity.prototype.draw.call(this);
+}
+
+Dummy.prototype.drawLeft = function() {
+   this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y, scale);
+   Entity.prototype.draw.call(this);
 }
