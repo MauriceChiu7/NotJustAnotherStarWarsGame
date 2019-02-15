@@ -9,18 +9,24 @@ var musicVolume = 1;
 var sfxVolume = 1;
 var gameEngine = new GameEngine();
 
-AM.queueDownload("./img/background.jpg");
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
 AM.queueDownload("./img/luke_sprites_left.png");
 AM.queueDownload("./img/vader_sprites_left - Copy.png");
 AM.queueDownload("./img/blueLightsaber.png");
+AM.queueDownload("./img/laserbeams_angle.png");
+AM.queueDownload("./img/laserbeams_angle_left.png");
+AM.queueDownload("./img/macewindu_left.png");
+AM.queueDownload("./img/macewindu_right.png");
 AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
 AM.queueSound("./sounds/VolumeUp.wav");
 AM.queueSound("./sounds/VolumeDown.wav");
 AM.queueSound("./sounds/CycleMenu.wav");
+AM.queueSound("./sounds/laser_blaster_sound.wav");
+AM.queueSound("./sounds/LightsaberThrow.WAV");
+AM.queueSound("./sounds/LightsaberTurnOn.wav");
 AM.downloadAll(function () {
     startScreen();
 });
@@ -439,6 +445,7 @@ function inGame() {
         gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/StarWarsLogo.png"), 0, 0, 948, 520));
         gameEngine.addEntity(new Vader());
     }
+    gameEngine.addEntity(new Dummy(gameEngine));
 
     // unction Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight)
     gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/StarWarsLogo.png"), 0, 0, 200, 200));

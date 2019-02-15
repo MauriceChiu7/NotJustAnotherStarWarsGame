@@ -32,7 +32,8 @@ var center_x;
 var center_y;
 var degree;
 var primaryWeapon = true;
-
+var mouseCoor = {x: 0, y:0};
+var playerCoor = {x: 0, y: 0};
 /* Character's center. Used to calculate the angle at which the characters should aim their weapon at. */
 
 document.oncontextmenu = function() {
@@ -43,7 +44,9 @@ document.oncontextmenu = function() {
     }
 }
 
+
 function Character(game){
+    canvas.addEventListener("keyup", lightsaberThrow);
     canvas.addEventListener("click", inGameClick);
     canvas.addEventListener("mousemove", aimDirection);
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
@@ -92,7 +95,7 @@ function Character(game){
     // Primary weapon animations
     this.standLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 1540, -96, 70, 1, 3, true, false);
     this.runLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 2310, -96, 70, 0.1, 8, true, false);
-    this.jumpLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 336, 2100, 144, 140, 0.1, 9, false, false);
+    this.jumpLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 336, 2100, 144, 140, 0.1, 9, false, true);
     this.crouchLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 1610, 96, 70, 1, 3, true, false);
     this.saberOnLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 1750, 96, 70, 0.1, 3, false, true);
     this.saberOffLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 1750, 96, 70, 0.1, 3, false, false);
@@ -182,6 +185,10 @@ Character.prototype.update = function () {
         this.standing = false;
         this.attacking = false;
         // this.aiming = true;
+        if (!primaryWeapon){
+          var audio = AM.getSound('./sounds/LightsaberTurnOn.wav').cloneNode();
+          audio.play();
+        }
         primaryWeapon = !primaryWeapon;
     }
     if (this.game.i) {                                  // Key I: Dying
@@ -318,6 +325,7 @@ Character.prototype.update = function () {
     } else if (this.x < 0){
       this.x = 1200;
     }
+
 
     center_x = this.x;
     center_y = this.y;
@@ -469,6 +477,7 @@ Character.prototype.drawLeft = function() {
     Entity.prototype.draw.call(this);
 }
 
+var absDegree;
 Character.prototype.drawGunStanding = function () {
     absDegree = Math.abs(degree);
     if (absDegree >= 0 && absDegree < 11) {
@@ -521,7 +530,8 @@ function aimDirection(event) {
     // console.log("center_x: " + center_x + ", center_y: " + center_y);
     var x = event.clientX - canvas.getBoundingClientRect().left;
     var y = event.clientY - canvas.getBoundingClientRect().top;
-
+    mouseCoor.x = x;
+    mouseCoor.y = y;
     var delta_x = (x - center_x);
     var delta_y = (y- center_y);
     var hypotenuse = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
@@ -551,19 +561,42 @@ function stand() {
     this.crouching = false;
 }
 
+
+
 function inGameClick(event) {
-    //if (debug)
-        //console.log(event + 'click');
-    if (transitionCounter == 0) {
-        var rect = canvas.getBoundingClientRect();
-        var x = event.clientX - rect.left;
-        var y = event.clientY - rect.top;
-        var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
-        audio.volume = sfxVolume * 0.2;
-        audio.play();
-        statusBars.update(0, -40);
-        //console.log(gameEngine.entities[0]);
-        gameEngine.entities[0].attacking = true; // entities[0] is luke because we only have one character rn.
-        gameEngine.entities[0].switching = false;
+    if(primaryWeapon){
+      if (transitionCounter == 0) {
+          var rect = canvas.getBoundingClientRect();
+          var x = event.clientX - rect.left;
+          var y = event.clientY - rect.top;
+          var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
+          audio.volume = sfxVolume * 0.2;
+          audio.play();
+          statusBars.update(0, -40);
+          //console.log(gameEngine.entities[0]);
+          gameEngine.entities[0].attacking = true; // entities[0] is luke because we only have one character rn.
+          gameEngine.entities[0].switching = false;
+      }
+    } else {
+      var audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
+      audio.play();
+
+      var rect = canvas.getBoundingClientRect();
+      var endCoor = {x: event.clientX - rect.left, y: event.clientY - rect.top};
+      playerCoor = {x: center_x, y: center_y};
+      console.log("GameEntities1: "+ gameEngine.entities.length);
+      gameEngine.addEntity(new LaserBeam(playerCoor, endCoor, gameEngine, degree));
+      console.log("GameEntities2: "+ gameEngine.entities.length);
     }
+
+}
+function lightsaberThrow(e){
+  if (primaryWeapon && e.code === "KeyE"){
+      var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
+      audio.play();
+      playerCoor = {x: center_x, y: center_y };
+      // console.log("GameEntities1: "+ gameEngine.entities.length);
+      gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
+      // console.log("GameEntities2: "+ gameEngine.entities.length);
+  }
 }
