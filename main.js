@@ -437,10 +437,12 @@ function inGame() {
     // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
     gameEngine.start();
-    if (playerCharacter == 1) {
+    if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
         gameEngine.addEntity(new Character(gameEngine));
-    } else if (playerCharacter == 2) {
+    } else if (playerCharacter == 2 || playerCharacter == 1) {
+        gameEngine.addEntity(new Platform(0, 500, 1200, 100, AM.getAsset("./img/StarWarsLogo.png"), 0, 0, 200, 200));
+        gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/StarWarsLogo.png"), 0, 0, 948, 520));
         gameEngine.addEntity(new Vader());
     }
     gameEngine.addEntity(new Dummy(gameEngine));

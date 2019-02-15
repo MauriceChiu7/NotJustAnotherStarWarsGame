@@ -351,6 +351,7 @@ function drawStars() {
 
 // --------------------- ENTITIES ----------------------------
 function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight) {
+    this.tag = "Platform";
     this.x = x;
     this.y = y;
     this.width = width;
