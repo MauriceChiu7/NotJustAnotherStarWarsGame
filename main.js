@@ -439,7 +439,9 @@ function inGame() {
     // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
     gameEngine.start();
-    if (playerCharacter == 1) {
+    gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
+    gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100));
+    if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
         gameEngine.addEntity(new Character(gameEngine));
     } else if (playerCharacter == 2 || playerCharacter == 1) {
@@ -450,8 +452,6 @@ function inGame() {
     gameEngine.addEntity(new Dummy(gameEngine));
 
     // unction Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight)
-    gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
-    gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100));
     // gameEngine.addEntity(new Platform());
 
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
