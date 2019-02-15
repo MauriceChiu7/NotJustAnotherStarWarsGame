@@ -23,7 +23,7 @@ function LaserBeam(start, end, game, angle){
   this.shootAnim135Left = new Animation(this.spriteSheetLeft, 180, 60, 120, 70, frameDuration, 1, false, false);
 
   this.start = start;
-  this.speed = 150;
+  this.speed = 100;
   this.end = end;
   this.x = start.x;
   this.y = start.y;
@@ -82,7 +82,7 @@ LaserBeam.prototype.draw = function(){
 */
 function LightsaberThrow(start, end, game){
   // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
-  this.throwAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1260, 96, 70, 2, 0.5, false, false);
+  this.throwAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1260, 96, 70, 0.05, 4, true, false);
   // this.throwAnim = new Animation(AM.getAsset("./img/blue_laser_beam.png"), 45, 70, 527, 59, 1, 0.1, false, false);
 
   this.start = start;
@@ -108,8 +108,8 @@ LightsaberThrow.prototype.update = function(){
     let l = Math.sqrt(x * x + y * y);
     x = x / l;
     y = y / l;
-    this.x += x * this.speed;
-    this.y += y * this.speed;
+    this.x -= x * this.speed;
+    this.y -= y * this.speed;
   } else  if (this.x < this.end.x || this.y < this.end.y) {
     console.log(this.x+" "+this.y+ " "+ this.end.x + " "+ this.end.y);
 
@@ -134,6 +134,6 @@ LightsaberThrow.prototype.update = function(){
 }
 
 LightsaberThrow.prototype.draw = function(){
-  this.throwAnim.drawFrame(this.game.clockTick, ctx, this.x, this.y, 1);
+  this.throwAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, 1);
   Entity.prototype.draw.call(this);
 }
