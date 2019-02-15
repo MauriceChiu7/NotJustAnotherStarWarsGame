@@ -440,7 +440,8 @@ function inGame() {
     gameEngine.init(ctx);
     gameEngine.start();
     gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
-    gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100));
+    gameEngine.addEntity(new Platform(400, 400, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 100, 100, 335, 330, 120, 100));
+    gameEngine.addEntity(new Platform(800, 450, 100, 100, AM.getAsset("./img/mapAssets1.png"), 560, 300, 100, 100, 335, 330, 120, 100));
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
         gameEngine.addEntity(new Character(gameEngine));

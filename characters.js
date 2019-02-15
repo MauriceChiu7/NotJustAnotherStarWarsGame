@@ -69,7 +69,7 @@ Vader.prototype.update = function() {
         this.x = this.getCollision("right").entity.collisionX + this.getCollision("right").entity.collisionWidth + 2;
         this.xAcceleration = 0;
     } else if (this.getCollision("left") != null) {
-        this.x = this.getCollision("left").entity.collisionWidth - 2;
+        this.x = this.getCollision("left").entity.collisionX - 2;
         this.xAcceleration = 0;
     }
     if (this.getCollision("top") != null) {
@@ -140,13 +140,21 @@ Vader.prototype.update = function() {
         if (this.attacking) {
             this.xAcceleration -= 1;
         } else {
-            this.xAcceleration -= 1.5;    
+            if (this.yAcceleration == 0) {
+                this.xAcceleration -= 1.5;    
+            } else {
+                this.xAcceleration -= 1.5;
+            }
         }
     } else if (this.movingRight) {
         if (this.attacking) {
             this.xAcceleration += 1;
         } else {
-            this.xAcceleration += 1.5;
+            if (this.yAcceleration == 0) {
+                this.xAcceleration += 1.5;
+            } else {
+                this.xAcceleration += 1.5;
+            }
         }
     }
 
