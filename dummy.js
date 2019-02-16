@@ -2,14 +2,14 @@ var scale = 1;
 var canvas = document.getElementById("gameWorld");
 
 function Dummy(game) {
-
+// Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
    //right
-   this.walkRightAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 886 ,625, -36, 60, 0.2, 11, true, false);
-   this.standAnim = new Animation(AM.getAsset("./img/macewindu_right.png") , 886, 75, -30, 65, 1, 1, true, false);
-   this.attackAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 889, 1745, -80, 78, 0.2, 3, true, false);
+   this.walkRightAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 893 ,632, -37, 60, 0.2, 11, true, false);
+   this.standAnim = new Animation(AM.getAsset("./img/macewindu_right.png") , 893, 75, -30, 65, 1, 1, true, false);
+   this.attackAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 893, 1745, -80, 78, 0.2, 3, true, false);
 
    //left
-   this.walkLeftAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 10   ,625, 35, 60, 0.2, 11, true, false);
+   this.walkLeftAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 7, 632, 37, 60, 0.2, 11, true, false);
    this.startAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 1655, 67, 85, 0.3, 4, true, false);
    this.thinkAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 0, 50, 66, 0.7, 4, true, false);
 
