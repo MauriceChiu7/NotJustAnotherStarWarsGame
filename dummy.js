@@ -27,7 +27,7 @@ function Dummy(game) {
    this.game = game;
 
    this.ctx = game.ctx;
-   this.player = this.game.entities[0];
+   this.player = this.game.entities[2];
 
    Entity.call(this, game, 770, 490);
 }
