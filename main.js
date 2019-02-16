@@ -19,7 +19,7 @@ AM.queueDownload("./img/laserbeams_angle.png");
 AM.queueDownload("./img/laserbeams_angle_left.png");
 AM.queueDownload("./img/macewindu_left.png");
 AM.queueDownload("./img/macewindu_right.png");
-AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
+AM.queueSound("./sounds/VaderVsLukeTheme.wav");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
 AM.queueSound("./sounds/VolumeUp.wav");
@@ -29,6 +29,7 @@ AM.queueSound("./sounds/laser_blaster_sound.wav");
 AM.queueSound("./sounds/LightsaberThrow.WAV");
 AM.queueSound("./sounds/LightsaberTurnOn.wav");
 AM.queueSound("./sounds/LightsaberTurnOff.wav");
+AM.queueSound("./sounds/StarWarsMainTheme.wav");
 AM.downloadAll(function () {
     startScreen();
 });
@@ -64,6 +65,9 @@ function menuMouseMove(event) {
 }
 
 // --------------------- START SCREEN ----------------------------
+// var mainMenuMusic = AM.getSound('./sounds/StarWarsMainTheme.wav');
+var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
+
 function startScreen() {
     initializeCharacterData();
     createStars();
@@ -112,6 +116,7 @@ function mainMenu() {
 }
 
 function mainMenuFrame() {
+    mainMenuMusic.play();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
     menuItems.forEach(function(item) {
@@ -119,7 +124,9 @@ function mainMenuFrame() {
     });
     frameId = requestAnimationFrame(mainMenuFrame);
     if (transition) {
+
         if (menuSelection == "STORY MODE" || menuSelection == "MULTIPLAYER") {
+            mainMenuMusic.pause();
             screenTransition(inGame);
         } else if (menuSelection == "CUSTOM GAME") {
             screenTransition(customGame);
@@ -216,6 +223,7 @@ function customGameFrame() {
         if (menuSelection == "BACK") {
             screenTransition(mainMenu);
         } else if (menuSelection == "START") {
+            mainMenuMusic.pause();
             screenTransition(inGame);
         } else {
             screenTransition(customGame);
@@ -432,7 +440,7 @@ function creditsClick(event) {
 function inGame() {
     canvas.removeEventListener('mousemove', menuMouseMove);
     cancelAnimationFrame(frameId);
-    // var audio = AM.getSound("./sounds/VaderVsLukeTheme.mp3");
+    // var audio = AM.getSound("./sounds/VaderVsLukeTheme.wav");
     // audio.volume = musicVolume;
     // audio.play();
     frameId = requestAnimationFrame(inGameFrame);

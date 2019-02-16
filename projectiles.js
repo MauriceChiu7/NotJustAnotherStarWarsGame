@@ -44,6 +44,7 @@ LaserBeam.prototype.update = function(){
   y = y / l;
   this.x += x * this.speed;
   this.y += y * this.speed;
+
   // console.log(this.x+" "+this.y);
   if (this.x >1200 || this.x < 0 || this.y >600 ||this.y<0){
     for (var i =0; i< gameEngine.entities.length; i++){
@@ -82,7 +83,7 @@ LaserBeam.prototype.draw = function(){
 */
 function LightsaberThrow(start, end, game){
   // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
-  this.throwAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1260, 96, 70, 0.05, 4, true, false);
+  this.throwAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1312, 96, 25, 0.05, 4, true, false);
   // this.throwAnim = new Animation(AM.getAsset("./img/blue_laser_beam.png"), 45, 70, 527, 59, 1, 0.1, false, false);
 
   this.start = start;
@@ -91,49 +92,86 @@ function LightsaberThrow(start, end, game){
   this.x = start.x;
   this.y = start.y;
   this.game = game;
-  console.log(start.x+" "+start.y+ " "+ end.x + " "+end.y);
+  this.goBack = false;
+  if (start.x <= end.x){
+    this.right = true;
+  } else {
+    this.right = false;
+  }
+
+  console.log("Init throw: "+start.x+" "+start.y+ " "+ end.x + " "+end.y);
   Entity.call(this, game, this.x, this.y);
 }
 LightsaberThrow.prototype = new Entity();
 LightsaberThrow.prototype.constructor = LightsaberThrow;
 
 LightsaberThrow.prototype.update = function(){
-  if (this.x > this.end.x || this.y > this.end.y){
-    console.log("enter"+ this.x+" "+this.y+ " "+ this.end.x + " "+ this.end.y);
-    console.log(playerCoor.x+" "+playerCoor.y);
-    // let x =  playerCoor.x - this.end.x;
-    // let y = playerCoor.y - this.end.y;
-    let x =  this.end.x - playerCoor.x;
-    let y = this.end.y - playerCoor.y;
-    let l = Math.sqrt(x * x + y * y);
-    x = x / l;
-    y = y / l;
-    this.x -= x * this.speed;
-    this.y -= y * this.speed;
-  } else  if (this.x < this.end.x || this.y < this.end.y) {
-    console.log(this.x+" "+this.y+ " "+ this.end.x + " "+ this.end.y);
-
-    let x =  this.end.x - this.start.x;
-    let y = this.end.y - this.start.y;
-    let l = Math.sqrt(x * x + y * y);
-    x = x / l;
-    y = y / l;
-    this.x += x * this.speed;
-    this.y += y * this.speed;
+  if (this.right){      // Throwing to the right side
+    if (!this.goBack){
+      let x =  this.end.x - this.start.x;
+      let y =  this.end.y - this.start.y;
+      let l = Math.sqrt(x * x + y * y);
+      x = x / l;
+      y = y / l;
+      this.x += x * this.speed;
+      this.y += y * this.speed;
+    }
+    if (this.goBack){
+      let x =  center_x - this.end.x;
+      let y =  center_y - this.end.y;
+      let l = Math.sqrt(x * x + y * y);
+      x = x / l;
+      y = y / l;
+      this.x -= -x * this.speed;
+      this.y -= -y * this.speed;
+      if (this.x < center_x){
+          deleteLightsaberThrow();
+      }
+    }
+    if (this.x > this.end.x && this.y < this.end.y){
+      this.goBack = true;
+    }
+  } else {      // Throwing to the left side
+    if (!this.goBack){
+      let x =  this.end.x - this.start.x;
+      let y =  this.end.y - this.start.y;
+      let l = Math.sqrt(x * x + y * y);
+      x = x / l;
+      y = y / l;
+      this.x += x * this.speed;
+      this.y += y * this.speed;
+    }
+    if (this.goBack){
+      let x =  playerCoor.x - this.end.x;
+      let y =  playerCoor.y - this.end.y;
+      let l = Math.sqrt(x * x + y * y);
+      x = x / l;
+      y = y / l;
+      this.x -= -x * this.speed;
+      this.y -= -y * this.speed;
+      if (this.x > playerCoor.x){
+        deleteLightsaberThrow();
+      }
+    }
+    if (this.x < this.end.x && this.y < this.end.y){
+      this.goBack = true;
+    }
   }
-  // if (this.x >1200 || this.x < 0 || this.y >600 ||this.y<0){
-  //   for (var i =0; i< gameEngine.entities.length; i++){
-  //     if (gameEngine.entities[i] instanceof LightsaberThrow){
-  //       console.log(gameEngine.entities[i] instanceof LightsaberThrow);
-  //       gameEngine.entities.splice(i, 1);
-  //     }
-  //   }
-  // }
+
 
   Entity.prototype.update.call(this);
 }
 
 LightsaberThrow.prototype.draw = function(){
-  this.throwAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, 1);
+  this.throwAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, 1.7);
   Entity.prototype.draw.call(this);
+}
+
+function deleteLightsaberThrow(){
+  for (var i =0; i< gameEngine.entities.length; i++){
+    if (gameEngine.entities[i] instanceof LightsaberThrow){
+      console.log(gameEngine.entities[i] instanceof LightsaberThrow);
+      gameEngine.entities.splice(i, 1);
+    }
+  }
 }
