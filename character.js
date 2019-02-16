@@ -147,7 +147,7 @@ function Character(game){
 
     this.game = game;
     this.ctx = game.ctx;
-    Entity.call(this, game, 500, 500);
+    Entity.call(this, game, 300, 500);
 }
 
 Character.prototype = new Entity();
@@ -588,7 +588,7 @@ function inGameClick(event) {
       var endCoor = {x: event.clientX - rect.left, y: event.clientY - rect.top};
       playerCoor = {x: center_x, y: center_y};
       console.log("GameEntities1: "+ gameEngine.entities.length);
-      gameEngine.addEntity(new LaserBeam(playerCoor, endCoor, gameEngine, degree));
+      gameEngine.addEntity(new LaserBeam(playerCoor, mouseCoor, gameEngine, degree));
       console.log("GameEntities2: "+ gameEngine.entities.length);
     }
 
@@ -597,7 +597,10 @@ function lightsaberThrow(e){
   if (primaryWeapon && e.code === "KeyE"){
       var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
       audio.play();
+      var rect = canvas.getBoundingClientRect();
+      // var endCoor = {x: e.clientX - rect.left, y: e.clientY - rect.top};
       playerCoor = {x: center_x, y: center_y };
+      console.log("character.js: "+mouseCoor.x + " "+ mouseCoor.y);
       // console.log("GameEntities1: "+ gameEngine.entities.length);
       gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
       // console.log("GameEntities2: "+ gameEngine.entities.length);
