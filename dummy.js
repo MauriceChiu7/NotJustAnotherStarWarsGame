@@ -4,38 +4,39 @@ var canvas = document.getElementById("gameWorld");
 function Dummy(game) {
 
    //right
-  this.walkRightAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 886 ,625, -36, 60, 0.2, 11, true, false);
-  this.standAnim = new Animation(AM.getAsset("./img/macewindu_right.png") , 886, 75, -30, 65, 1, 1, true, false);
-  this.attackAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 889, 1745, -80, 78, 0.2, 3, true, false);
+   this.walkRightAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 886 ,625, -36, 60, 0.2, 11, true, false);
+   this.standAnim = new Animation(AM.getAsset("./img/macewindu_right.png") , 886, 75, -30, 65, 1, 1, true, false);
+   this.attackAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 889, 1745, -80, 78, 0.2, 3, true, false);
 
-  //left
-  this.walkLeftAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 10   ,625, 35, 60, 0.2, 11, true, false);
-  this.startAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 1655, 67, 85, 0.3, 4, true, false);
-  this.thinkAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 0, 50, 66, 0.7, 4, true, false);
+   //left
+   this.walkLeftAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 10   ,625, 35, 60, 0.2, 11, true, false);
+   this.startAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 1655, 67, 85, 0.3, 4, true, false);
+   this.thinkAnim = new Animation(AM.getAsset("./img/macewindu_left.png"), 0, 0, 50, 66, 0.7, 4, true, false);
 
-  this.begin = true;
-  this.speed = 100;
-  this.walking = null;
-  this.standing = null;
+   this.begin = true;
+   this.speed = 100;
+   this.walking = null;
+   this.standing = null;
 
-  this.thinking = null;
-  this.updateCount = 0;
-  this.attack = null
-  this.newMap = null;
-  this.attackCount = 0;
-  this.distance = null;
-  this.player = this.game.entities[0];
-   
-  this.game = game;
-  this.ctx = game.ctx;
-  Entity.call(this, game, 770, 490);
+   this.thinking = null;
+   this.updateCount = 0;
+   this.attack = null
+   this.newMap = null;
+   this.attackCount = 0;
+   this.distance = null;
+   this.game = game;
+
+   this.ctx = game.ctx;
+   this.player = this.game.entities[0];
+
+   Entity.call(this, game, 770, 490);
 }
 
 Dummy.prototype = new Entity();
 Dummy.prototype.constructor = Dummy;
 
 Dummy.prototype.update = function (){
-   this.distance = player.x + 50 - this.x; 
+   this.distance = this.player.x + 50 - this.x; 
 
    if (this.distance > 50) {
       this.x += this.game.clockTick * this.speed;
@@ -43,7 +44,7 @@ Dummy.prototype.update = function (){
       this.x -= this.game.clockTick * this.speed;
    }
 
-   console.log(this.game.entities);
+   console.log(this.game.entities[0]);
 
   
 
@@ -52,7 +53,7 @@ Dummy.prototype.update = function (){
 
 Dummy.prototype.draw = function() {
 
-   if (player.x + 50> this.x) {
+   if (this.player.x+ 50> this.x) {
       this.drawRight();
    } else {
       this.drawLeft();
