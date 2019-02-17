@@ -29,8 +29,9 @@ Vader.prototype.constructor = Vader;
 Vader.prototype.collide = function(xDisplacement, yDisplacement, tag) {
     var collisions = [];
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var current = gameEngine.entities[i]; 
-        if (current.tag == tag) {
+        let theTag = gameEngine.entities[i].tag;
+        let current = gameEngine.entities[i].object;
+        if (theTag == tag) {
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
                 this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
                 var direction = [];
@@ -62,7 +63,7 @@ Vader.prototype.getCollision = function(direction) {
 }
 
 Vader.prototype.update = function() {
-    this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+    this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "platform");
 
     // stops movement if collision encountered
     if (this.getCollision("right") != null) {
@@ -93,7 +94,7 @@ Vader.prototype.update = function() {
             this.xAcceleration = 0;
         }
     }
-    
+
     // movement
     if (gameEngine.w && this.getCollision("bottom") != null) {
         this.yAcceleration -= 13;
@@ -140,7 +141,7 @@ Vader.prototype.update = function() {
         if (this.attacking) {
             this.xAcceleration -= 1;
         } else {
-            this.xAcceleration -= 1.5;    
+            this.xAcceleration -= 1.5;
         }
     } else if (this.movingRight) {
         if (this.attacking) {

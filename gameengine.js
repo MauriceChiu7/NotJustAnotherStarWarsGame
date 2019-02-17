@@ -54,15 +54,16 @@ GameEngine.prototype.startInput = function () {
 
     this.ctx.canvas.addEventListener("mouseup", function (e) {
         that.clickPos = getXandY(e);
-        // that.click = false;
+        that.mouseup = true;
         // console.log(e);
-        //console.log("MOUSE UP EVENT - X,Y " + e.clientX + ", " + e.clientY);
+        // console.log("MOUSE UP EVENT - X,Y " + e.clientX + ", " + e.clientY);
     }, false);
 
     this.ctx.canvas.addEventListener("contextmenu", function (e) {
         that.clickPos = getXandY(e);
-        console.log(e);
-        console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
+        // console.log(e);
+        // console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
+        that.rightclick = true;
         e.preventDefault();
     }, false);
 
@@ -136,7 +137,7 @@ GameEngine.prototype.startInput = function () {
 }
 
 GameEngine.prototype.addEntity = function (entity) {
-    console.log('added entity');
+    console.log('added entity: ' + entity.tag);
     this.entities.push(entity);
 }
 
@@ -144,8 +145,8 @@ GameEngine.prototype.draw = function () {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
     for (var i = 0; i < this.entities.length; i++) {
-        this.entities[i].checkCollisions();
-        this.entities[i].draw(this.ctx);
+        this.entities[i].object.checkCollisions();
+        this.entities[i].object.draw(this.ctx);
     }
     statusBars.draw();
     this.ctx.restore();
@@ -157,7 +158,7 @@ GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
 
     for (var i = 0; i < entitiesCount; i++) {
-        var entity = this.entities[i];
+        var entity = this.entities[i].object;
 
         entity.update();
     }
@@ -177,6 +178,8 @@ GameEngine.prototype.loop = function () {
     this.i = null;//for dying
     this.spacebar = null;
     this.click = null;
+    this.rightclick = null;
+    this.mouseup = null;
     this.keyup = null;
     this.keyReleased = null;
 }
@@ -221,7 +224,7 @@ Entity.prototype.draw = function (ctx) {
 
 Entity.prototype.checkCollisions = function() {
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var current = gameEngine.entities[i]; 
+        var current = gameEngine.entities[i];
         if (current != this) {
             if (this.x < current.x + current.width && this.x > current.x &&
                 this.y < current.y + current.height && this.y > current.y) {
