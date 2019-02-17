@@ -89,3 +89,38 @@ Dummy.prototype.drawLeft = function() {
    }
    Entity.prototype.draw.call(this);
 }
+/*
+Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
+    var collisions = [];
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var current = gameEngine.entities[i]; 
+        if (current.tag == tag) {
+            if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
+                this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
+                var direction = [];
+                if (this.y > current.collisionY + current.collisionHeight) {
+                    direction = "top";
+                } else if (this.y + this.height > current.collisionY) {
+                    direction = "bottom";
+                }
+                if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+                    direction = "right";
+                } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+                    direction = "left";
+                }
+                collisions.push({entity: current, direction: direction});
+            }
+        }
+    }
+    // console.log(collisions);
+    return collisions;
+}
+
+Dummy.prototype.getCollision = function(direction) {
+    for(var i = 0; i < this.platformCollisions.length; i++) {
+        if (this.platformCollisions[i].direction == direction) {
+            return this.platformCollisions[i];
+        }
+    }
+    return null;
+}*/
