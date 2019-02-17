@@ -44,83 +44,106 @@ document.oncontextmenu = function() {
     }
 }
 
-
+var blocking = false;
+var rightClickIsDown = false;
 function Character(game){
     canvas.addEventListener("keyup", lightsaberThrow);
-    canvas.addEventListener("click", inGameClick);
     canvas.addEventListener("mousemove", aimDirection);
+
+    canvas.addEventListener('mousedown', function(e) {
+      rightClickIsDown = true;
+      if (e.button ==2){
+        setTimeout(function() {
+          if(rightClickIsDown) {
+            // mouse was held down for > 2 seconds
+            blocking = true;
+            console.log("Right click!!!!! Hold");
+          }
+        }, 50);
+      }
+    });
+    canvas.addEventListener('mouseup', function(e) {
+      rightClickIsDown = false;
+      if (e.button ==2){
+        blocking = false;
+      }
+    });
+
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     // *********************** //
     // Right-Facing Animations //
     // *********************** //
 
     // Primary weapon animations
-    this.runRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 2310, 96, 70, 0.1, 8, true, false);
-    this.jumpRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 2100, 144, 140, 0.1, 9, false, false);
-    this.standRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1540, 96, 70, 1, 3, true, false);
-    this.crouchRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1610, 96, 70, 0.5, 3, true, false);
-    this.attk1RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1820, 144, 140, 0.07, 5, false, false);
-    this.attk2RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1960, 144, 140, 0.07, 5, false, false);
-    this.saberOnRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1750, 96, 70, 0.1, 3, false, false);
-    this.saberOffRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1750, 96, 70, 0.1, 3, false, true);
-    this.dyingRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 630, 96, 70, 0.5, 6, false, false);
+    let rightLukeSpriteSheet = AM.getAsset("./img/luke_sprites_right.png");
+    this.blockRightAnim = new Animation(rightLukeSpriteSheet, 300, 905, 96, 70, 0.1, 1, true, false);
+    this.runRightAnim = new Animation(rightLukeSpriteSheet, 0, 2310, 96, 70, 0.1, 8, true, false);
+    this.jumpRightAnim = new Animation(rightLukeSpriteSheet, 0, 2100, 144, 140, 0.1, 9, false, false);
+    this.standRightAnim = new Animation(rightLukeSpriteSheet, 0, 1540, 96, 70, 1, 3, true, false);
+    this.crouchRightAnim = new Animation(rightLukeSpriteSheet, 0, 1610, 96, 70, 0.5, 3, true, false);
+    this.attk1RightAnim = new Animation(rightLukeSpriteSheet, 0, 1820, 144, 140, 0.07, 5, false, false);
+    this.attk2RightAnim = new Animation(rightLukeSpriteSheet, 0, 1960, 144, 140, 0.07, 5, false, false);
+    this.saberOnRightAnim = new Animation(rightLukeSpriteSheet, 0, 1750, 96, 70, 0.1, 3, false, false);
+    this.saberOffRightAnim = new Animation(rightLukeSpriteSheet, 0, 1750, 96, 70, 0.1, 3, false, true);
+    this.dyingRightAnim = new Animation(rightLukeSpriteSheet, 0, 630, 96, 70, 0.5, 6, false, false);
 
     /** Edit by Steven **/
     // Secondary weapon animations
-    //this.gunStandRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 0, 96, 70, 1, 3, true, false);
-    this.gunCrouchRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 280, 96, 70, 1, 3, true, false);
-    this.gunRunRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 140, 96, 70, 0.05, 8, true, false);
-    this.gunJumpRightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 490, 96, 70, 0.1, 8, false, false);
+    //this.gunStandRightAnim = new Animation(rightLukeSpriteSheet, 0, 0, 96, 70, 1, 3, true, false);
+    this.gunCrouchRightAnim = new Animation(rightLukeSpriteSheet, 0, 280, 96, 70, 1, 3, true, false);
+    this.gunRunRightAnim = new Animation(rightLukeSpriteSheet, 0, 140, 96, 70, 0.05, 8, true, false);
+    this.gunJumpRightAnim = new Animation(rightLukeSpriteSheet, 0, 490, 96, 70, 0.1, 8, false, false);
 
-    this.gunStanding0RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 576, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding22RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 480, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding45RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 384, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding67RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 288, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding90RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 192, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding135RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding157RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 96, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding0RightAnim = new Animation(rightLukeSpriteSheet, 576, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding22RightAnim = new Animation(rightLukeSpriteSheet, 480, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding45RightAnim = new Animation(rightLukeSpriteSheet, 384, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding67RightAnim = new Animation(rightLukeSpriteSheet, 288, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding90RightAnim = new Animation(rightLukeSpriteSheet, 192, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding135RightAnim = new Animation(rightLukeSpriteSheet, 0, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding157RightAnim = new Animation(rightLukeSpriteSheet, 96, 210, 96, 70, 0.5, 1, true, false);
 
-    this.gunCrouching0RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 576, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching22RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 480, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching45RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 384, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching67RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 288, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching90RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 192, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching157RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching135RightAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 96, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching0RightAnim = new Animation(rightLukeSpriteSheet, 576, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching22RightAnim = new Animation(rightLukeSpriteSheet, 480, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching45RightAnim = new Animation(rightLukeSpriteSheet, 384, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching67RightAnim = new Animation(rightLukeSpriteSheet, 288, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching90RightAnim = new Animation(rightLukeSpriteSheet, 192, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching157RightAnim = new Animation(rightLukeSpriteSheet, 0, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching135RightAnim = new Animation(rightLukeSpriteSheet, 96, 280, 96, 70, 0.5, 1, true, false);
 
     // ********************** //
     // Left-Facing Animations //
     // ********************** //
-
+    let leftLukeSpriteSheet = AM.getAsset("./img/luke_sprites_left.png");
     // Primary weapon animations
-    this.standLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 1540, -96, 70, 1, 3, true, false);
-    this.runLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 2310, -96, 70, 0.1, 8, true, false);
-    this.jumpLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 336, 2100, 144, 140, 0.1, 9, false, true);
-    this.crouchLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 1610, 96, 70, 1, 3, true, false);
-    this.saberOnLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 1750, 96, 70, 0.1, 3, false, true);
-    this.saberOffLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 1750, 96, 70, 0.1, 3, false, false);
+    this.blockLeftAnim = new Animation(leftLukeSpriteSheet, 1285, 905, 40, 70, 0.1, 1, true, false);
+    this.standLeftAnim = new Animation(leftLukeSpriteSheet, 1632, 1540, -96, 70, 1, 3, true, false);
+    this.runLeftAnim = new Animation(leftLukeSpriteSheet, 1632, 2310, -96, 70, 0.1, 8, true, false);
+    this.jumpLeftAnim = new Animation(leftLukeSpriteSheet, 336, 2100, 144, 140, 0.1, 9, false, true);
+    this.crouchLeftAnim = new Animation(leftLukeSpriteSheet, 1344, 1610, 96, 70, 1, 3, true, false);
+    this.saberOnLeftAnim = new Animation(leftLukeSpriteSheet, 1344, 1750, 96, 70, 0.1, 3, false, true);
+    this.saberOffLeftAnim = new Animation(leftLukeSpriteSheet, 1344, 1750, 96, 70, 0.1, 3, false, false);
 
     // Secondary weapon animations
-    this.gunStandLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 0, -96, 70, 1, 3, true, false);
-    this.gunCrouchLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 280, 96, 70, 1, 3, true, false);
-    this.gunRunLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1632, 140, -96, 70, 0.05, 8, true, false);
-    this.gunJumpLeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 864, 490, 96, 70, 0.1, 8, false, false);
+    this.gunStandLeftAnim = new Animation(leftLukeSpriteSheet, 1632, 0, -96, 70, 1, 3, true, false);
+    this.gunCrouchLeftAnim = new Animation(leftLukeSpriteSheet, 1344, 280, 96, 70, 1, 3, true, false);
+    this.gunRunLeftAnim = new Animation(leftLukeSpriteSheet, 1632, 140, -96, 70, 0.05, 8, true, false);
+    this.gunJumpLeftAnim = new Animation(leftLukeSpriteSheet, 864, 490, 96, 70, 0.1, 8, false, false);
 
-    this.gunStanding0LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 960, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding22LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1056, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding45LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1152, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding67LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1248, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding90LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding135LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1536, 210, 96, 70, 0.5, 1, true, false);
-    this.gunStanding157LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1440, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding0LeftAnim = new Animation(leftLukeSpriteSheet, 960, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding22LeftAnim = new Animation(leftLukeSpriteSheet, 1056, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding45LeftAnim = new Animation(leftLukeSpriteSheet, 1152, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding67LeftAnim = new Animation(leftLukeSpriteSheet, 1248, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding90LeftAnim = new Animation(leftLukeSpriteSheet, 1344, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding135LeftAnim = new Animation(leftLukeSpriteSheet, 1536, 210, 96, 70, 0.5, 1, true, false);
+    this.gunStanding157LeftAnim = new Animation(leftLukeSpriteSheet, 1440, 210, 96, 70, 0.5, 1, true, false);
 
-    this.gunCrouching0LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 960, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching22LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1056, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching45LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1152, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching67LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1248, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching90LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1344, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching157LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1536, 280, 96, 70, 0.5, 1, true, false);
-    this.gunCrouching135LeftAnim = new Animation(AM.getAsset("./img/luke_sprites_left.png"), 1440, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching0LeftAnim = new Animation(leftLukeSpriteSheet, 960, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching22LeftAnim = new Animation(leftLukeSpriteSheet, 1056, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching45LeftAnim = new Animation(leftLukeSpriteSheet, 1152, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching67LeftAnim = new Animation(leftLukeSpriteSheet, 1248, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching90LeftAnim = new Animation(leftLukeSpriteSheet, 1344, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching157LeftAnim = new Animation(leftLukeSpriteSheet, 1536, 280, 96, 70, 0.5, 1, true, false);
+    this.gunCrouching135LeftAnim = new Animation(leftLukeSpriteSheet, 1440, 280, 96, 70, 0.5, 1, true, false);
 
     // ************************ //
     // Aiming                   //
@@ -140,7 +163,7 @@ function Character(game){
     this.switching = false;
     this.dying = false;
     this.dead = false;
-    // this.aiming = false;
+    this.width = 20;
 
     this.ground = 500;
     this.speed = 500;
@@ -197,16 +220,40 @@ Character.prototype.update = function () {
     if (this.game.i) {                                  // Key I: Dying
         this.dying = !this.dying;
     }
-    if (this.game.keyup && !this.jumping){              // Keyup: Standing
+    if (this.game.keyup && !this.jumping ){              // Keyup: Standing
         this.standing = true;
         this.running = false;
         this.crouching = false;
+    }
+    if (!blocking && !this.jumping){
+      this.standing = true;
+    }
+    if (this.game.click){
+      if(primaryWeapon){
+        if (transitionCounter == 0) {
+            let audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
+            audio.volume = sfxVolume * 0.2;
+            audio.play();
+            statusBars.update(0, -20);
+            this.attacking = true;
+            this.switching = false;
+        }
+      } else {
+        let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
+        audio.play();
+        let rect = canvas.getBoundingClientRect();
+        playerCoor = {x: center_x, y: center_y};
+        const endx = mouseCoor.x; const endy = mouseCoor.y;
+        let endCoor = {x: endx, y: endy};
+        gameEngine.addEntity({tag: "laser", object: new LaserBeam(playerCoor, endCoor, gameEngine, degree)});
+      }
     }
 
     // Running
     if (this.running){
         this.crouching = false;
         this.standing = false;
+        blocking = false;
         if (this.theD){
             if (this.x > this.game.mouseMoveX) {
                 this.x += this.game.clockTick * (this.speed * 0.5);
@@ -227,6 +274,7 @@ Character.prototype.update = function () {
         this.crouching = false;
         this.attacking = false;
         this.switching = false;
+        blocking = false;
         // this.running = false;
         var jumpDistance;
         if (primaryWeapon) {
@@ -284,6 +332,13 @@ Character.prototype.update = function () {
 
     // Attacking
     if (this.attacking) {
+        console.log("ENTER ATTACK!!!");
+        for (let i = 0; i < this.game.entities.length; i++) {
+          let ent = this.game.entities[i];
+          if (ent !== this && this.collide(ent) && ent.tag == "AI"){
+            console.log("Attack collision!!!");
+          }
+        }
         this.standing = false;
         if (this.attk1RightAnim.isDone()) {
             this.attk1RightAnim.elapsedTime = 0;
@@ -321,6 +376,10 @@ Character.prototype.update = function () {
         this.standing = false;
         // this.jumping = false;
     }
+    // Blocking
+    if (blocking){
+      this.standing = false;
+    }
 
     // World wrapping
     if (this.x > 1200){
@@ -328,14 +387,19 @@ Character.prototype.update = function () {
     } else if (this.x < 0){
       this.x = 1200;
     }
-
-
     center_x = this.x;
     center_y = this.y;
-
     Entity.prototype.update.call(this);
 }
-
+Character.prototype.collide = function (other) {
+  console.log("COllide: " + distance(this, other) +" "+this.width +" "+ other.width);
+    return distance(this, other) < this.width + other.width;
+};
+function distance(a, b) {
+    var dx = a.x - b.x;
+    var dy = a.y - b.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
 Character.prototype.draw = function(){
     if (this.game.mouseMoveX + cursorOffset > this.x) {
         //console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
@@ -348,6 +412,9 @@ Character.prototype.draw = function(){
 
 Character.prototype.drawRight = function() {
     if (primaryWeapon) { // If the character is using their primaryWeapon
+        if (blocking){
+          this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x+10, this.y + groundHeight, scale);
+        }
         if (this.switching) {
             this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
@@ -415,6 +482,9 @@ Character.prototype.drawRight = function() {
 
 Character.prototype.drawLeft = function() {
     if (primaryWeapon) { // If the character is using their primaryWeapon
+        if (blocking){
+          this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x+50, this.y + groundHeight, scale);
+        }
         if (this.switching) {
             this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
@@ -565,25 +635,21 @@ function stand() {
 }
 
 
-
 function inGameClick(event) {
     if(primaryWeapon){
       if (transitionCounter == 0) {
-          var rect = canvas.getBoundingClientRect();
-          var x = event.clientX - rect.left;
-          var y = event.clientY - rect.top;
           var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
           audio.volume = sfxVolume * 0.2;
           audio.play();
-          statusBars.update(0, -40);
+          statusBars.update(0, -20);
           //console.log(gameEngine.entities[0]);
-          gameEngine.entities[0].attacking = true; // entities[0] is luke because we only have one character rn.
+          gameEngine.entities[0].attacking = true;
           gameEngine.entities[0].switching = false;
+          console.log(gameEngine.entities[0].attacking);
       }
     } else {
       var audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
       audio.play();
-
       var rect = canvas.getBoundingClientRect();
       var endCoor = {x: event.clientX - rect.left, y: event.clientY - rect.top};
       playerCoor = {x: center_x, y: center_y};
@@ -591,7 +657,6 @@ function inGameClick(event) {
       gameEngine.addEntity(new LaserBeam(playerCoor, mouseCoor, gameEngine, degree));
       console.log("GameEntities2: "+ gameEngine.entities.length);
     }
-
 }
 function lightsaberThrow(e){
   if (primaryWeapon && e.code === "KeyE"){
@@ -602,7 +667,7 @@ function lightsaberThrow(e){
       playerCoor = {x: center_x, y: center_y };
       console.log("character.js: "+mouseCoor.x + " "+ mouseCoor.y);
       // console.log("GameEntities1: "+ gameEngine.entities.length);
-      gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
+      gameEngine.addEntity({tag: "lightsaberthrow", object: new LightsaberThrow(playerCoor, mouseCoor, gameEngine)} );
       // console.log("GameEntities2: "+ gameEngine.entities.length);
   }
 }
