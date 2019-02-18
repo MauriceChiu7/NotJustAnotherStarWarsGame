@@ -4,22 +4,20 @@ var canvas = document.getElementById("gameWorld");
 function Dummy(game) {
    //right
    let rightWinduSprite = AM.getAsset("./img/macewindu_right.png");
-   this.walkRightAnim = new Animation(rightWinduSprite, 512 ,645, 36, 60, 0.2, 8, true, true);
-   this.standRightAnim = new Animation(rightWinduSprite , 886, 75, -30, 65, 1, 1, true, false);
-   this.attackRightAnim = new Animation(rightWinduSprite, 165, 1800, 100, 75, 0.2, 3, true, false);
+   this.walkRightAnim = new Animation(rightWinduSprite, 893 ,632, -37, 60, 0.2, 8, true, false);
+   this.standRightAnim = new Animation(rightWinduSprite , 885, 75, -30, 65, 1, 1, true, false);
+   this.attackRightAnim = new Animation(rightWinduSprite, 885, 1790, -90, 76, 0.15, 8, true, false);
    this.blockRightAnim = new Animation(rightWinduSprite, 875 ,325, 32, 70, 0.2, 1, true, false);
    this.hurtRightAnim = new Animation(rightWinduSprite, 875 ,1945, 40, 70, 0.2, 1, true, false);
    this.deadRightAnim = new Animation(rightWinduSprite, 355 ,1912, 70, 40, 0.2, 1, true, false);
 
    //left
    let leftWinduSprite = AM.getAsset("./img/macewindu_left.png");
-   this.walkLeftAnim = new Animation(leftWinduSprite, 10 ,625, 35, 60, 0.2, 11, true, false);
+   this.walkLeftAnim = new Animation(leftWinduSprite, 7, 632, 37, 60, 0.2, 11, true, false);
    this.startAnim = new Animation(leftWinduSprite, 0, 1655, 67, 85, 0.3, 4, true, false);
-   this.attackLeftAnim = new Animation(leftWinduSprite, 345 ,1750, 75, 75, 0.2, 3, true, false);
+   this.attackLeftAnim = new Animation(leftWinduSprite, 20, 1790, 90, 75, 0.15, 8, true, false);
    this.blockLeftAnim = new Animation(leftWinduSprite, 10 ,315, 32, 70, 0.2, 1, true, false);
    this.hurtLeftAnim = new Animation(leftWinduSprite, 0 , 1885, 40, 70, 0.2, 1, true, false);
-
-   this.thinkAnim = new Animation(leftWinduSprite, 0, 0, 50, 66, 0.7, 4, true, false);
 
 
    this.begin = true;
@@ -124,7 +122,7 @@ Dummy.prototype.drawRight = function() {
     if(this.block){
       this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
     } else if (this.attack) {
-      this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x-80, this.y - 20, scale);
+      this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y - 20, scale);
     } else if (this.standing){
       this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
     } else if (this.hurting){
@@ -141,7 +139,7 @@ Dummy.prototype.drawLeft = function() {
   if(this.block){
     this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
   } else if (this.attack) {
-    this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
+    this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 50, this.y - 20, scale);
   } else if (this.standing){
     this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
   } else if (this.hurting){
