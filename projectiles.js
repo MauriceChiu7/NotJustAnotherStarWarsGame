@@ -169,8 +169,8 @@ LightsaberThrow.prototype.draw = function(){
 
 function deleteLightsaberThrow(){
   for (var i =0; i< gameEngine.entities.length; i++){
-    if (gameEngine.entities[i] instanceof LightsaberThrow){
-      console.log(gameEngine.entities[i] instanceof LightsaberThrow);
+    if (gameEngine.entities[i].object instanceof LightsaberThrow){
+      // console.log(gameEngine.entities[i] instanceof LightsaberThrow);
       gameEngine.entities.splice(i, 1);
     }
   }
