@@ -5,19 +5,22 @@ function Dummy(game) {
    //right
    let rightWinduSprite = AM.getAsset("./img/macewindu_right.png");
    this.walkRightAnim = new Animation(rightWinduSprite, 893 ,632, -37, 60, 0.2, 8, true, false);
-   this.standRightAnim = new Animation(rightWinduSprite , 885, 75, -30, 65, 1, 1, true, false);
+   this.standRightAnim = new Animation(rightWinduSprite , 895, 70, -30, 65, 1, 1, true, false);
    this.attackRightAnim = new Animation(rightWinduSprite, 885, 1790, -90, 76, 0.15, 8, true, false);
-   this.blockRightAnim = new Animation(rightWinduSprite, 875 ,325, 32, 70, 0.2, 1, true, false);
+   this.blockRightAnim = new Animation(rightWinduSprite, 685 ,775, -55, 65, 1, 1, true, false);
    this.hurtRightAnim = new Animation(rightWinduSprite, 875 ,1945, 40, 70, 0.2, 1, true, false);
    this.deadRightAnim = new Animation(rightWinduSprite, 355 ,1912, 70, 40, 0.2, 1, true, false);
+   this.jumpingRightAnim = new Animation(rightWinduSprite, 897, 1285, -27, 70, 1, 1, true, false);
 
    //left
    let leftWinduSprite = AM.getAsset("./img/macewindu_left.png");
    this.walkLeftAnim = new Animation(leftWinduSprite, 7, 632, 37, 60, 0.2, 11, true, false);
-   this.startAnim = new Animation(leftWinduSprite, 0, 1655, 67, 85, 0.3, 4, true, false);
+   this.standLeftAnim = new Animation(leftWinduSprite , 0, 70, 40, 65, 1, 1, true, false);
    this.attackLeftAnim = new Animation(leftWinduSprite, 20, 1790, 90, 75, 0.15, 8, true, false);
-   this.blockLeftAnim = new Animation(leftWinduSprite, 10 ,315, 32, 70, 0.2, 1, true, false);
+   this.blockLeftAnim = new Animation(leftWinduSprite, 215, 775, 55, 65, 1, 1, true, false);
    this.hurtLeftAnim = new Animation(leftWinduSprite, 0 , 1885, 40, 70, 0.2, 1, true, false);
+   this.jumpingRightAnim = new Animation(leftWinduSprite, 0, 1285, 30, 70, 1, 1, true, false);
+
 
 
    this.begin = true;
@@ -29,9 +32,8 @@ function Dummy(game) {
    this.hurting = false;
    this.dead = false;
 
-   this.thinking = null;
+   this.jumping = null;
    this.updateCount = 0;
-   this.newMap = null;
    this.attackCount = 0;
    this.distance = null;
    this.game = game;
@@ -60,7 +62,7 @@ Dummy.prototype.update = function (){
    // this.attack = false;
    // this.standing = false;
 
-   if (this.distance > 50) {
+   if (this.distance > 70) {
       this.x += this.game.clockTick * this.speed;
       // this.chanceToBlock = Math.round(Math.random());
       this.block =false;
@@ -68,7 +70,7 @@ Dummy.prototype.update = function (){
       this.standing = false;
       this.hurting = false;
       this.dead = false;
-   } else if (this.distance < -50) {
+   } else if (this.distance < -70) {
       this.x -= this.game.clockTick * this.speed;
       // this.chanceToBlock = Math.round(Math.random());
       this.block =false;
@@ -76,21 +78,19 @@ Dummy.prototype.update = function (){
       this.standing = false;
       this.hurting = false;
       this.dead = false;
-   } else if (Math.abs(this.player.y - this.y) < 50) {
-     if (!this.block && !this.attack){
-       this.chanceToBlock = Math.round(Math.random()*5);
-     }
-     // this.chanceToBlock = 1;
-     if (this.chanceToBlock == 1){
+   } else if (!this.block && !this.attack && Math.abs(this.player.y - this.y) < 40) {
+      this.chanceToBlock = Math.round(Math.random()*5);
+      // this.chanceToBlock = 1;
+      if (this.chanceToBlock == 1){
        this.block = true;
-     } else if (this.chanceToBlock === 0){
+      } else if (this.chanceToBlock === 0){
        this.attack = true;
-     } else {
+      } else {
        this.standing = true;
-     }
+      }
 
-     // if (this.player.attacking && this.standing) {
-     if (this.player.attacking) {
+      // if (this.player.attacking && this.standing) {
+      if (this.player.attacking) {
        this.chanceToBlock = -1;
        this.blocking =false;
        this.attack = false;
@@ -101,10 +101,9 @@ Dummy.prototype.update = function (){
          this.dead = true;
        }
        // console.log("Luke attacking: " + this.player.attacking + ", hurting: "+this.hurting + ", lives: " + this.lives);
-     } else {
-        this.standing = true;
-     }
-
+      }
+   } else if (Math.abs(this.player.y - this.y) > 40) {
+      this.standing = true;
    }
 
   Entity.prototype.update.call(this);
@@ -120,34 +119,34 @@ Dummy.prototype.draw = function() {
 
 Dummy.prototype.drawRight = function() {
     if(this.block){
-      this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
+      this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 20, this.y - 5, scale);
     } else if (this.attack) {
-      this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y - 20, scale);
+      this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 60, this.y - 15, scale);
     } else if (this.standing){
-      this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
+      this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 20, this.y + 10, scale);
     } else if (this.hurting){
       this.hurtRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
     } else if (this.dead){
       this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
     } else {
-      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
+      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y + 5, scale);
     }
    Entity.prototype.draw.call(this);
 }
 
 Dummy.prototype.drawLeft = function() {
   if(this.block){
-    this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
+    this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x -5 , this.y - 5, scale);
   } else if (this.attack) {
-    this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 50, this.y - 20, scale);
+    this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 50, this.y - 15, scale);
   } else if (this.standing){
-    this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
+    this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y  + 10, scale);
   } else if (this.hurting){
     this.hurtLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
   } else if (this.dead){
     this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
   } else {
-    this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y, scale);
+    this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y + 5, scale);
   }
    Entity.prototype.draw.call(this);
 }
