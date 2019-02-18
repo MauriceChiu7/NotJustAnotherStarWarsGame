@@ -39,7 +39,7 @@ function Dummy(game) {
    this.game = game;
    this.chanceToBlock = 0;
    this.lives = 3;
-   this.width=20;
+   this.width = 20;
 
    this.ctx = game.ctx;
    for (let i = 0; i < this.game.entities.length; i++) {
@@ -57,7 +57,7 @@ function Dummy(game) {
 Dummy.prototype = new Entity();
 Dummy.prototype.constructor = Dummy;
 
-Dummy.prototype.update = function (){
+Dummy.prototype.update = function () {
    this.distance = this.player.x + 50 - this.x;
    // this.attack = false;
    // this.standing = false;
@@ -104,9 +104,8 @@ Dummy.prototype.update = function (){
       }
    } else if (Math.abs(this.player.y - this.y) > 40) {
       this.standing = true;
-   }
-
-  Entity.prototype.update.call(this);
+   } 
+   Entity.prototype.update.call(this);
 };
 
 Dummy.prototype.draw = function() {
