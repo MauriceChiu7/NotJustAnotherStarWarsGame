@@ -122,6 +122,8 @@ function Character(game){
     this.crouchLeftAnim = new Animation(leftLukeSpriteSheet, 1344, 1610, 96, 70, 1, 3, true, false);
     this.saberOnLeftAnim = new Animation(leftLukeSpriteSheet, 1344, 1750, 96, 70, 0.1, 3, false, true);
     this.saberOffLeftAnim = new Animation(leftLukeSpriteSheet, 1344, 1750, 96, 70, 0.1, 3, false, false);
+    this.attk1LefttAnim = new Animation(leftLukeSpriteSheet, 880, 1820, 144, 140, 0.07, 5, false, true);
+    this.attk2LefttAnim = new Animation(leftLukeSpriteSheet, 880, 1960, 144, 140, 0.07, 5, false, true);
 
     // Secondary weapon animations
     this.gunStandLeftAnim = new Animation(leftLukeSpriteSheet, 1632, 0, -96, 70, 1, 3, true, false);
@@ -185,7 +187,6 @@ Character.prototype.update = function () {
     // Mouse Events                 //
     // Keyboard Events              //
     // **************************** //
-
     if (this.game.d){                                   // Key D: Running Right
         this.running = true;
         this.standing = false;
@@ -332,22 +333,26 @@ Character.prototype.update = function () {
 
     // Attacking
     if (this.attacking) {
-        console.log("ENTER ATTACK!!!");
         for (let i = 0; i < this.game.entities.length; i++) {
           let ent = this.game.entities[i];
-          if (ent !== this && this.collide(ent) && ent.tag == "AI"){
-            console.log("Attack collision!!!");
+          if (ent.tag == "AI"){
+            console.log("enter AI, object: " + ent.object + " " +this.width);
+            if (ent.object !== this && this.collide(ent.object)){
+              console.log("Attack collision!!!");
+            }
           }
         }
         this.standing = false;
-        if (this.attk1RightAnim.isDone()) {
+        if (this.attk1RightAnim.isDone() || this.attk1LefttAnim.isDone()) {
             this.attk1RightAnim.elapsedTime = 0;
+            this.attk1LefttAnim.elapsedTime = 0;
             attkNum = 2;
             this.attacking = false;
             this.standing = true;
         }
-        if (this.attk2RightAnim.isDone()) {
+        if (this.attk2RightAnim.isDone() || this.attk2LefttAnim.isDone()) {
             this.attk2RightAnim.elapsedTime = 0;
+            this.attk2LefttAnim.elapsedTime = 0;
             attkNum = 1;
             this.attacking = false;
             this.standing = true;
@@ -380,7 +385,6 @@ Character.prototype.update = function () {
     if (blocking){
       this.standing = false;
     }
-
     // World wrapping
     if (this.x > 1200){
       this.x=0;
@@ -392,7 +396,7 @@ Character.prototype.update = function () {
     Entity.prototype.update.call(this);
 }
 Character.prototype.collide = function (other) {
-  console.log("COllide: " + distance(this, other) +" "+this.width +" "+ other.width);
+    console.log("COllide: " + distance(this, other) +" "+this.width +" "+ other.width);
     return distance(this, other) < this.width + other.width;
 };
 function distance(a, b) {
@@ -499,9 +503,9 @@ Character.prototype.drawLeft = function() {
         }
         if (this.attacking) {
             if (attkNum === 1) {
-                this.attk1RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
+                this.attk1LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
             } else {
-                this.attk2RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
+                this.attk2LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 60, this.y + LUKE_2_HIGH_DIFF + groundHeight, scale);
             }
         }
         if (this.jumping) {
@@ -611,12 +615,6 @@ function aimDirection(event) {
     var radian = Math.asin(delta_x/hypotenuse);
     degree = radian * 180 / Math.PI;
 
-    // if (debug) {
-        // console.log("mouse x: " + event.clientX + ", mouse y: " + event.clientY);
-        //console.log("center_x: " + center_x + ", center_y: " + center_y);
-        // console.log("standing: " + this.standing)
-        // console.log("dx: " + delta_x + ", dy: " + delta_y);
-    // }
     if (y > center_y) {
         if (x > center_x) {
             degree = 180 - degree;
@@ -634,30 +632,6 @@ function stand() {
     this.crouching = false;
 }
 
-
-function inGameClick(event) {
-    if(primaryWeapon){
-      if (transitionCounter == 0) {
-          var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
-          audio.volume = sfxVolume * 0.2;
-          audio.play();
-          statusBars.update(0, -20);
-          //console.log(gameEngine.entities[0]);
-          gameEngine.entities[0].attacking = true;
-          gameEngine.entities[0].switching = false;
-          console.log(gameEngine.entities[0].attacking);
-      }
-    } else {
-      var audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
-      audio.play();
-      var rect = canvas.getBoundingClientRect();
-      var endCoor = {x: event.clientX - rect.left, y: event.clientY - rect.top};
-      playerCoor = {x: center_x, y: center_y};
-      console.log("GameEntities1: "+ gameEngine.entities.length);
-      gameEngine.addEntity(new LaserBeam(playerCoor, mouseCoor, gameEngine, degree));
-      console.log("GameEntities2: "+ gameEngine.entities.length);
-    }
-}
 function lightsaberThrow(e){
   if (primaryWeapon && e.code === "KeyE"){
       var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();

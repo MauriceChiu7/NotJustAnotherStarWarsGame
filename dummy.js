@@ -4,9 +4,13 @@ var canvas = document.getElementById("gameWorld");
 function Dummy(game) {
    //right
    let rightWinduSprite = AM.getAsset("./img/macewindu_right.png");
-   this.walkRightAnim = new Animation(rightWinduSprite, 512 ,645, 36, 60, 0.2, 8, true, true);
-   this.standRightAnim = new Animation(rightWinduSprite , 886, 75, -30, 65, 1, 1, true, false);
-   this.attackRightAnim = new Animation(rightWinduSprite, 165, 1800, 100, 75, 0.2, 3, true, false);
+   this.walkRightAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 886 ,625, -36, 60, 0.2, 11, true, false);
+   this.standRightAnim = new Animation(AM.getAsset("./img/macewindu_right.png") , 886, 75, -30, 65, 1, 1, true, false);
+   this.attackRightAnim = new Animation(AM.getAsset("./img/macewindu_right.png"), 889, 1745, -80, 78, 0.2, 3, true, false);
+   // this.walkRightAnim = new Animation(rightWinduSprite, 512 ,645, 36, 60, 0.2, 8, true, true);
+   // this.standRightAnim = new Animation(rightWinduSprite , 886, 75, -30, 65, 1, 1, true, false);
+   // this.attackRightAnim = new Animation(rightWinduSprite, 165, 1800, 100, 75, 0.2, 3, true, false);
+
    this.blockRightAnim = new Animation(rightWinduSprite, 875 ,325, 32, 70, 0.2, 1, true, false);
    this.hurtRightAnim = new Animation(rightWinduSprite, 875 ,1945, 40, 70, 0.2, 1, true, false);
    this.deadRightAnim = new Animation(rightWinduSprite, 355 ,1912, 70, 40, 0.2, 1, true, false);
@@ -39,7 +43,7 @@ function Dummy(game) {
    this.game = game;
    this.chanceToBlock = 0;
    this.lives = 3;
-   this.width=20;
+   this.width = 20;
 
    this.ctx = game.ctx;
    for (let i = 0; i < this.game.entities.length; i++) {
@@ -106,9 +110,7 @@ Dummy.prototype.update = function (){
      } else {
         this.standing = true;
      }
-
    }
-
   Entity.prototype.update.call(this);
 };
 
