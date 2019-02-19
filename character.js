@@ -50,25 +50,6 @@ function Character(game){
     canvas.addEventListener("keyup", lightsaberThrow);
     canvas.addEventListener("mousemove", aimDirection);
 
-    canvas.addEventListener('mousedown', function(e) {
-      rightClickIsDown = true;
-      if (e.button ==2){
-        setTimeout(function() {
-          if(rightClickIsDown) {
-            // mouse was held down for > 2 seconds
-            blocking = true;
-            console.log("Right click!!!!! Hold");
-          }
-        }, 50);
-      }
-    });
-    canvas.addEventListener('mouseup', function(e) {
-      rightClickIsDown = false;
-      if (e.button ==2){
-        blocking = false;
-      }
-    });
-
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     // *********************** //
     // Right-Facing Animations //
@@ -165,7 +146,10 @@ function Character(game){
     this.switching = false;
     this.dying = false;
     this.dead = false;
-    this.width = 20;
+    this.hitbox = 30;
+
+    this.xAcceleration = 0;
+    this.yAcceleration = 0;
 
     this.ground = 500;
     this.speed = 500;
@@ -240,16 +224,28 @@ Character.prototype.update = function () {
             this.switching = false;
         }
       } else {
-        let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
-        audio.play();
-        let rect = canvas.getBoundingClientRect();
-        playerCoor = {x: center_x, y: center_y};
-        const endx = mouseCoor.x; const endy = mouseCoor.y;
-        let endCoor = {x: endx, y: endy};
-        gameEngine.addEntity({tag: "laser", object: new LaserBeam(playerCoor, endCoor, gameEngine, degree)});
+        let laserShot = false;
+        for (var i =0; i < gameEngine.entities.length; i++){
+          if (gameEngine.entities[i].tag === "laser"){
+            laserShot = true;
+          }
+        }
+        if(!laserShot){
+            let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
+            audio.play();          
+
+            let endCoor = {x:0, y:0};
+            let rect = canvas.getBoundingClientRect();
+            canvas.addEventListener("click", function(e){
+                endCoor.x = e.clientX - rect.left;
+                endCoor.y = e.clientY - rect.top;
+                playerCoor = {x: center_x, y: center_y};
+                gameEngine.addEntity({tag: "laser", object: new LaserBeam(playerCoor, endCoor, gameEngine, degree)});
+            });
+            
+        }
       }
     }
-
     // Running
     if (this.running){
         this.crouching = false;
@@ -269,66 +265,29 @@ Character.prototype.update = function () {
             }
         }
     }
-
+    canvas.addEventListener('mousedown', function(e) {
+        rightClickIsDown = true;
+        if (e.button ==2 && primaryWeapon){
+          setTimeout(function() {
+            if(rightClickIsDown) {
+              // mouse was held down for > 2 seconds
+              blocking = true;
+              console.log("Right click!!!!! Hold");
+            }
+          }, 50);
+        }
+    });
+    canvas.addEventListener('mouseup', function(e) {
+      rightClickIsDown = false;
+      if (e.button ==2 && primaryWeapon){
+        blocking = false;
+      }
+    });
     // Jumping
     if (this.jumping){
-        this.crouching = false;
-        this.attacking = false;
-        this.switching = false;
-        blocking = false;
-        // this.running = false;
-        var jumpDistance;
-        if (primaryWeapon) {
-            if (this.jumpRightAnim.isDone() || this.jumpLeftAnim.isDone()) {
-                this.jumpRightAnim.elapsedTime = 0;
-                this.jumpLeftAnim.elapsedTime = 0;
-                this.jumping = false;
-                this.running = false;
-                this.standing = true;
-            }
-            if (degree >= 0) { // facing right
-                if (primaryWeapon) {
-                    jumpDistance = this.jumpRightAnim.elapsedTime / this.jumpRightAnim.totalTime;
-                } else {
-                    jumpDistance = this.gunJumpRightAnim.elapsedTime / this.gunJumpRightAnim.totalTime;
-                }
-            } else {
-                if (primaryWeapon) {
-                    jumpDistance = this.jumpLeftAnim.elapsedTime / this.jumpLeftAnim.totalTime;
-                } else {
-                    jumpDistance = this.gunJumpLeftAnim.elapsedTime / this.gunJumpLeftAnim.totalTime;
-                }
-            }
-
-        } else {
-            if (this.gunJumpRightAnim.isDone() || this.gunJumpLeftAnim.isDone()) {
-                this.gunJumpRightAnim.elapsedTime = 0;
-                this.gunJumpLeftAnim.elapsedTime = 0;
-                this.jumping = false;
-                this.running = false;
-                this.standing = true;
-            }
-            if (degree >= 0) { // facing right
-                if (primaryWeapon) {
-                    jumpDistance = this.jumpRightAnim.elapsedTime / this.jumpRightAnim.totalTime;
-                } else {
-                    jumpDistance = this.gunJumpRightAnim.elapsedTime / this.gunJumpRightAnim.totalTime;
-                }
-            } else {
-                if (primaryWeapon) {
-                    jumpDistance = this.jumpLeftAnim.elapsedTime / this.jumpLeftAnim.totalTime;
-                } else {
-                    jumpDistance = this.gunJumpLeftAnim.elapsedTime / this.gunJumpLeftAnim.totalTime;
-                }
-            }
-        }
-        var totalHeight = scale * 300;
-
-        if (jumpDistance > 0.5) {
-            jumpDistance = 1 - jumpDistance;
-        }
-        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-        this.y = this.ground - height;
+        this.crouching = this.attacking = this.switching = blocking = false;
+        this.yAcceleration -= 20;
+        this.y += this.yAcceleration;
     }
 
     // Attacking
@@ -336,7 +295,7 @@ Character.prototype.update = function () {
         for (let i = 0; i < this.game.entities.length; i++) {
           let ent = this.game.entities[i];
           if (ent.tag == "AI"){
-            console.log("enter AI, object: " + ent.object + " " +this.width);
+            console.log("enter AI, object: " + ent.tag + " " +this.hitbox);
             if (ent.object !== this && this.collide(ent.object)){
               console.log("Attack collision!!!");
             }
@@ -395,15 +354,18 @@ Character.prototype.update = function () {
     center_y = this.y;
     Entity.prototype.update.call(this);
 }
+
 Character.prototype.collide = function (other) {
-    console.log("COllide: " + distance(this, other) +" "+this.width +" "+ other.width);
-    return distance(this, other) < this.width + other.width;
+    console.log("COLLIDE: " + distance(this, other) +" "+ (this.hitbox + other.hitbox));
+    return distance(this, other) < this.hitbox + other.hitbox;
 };
 function distance(a, b) {
+  console.log(a.x +" "+a.y+ " "+ b.x +" "+b.y);
     var dx = a.x - b.x;
     var dy = a.y - b.y;
     return Math.sqrt(dx * dx + dy * dy);
 }
+
 Character.prototype.draw = function(){
     if (this.game.mouseMoveX + cursorOffset > this.x) {
         //console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
@@ -633,15 +595,20 @@ function stand() {
 }
 
 function lightsaberThrow(e){
-  if (primaryWeapon && e.code === "KeyE"){
+  let laserthrown = false;
+  for (var i =0; i < gameEngine.entities.length; i++){
+    if (gameEngine.entities[i].tag === "lightsaberthrow"){
+      laserthrown = true;
+    }
+  }
+  if (primaryWeapon && e.code === "KeyE" && !laserthrown){
       var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
       audio.play();
       var rect = canvas.getBoundingClientRect();
       // var endCoor = {x: e.clientX - rect.left, y: e.clientY - rect.top};
       playerCoor = {x: center_x, y: center_y };
       console.log("character.js: "+mouseCoor.x + " "+ mouseCoor.y);
-      // console.log("GameEntities1: "+ gameEngine.entities.length);
       gameEngine.addEntity({tag: "lightsaberthrow", object: new LightsaberThrow(playerCoor, mouseCoor, gameEngine)} );
-      // console.log("GameEntities2: "+ gameEngine.entities.length);
   }
 }
+

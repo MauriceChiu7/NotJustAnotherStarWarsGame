@@ -456,7 +456,7 @@ function inGame() {
 
     if (testingLuke){
       gameEngine.addEntity({tag: "player", object: new Character(gameEngine)});
-      gameEngine.addEntity({tag: "AI", object: new Dummy(gameEngine)});
+    //   gameEngine.addEntity({tag: "AI", object: new Dummy(gameEngine)});
     } else {
       if (playerCharacter == 3) {
           // gameEngine.addEntity(new Vader());

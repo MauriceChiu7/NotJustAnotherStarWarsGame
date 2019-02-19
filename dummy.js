@@ -37,7 +37,7 @@ function Dummy(game) {
    this.game = game;
    this.chanceToBlock = 0;
    this.lives = 3;
-   this.width = 20;
+   this.hitbox = 30;
 
    this.ctx = game.ctx;
    for (let i = 0; i < this.game.entities.length; i++) {

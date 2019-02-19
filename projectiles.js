@@ -4,6 +4,13 @@
 var lasersize = 0.15;
 var lasersize2 = 0.5;
 
+function distance(a, b) {
+  // console.log(a.x +" "+a.y+ " "+ b.x +" "+b.y);
+    var dx = a.x - b.x;
+    var dy = a.y - b.y;
+    return Math.sqrt(dx * dx + dy * dy);
+}
+
 function LaserBeam(start, end, game, angle){
   // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
   this.spriteSheet = AM.getAsset("./img/laserbeams_angle.png");
@@ -23,19 +30,34 @@ function LaserBeam(start, end, game, angle){
   this.shootAnim135Left = new Animation(this.spriteSheetLeft, 180, 60, 120, 70, frameDuration, 1, false, false);
 
   this.start = start;
-  this.speed = 100;
+  this.speed = 30;
   this.end = end;
   this.x = start.x;
   this.y = start.y;
   this.game = game;
   this.angle = angle;
-  console.log(this.angle);
+
+  this.hitbox = 30;
   Entity.call(this, game, this.x, this.y);
 }
 LaserBeam.prototype = new Entity();
 LaserBeam.prototype.constructor = LaserBeam;
 
+LaserBeam.prototype.collide = function (other) {
+    // console.log("COLLIDE: " + distance(this, other) +" "+ (this.hitbox + other.hitbox));
+    return distance(this, other) < this.hitbox + other.hitbox;
+};
+
 LaserBeam.prototype.update = function(){
+  for (let i = 0; i < this.game.entities.length; i++) {
+    let ent = this.game.entities[i];
+    if (ent.tag == "AI"){
+      // console.log("enter AI, object: " + ent.tag + " " +this.hitbox);
+      if (ent.object !== this && this.collide(ent.object)){
+        console.log("Laserbeam collision!!!");
+      }
+    }
+  }
   var rect = canvas.getBoundingClientRect();
   var x =  this.end.x - this.start.x;
   var y = this.end.y - this.start.y;
@@ -48,7 +70,7 @@ LaserBeam.prototype.update = function(){
   // console.log(this.x+" "+this.y);
   if (this.x >1200 || this.x < 0 || this.y >600 ||this.y<0){
     for (var i =0; i< gameEngine.entities.length; i++){
-      if (gameEngine.entities[i] instanceof LaserBeam){
+      if (gameEngine.entities[i].object instanceof LaserBeam){
         console.log(gameEngine.entities[i] instanceof LaserBeam);
         gameEngine.entities.splice(i, 1);
       }
@@ -83,16 +105,18 @@ LaserBeam.prototype.draw = function(){
 */
 function LightsaberThrow(start, end, game){
   // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
-  this.throwAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1312, 96, 25, 0.05, 4, true, false);
+  this.throwAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1312, 96, 25, 0.08, 4, true, false);
   // this.throwAnim = new Animation(AM.getAsset("./img/blue_laser_beam.png"), 45, 70, 527, 59, 1, 0.1, false, false);
 
   this.start = start;
-  this.speed = 7;
+  this.speed = 10;
   this.end = end;
   this.x = start.x;
   this.y = start.y;
   this.game = game;
   this.goBack = false;
+
+  this.hitbox = 30;
   if (start.x <= end.x){
     this.right = true;
   } else {
@@ -104,8 +128,20 @@ function LightsaberThrow(start, end, game){
 }
 LightsaberThrow.prototype = new Entity();
 LightsaberThrow.prototype.constructor = LightsaberThrow;
-
+LightsaberThrow.prototype.collide = function (other) {
+    // console.log("COLLIDE: " + distance(this, other) +" "+ (this.hitbox + other.hitbox));
+    return distance(this, other) < this.hitbox + other.hitbox;
+};
 LightsaberThrow.prototype.update = function(){
+  for (let i = 0; i < this.game.entities.length; i++) {
+    let ent = this.game.entities[i];
+    if (ent.tag == "AI"){
+      // console.log("enter AI, object: " + ent.tag + " " +this.hitbox);
+      if (ent.object !== this && this.collide(ent.object)){
+        console.log("LIGHTSABER collision!!!");
+      }
+    }
+  }
   if (this.right){      // Throwing to the right side
     if (!this.goBack){
       let x =  this.end.x - this.start.x;
@@ -115,8 +151,8 @@ LightsaberThrow.prototype.update = function(){
       y = y / l;
       this.x += x * this.speed;
       this.y += y * this.speed;
-    }
-    if (this.goBack){
+    } else {
+    // if (this.goBack){
       let x =  center_x - this.end.x;
       let y =  center_y - this.end.y;
       let l = Math.sqrt(x * x + y * y);
@@ -124,7 +160,7 @@ LightsaberThrow.prototype.update = function(){
       y = y / l;
       this.x -= -x * this.speed;
       this.y -= -y * this.speed;
-      if (this.x < center_x){
+      if (this.x <= center_x){
           deleteLightsaberThrow();
       }
     }
@@ -140,16 +176,16 @@ LightsaberThrow.prototype.update = function(){
       y = y / l;
       this.x += x * this.speed;
       this.y += y * this.speed;
-    }
-    if (this.goBack){
-      let x =  playerCoor.x - this.end.x;
-      let y =  playerCoor.y - this.end.y;
+    } else {
+    // if (this.goBack){
+      let x =  center_x - this.end.x;
+      let y =  center_y - this.end.y;
       let l = Math.sqrt(x * x + y * y);
       x = x / l;
       y = y / l;
       this.x -= -x * this.speed;
       this.y -= -y * this.speed;
-      if (this.x > playerCoor.x){
+      if (this.x >= center_x ){
         deleteLightsaberThrow();
       }
     }
