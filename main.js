@@ -9,6 +9,15 @@ var musicVolume = 1;
 var sfxVolume = 1;
 var gameEngine = new GameEngine();
 
+var testingLuke;
+
+// MOVE THIS 
+var playerName = "<PLAYER NAME>";
+var tempName = "";
+var searching = false;
+var searchingCounter = 0;
+var editingName = false;
+
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
 AM.queueDownload("./img/luke_sprites_left.png");
@@ -19,7 +28,7 @@ AM.queueDownload("./img/laserbeams_angle.png");
 AM.queueDownload("./img/laserbeams_angle_left.png");
 AM.queueDownload("./img/macewindu_left.png");
 AM.queueDownload("./img/macewindu_right.png");
-AM.queueSound("./sounds/VaderVsLukeTheme.mp3");
+AM.queueSound("./sounds/VaderVsLukeTheme.wav");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
 AM.queueSound("./sounds/VolumeUp.wav");
@@ -29,6 +38,7 @@ AM.queueSound("./sounds/laser_blaster_sound.wav");
 AM.queueSound("./sounds/LightsaberThrow.WAV");
 AM.queueSound("./sounds/LightsaberTurnOn.wav");
 AM.queueSound("./sounds/LightsaberTurnOff.wav");
+AM.queueSound("./sounds/StarWarsMainTheme.wav");
 AM.downloadAll(function () {
     startScreen();
 });
@@ -64,6 +74,9 @@ function menuMouseMove(event) {
 }
 
 // --------------------- START SCREEN ----------------------------
+// var mainMenuMusic = AM.getSound('./sounds/StarWarsMainTheme.wav');
+var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
+
 function startScreen() {
     initializeCharacterData();
     createStars();
@@ -112,6 +125,7 @@ function mainMenu() {
 }
 
 function mainMenuFrame() {
+    mainMenuMusic.play();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
     menuItems.forEach(function(item) {
@@ -119,8 +133,14 @@ function mainMenuFrame() {
     });
     frameId = requestAnimationFrame(mainMenuFrame);
     if (transition) {
-        if (menuSelection == "STORY MODE" || menuSelection == "MULTIPLAYER") {
+
+        if (menuSelection == "STORY MODE"){
+            mainMenuMusic.pause();
             screenTransition(inGame);
+        } else if (menuSelection == "MULTIPLAYER") {
+            mainMenuMusic.pause();
+            screenTransition(multiplayer);
+            // testingLuke = true;
         } else if (menuSelection == "CUSTOM GAME") {
             screenTransition(customGame);
         } else if (menuSelection == "SETTINGS") {
@@ -194,11 +214,11 @@ function customGameFrame() {
     ctx.rect(1070, 400, 115, 160);
     ctx.stroke();
 
-    drawCharacterFromData(650, 170, playerCharacter);
-    drawCharacterFromData(650, 420, computerCharacter1);
-    drawCharacterFromData(780, 420, computerCharacter2);
-    drawCharacterFromData(910, 420, computerCharacter3);
-    drawCharacterFromData(1040, 420, computerCharacter4);
+    drawCharacterFromData(650, 170, playerCharacter, 115, 160, 1, 0, 0);
+    drawCharacterFromData(650, 420, computerCharacter1, 115, 160, 1, 0, 0);
+    drawCharacterFromData(780, 420, computerCharacter2, 115, 160, 1, 0, 0);
+    drawCharacterFromData(910, 420, computerCharacter3, 115, 160, 1, 0, 0);
+    drawCharacterFromData(1040, 420, computerCharacter4, 115, 160, 1, 0,0);
 
     ctx.font = "20px monospace";
     ctx.fillText("MAP", 35, 150);
@@ -216,6 +236,7 @@ function customGameFrame() {
         if (menuSelection == "BACK") {
             screenTransition(mainMenu);
         } else if (menuSelection == "START") {
+            mainMenuMusic.pause();
             screenTransition(inGame);
         } else {
             screenTransition(customGame);
@@ -280,6 +301,121 @@ function customGameClick(event) {
                 }
             }
         });
+    }
+}
+
+// --------------------- MULTIPLAYER ----------------------------
+function multiplayer() {
+    initializeMultiplayerItems();
+    cancelAnimationFrame(frameId);
+    canvas.addEventListener('click', multiplayerClick);
+    frameId = requestAnimationFrame(multiplayerFrame);
+}
+
+function multiplayerFrame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawStars();
+    ctx.save();
+    ctx.font = "30px monospace";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("MULTIPLAYER", 600, 100);
+    ctx.font = "20px monospace";
+    if (searching) {
+        ctx.fillText("Searching", 600, 250);
+        if (searchingCounter < 40) {
+            ctx.fillText(".", 600, 270);
+        } else if (searchingCounter < 80) {
+            ctx.fillText("..", 600, 270);
+        } else if (searchingCounter < 120) {
+            ctx.fillText("...", 600, 270);
+        } else if (searchingCounter < 160) {
+            ctx.fillText("....", 600, 270);
+        } else {
+            searchingCounter = 0;
+        }
+        searchingCounter++;
+    }
+    ctx.fillText(characterData[playerCharacter].name, 260, 448);
+    ctx.strokeStyle = "white";
+    ctx.rect(175, 160, 173, 240);
+    ctx.stroke();
+    ctx.restore();
+    menuItems.forEach(function(item) {
+        item.draw();
+    });
+
+    drawCharacterFromData(145, 180, playerCharacter, 173, 240, 1.5, -17, 10);
+    updateCharacterData();
+    frameId = requestAnimationFrame(multiplayerFrame);
+    if (transition) {
+        screenTransition(mainMenu);
+    }
+}
+
+function multiplayerClick(event) {
+    if (transitionCounter == 0) {
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        //canvas.removeEventListener('keyup', nameEditHandler, true);
+        menuItems.forEach(function(item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+                menuSelection = item.text;
+                if (menuSelection == "BACK") {
+                    var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
+                    canvas.removeEventListener('click', multiplayerClick);
+                    editingName = false;
+                    canvas.removeEventListener('keyup', nameEditHandler, true);
+                    transition = true;
+                } else if (menuSelection == "FIND MATCH") {
+                    searching = true;
+                    item.text = "CANCEL";
+                } else if (menuSelection == "CANCEL") {
+                    searching = false;
+                    item.text = "FIND MATCH";
+                } else if (menuSelection == "<") {
+                    playerCharacter--;
+                    if (playerCharacter == 0) {
+                        playerCharacter = characterData.length - 1;
+                    }
+                } else if (menuSelection == ">") {
+                    playerCharacter++;
+                    if (playerCharacter == characterData.length) {
+                        playerCharacter = 1;
+                    }
+                } else if (item.tag == "playername") {
+                    canvas.addEventListener('keyup', nameEditHandler, true);
+                    editingName = true;
+                    tempName = "";
+                    menuItems[menuItems.length - 1].text = "<ENTER A NAME>";
+                }
+            }
+        });
+    }
+}
+
+function nameEditHandler(event) {
+    var key = event.keyCode;
+    if (key == 8) {
+        if (tempName != "" && tempName) {
+            tempName = tempName.substring(0, tempName.length - 1);
+        }
+    } else if (key == 13 && tempName != "") {
+        playerName = tempName;
+        editingName = false;
+        canvas.removeEventListener('keyup', nameEditHandler, true);
+    } else if (tempName.length < 17) {
+        if (key != 13) {
+            tempName += String.fromCharCode(event.keyCode);
+        }
+    }
+
+    if (tempName == "") {
+        menuItems[menuItems.length - 1].text = "<ENTER A NAME>";
+    } else {
+        menuItems[menuItems.length - 1].text = tempName;
     }
 }
 
@@ -432,31 +568,36 @@ function creditsClick(event) {
 function inGame() {
     canvas.removeEventListener('mousemove', menuMouseMove);
     cancelAnimationFrame(frameId);
-    // var audio = AM.getSound("./sounds/VaderVsLukeTheme.mp3");
+    // var audio = AM.getSound("./sounds/VaderVsLukeTheme.wav");
     // audio.volume = musicVolume;
     // audio.play();
     frameId = requestAnimationFrame(inGameFrame);
     // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
     gameEngine.start();
-    gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
-    gameEngine.addEntity(new Platform(400, 400, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 100, 100, 335, 330, 120, 100));
-    gameEngine.addEntity(new Platform(800, 450, 100, 100, AM.getAsset("./img/mapAssets1.png"), 560, 300, 100, 100, 335, 330, 120, 100));
-    if (playerCharacter == 3) {
-        // gameEngine.addEntity(new Vader());
-        gameEngine.addEntity(new Character(gameEngine));
-    } else if (playerCharacter == 2 || playerCharacter == 1) {
-        // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
-        // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
-        gameEngine.addEntity(new Vader());
+    gameEngine.addEntity({tag: "platform", object: new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)});
+    gameEngine.addEntity({tag: "platform", object: new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100)});
+
+    if (testingLuke){
+      gameEngine.addEntity({tag: "player", object: new Character(gameEngine)});
+      gameEngine.addEntity({tag: "AI", object: new Dummy(gameEngine)});
+    } else {
+      if (playerCharacter == 3) {
+          // gameEngine.addEntity(new Vader());
+          // gameEngine.addEntity(new Character(gameEngine));
+      } else if (playerCharacter == 2 || playerCharacter == 1) {
+          // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
+          // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
+          gameEngine.addEntity({tag: "player", object: new Vader()});
+          gameEngine.addEntity({tag: "AI", object: new Dummy(gameEngine)});
+      }
     }
-    gameEngine.addEntity(new Dummy(gameEngine));
+
 
     // unction Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight)
     // gameEngine.addEntity(new Platform());
 
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
-    // document.getElementById("gameWorld").cursor =  "url(./img/blueLightsaber.png), default";
 }
 
 function inGameFrame() {

@@ -20,10 +20,10 @@ function initializeCharacterData() {
     characterData.push({name: "Vader", alignment: 1, spritesheet: AM.getAsset("./img/vader_sprites_left - Copy.png"), sx: 0, sy: 160, swidth: 120, sheight: 80, width: 168, height: 122.5, frameCount: 8, totalTime: 80, currentTime: 0, xBalance: 10, yBalance: -10});
 }
 
-function drawCharacterFromData(x, y, index) {
+function drawCharacterFromData(x, y, index, width, height, scale, xBalance, yBalance) {
     if (index != 0) {
         ctx.save();
-        var grd = ctx.createLinearGradient(x, y + 20, x + 115, y + 160);
+        var grd = ctx.createLinearGradient(x, y + 20, x + width, y + height);
         grd.addColorStop(0, "black");
         if (characterData[index].alignment == 0) {
             grd.addColorStop(1, "blue");
@@ -32,11 +32,11 @@ function drawCharacterFromData(x, y, index) {
         }
         ctx.globalAlpha = 0.5;
         ctx.fillStyle = grd;
-        ctx.fillRect(x + 30, y - 20, 115, 160);
+        ctx.fillRect(x + 30, y - 20, width, height);
         ctx.restore();
         ctx.drawImage(characterData[index].spritesheet, characterData[index].sx + Math.floor(characterData[index].currentTime / (characterData[index].totalTime / characterData[index].frameCount)) *
-                      characterData[index].swidth, characterData[index].sy, characterData[index].swidth, characterData[index].sheight, x + characterData[index].xBalance, y + characterData[index].yBalance,
-                      characterData[index].width, characterData[index].height);
+                      characterData[index].swidth, characterData[index].sy, characterData[index].swidth, characterData[index].sheight, x + characterData[index].xBalance + xBalance, y + characterData[index].yBalance + yBalance,
+                      characterData[index].width * scale, characterData[index].height * scale);
     }
 }
 
@@ -75,6 +75,15 @@ function initializeCustomGameItems() {
     new MenuItem("<", 1080, 380, 20, "computer4<");
     new MenuItem(">", 1175, 380, 20, "computer4>");
     new MenuItem("BACK", 600, 550, 20);
+}
+
+function initializeMultiplayerItems() {
+    menuItems = [];
+    new MenuItem("<", 180 ,450, 30);
+    new MenuItem(">", 340, 450, 30);
+    new MenuItem("FIND MATCH", 600, 325, 25);
+    new MenuItem("BACK", 600, 550, 20);
+    new MenuItem(playerName, 260, 120, 20, "playername");
 }
 
 function initializeSettingsItems() {
@@ -141,22 +150,47 @@ function MenuItem(text, x, y, size, tag) {
     this.text = text;
     this.h = size;
     this.w = ctx.measureText(this.text).width;
+    this.decreasing = true;
+    this.alpha = 1;
     menuItems.push(this);
 }
 
 MenuItem.prototype.draw = function() {
-    ctx.save();
-    if (this.hover) {
-        ctx.font = "" + this.size * 1.25 + "px monospace";
-        this.h = this.size * 1.25;
-        this.w = ctx.measureText(this.text).width;
-    } else {
+    if (this.tag == "playername" && editingName) {
+        ctx.save();
+        if (!transition) {
+            ctx.globalAlpha = this.alpha;
+        }
         ctx.font = "" + this.size + "px monospace";
+        ctx.fillStyle = "WHITE";
+        ctx.textAlign = "center";
+        ctx.fillText(this.text, this.x, this.y);
+        if (this.decreasing && this.alpha > 0.2) {
+            this.alpha -= 0.03;
+            if (this.alpha <= 0.2) {
+                this.decreasing = false;
+            }
+        } else if (!this.decreasing && this.alpha < 0.95) {
+            this.alpha += 0.03;
+            if (this.alpha >= 0.95) {
+                this.decreasing = true;
+            }
+        }
+        ctx.restore();
+    } else {
+        ctx.save();
+        if (this.hover) {
+            ctx.font = "" + this.size * 1.25 + "px monospace";
+            this.h = this.size * 1.25;
+            this.w = ctx.measureText(this.text).width;
+        } else {
+            ctx.font = "" + this.size + "px monospace";
+        }
+        ctx.fillStyle = "WHITE";
+        ctx.textAlign = "center";
+        ctx.fillText(this.text, this.x, this.y);
+        ctx.restore();
     }
-    ctx.fillStyle = "WHITE";
-    ctx.textAlign = "center";
-    ctx.fillText(this.text, this.x, this.y);
-    ctx.restore();
 }
 
 // --------------------- STATUS BARS ----------------------------

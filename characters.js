@@ -29,8 +29,9 @@ Vader.prototype.constructor = Vader;
 Vader.prototype.collide = function(xDisplacement, yDisplacement, tag) {
     var collisions = [];
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var current = gameEngine.entities[i]; 
-        if (current.tag == tag) {
+        let theTag = gameEngine.entities[i].tag;
+        let current = gameEngine.entities[i].object;
+        if (theTag == tag) {
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
                 this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
                 var direction = [];
@@ -62,7 +63,7 @@ Vader.prototype.getCollision = function(direction) {
 }
 
 Vader.prototype.update = function() {
-    this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+    this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "platform");
 
     // stops movement if collision encountered
     if (this.getCollision("right") != null) {
@@ -93,7 +94,7 @@ Vader.prototype.update = function() {
             this.xAcceleration = 0;
         }
     }
-    
+
     // movement
     if (gameEngine.w && this.getCollision("bottom") != null) {
         this.yAcceleration -= 13;
@@ -119,21 +120,6 @@ Vader.prototype.update = function() {
         this.attack2Anim.elapsedTime = 0;
         this.attacking = false;
         this.switchAttack = !this.switchAttack;
-    }
-
-    if (this.jumpAnim.isDone()) {
-        this.jumpAnim.elapsedTime = 0;
-        this.jumping = false;
-    }
-
-    if (this.jumping) {
-        var totalHeight = 200;
-        var jumpDistance = this.jumpAnim.elapsedTime / this.jumpAnim.totalTime;
-        if (jumpDistance > 0.5) {
-            jumpDistance = 1 - jumpDistance;
-        }
-        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-        this.y = 500 - height;
     }
 
     if (this.movingLeft) {
