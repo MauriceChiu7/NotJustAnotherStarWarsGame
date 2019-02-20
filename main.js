@@ -1,22 +1,21 @@
 var AM = new AssetManager();
 var canvas = document.getElementById("gameWorld");
 var ctx = canvas.getContext("2d");
+var gameEngine = new GameEngine();
 var transition = false;
 var frameId;
 var transitionCounter = 0;
 var menuSelection;
 var musicVolume = 1;
 var sfxVolume = 1;
-var gameEngine = new GameEngine();
-
-var testingLuke;
-
-// MOVE THIS 
 var playerName = "<PLAYER NAME>";
 var tempName = "";
 var searching = false;
 var searchingCounter = 0;
 var editingName = false;
+var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
+
+var testingLuke;
 
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
@@ -74,9 +73,6 @@ function menuMouseMove(event) {
 }
 
 // --------------------- START SCREEN ----------------------------
-// var mainMenuMusic = AM.getSound('./sounds/StarWarsMainTheme.wav');
-var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
-
 function startScreen() {
     initializeCharacterData();
     createStars();
@@ -357,7 +353,6 @@ function multiplayerClick(event) {
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
-        //canvas.removeEventListener('keyup', nameEditHandler, true);
         menuItems.forEach(function(item) {
             if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
                 menuSelection = item.text;
@@ -592,11 +587,6 @@ function inGame() {
           gameEngine.addEntity({tag: "AI", object: new Dummy(gameEngine)});
       }
     }
-
-
-    // unction Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight)
-    // gameEngine.addEntity(new Platform());
-
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
 }
 
