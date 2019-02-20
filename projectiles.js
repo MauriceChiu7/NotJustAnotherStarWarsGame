@@ -35,18 +35,19 @@ function LaserBeam(start, end, game) {
   this.x = start.x;
   this.y = start.y;
   this.game = game;
-  this.hitbox = 40;
+  this.tag = "laser";
 
   this.hitbox = 30;
   Entity.call(this, game, this.x, this.y);
 }
+
 LaserBeam.prototype = new Entity();
 LaserBeam.prototype.constructor = LaserBeam;
 
-LaserBeam.prototype.collide = function (other) {
-  // console.log("COLLIDE: " + distance(this, other) +" "+ (this.hitbox + other.hitbox));
-  return distance(this, other) < this.hitbox + other.hitbox;
-};
+// LaserBeam.prototype.collide = function (other) {
+//   // console.log("COLLIDE: " + distance(this, other) +" "+ (this.hitbox + other.hitbox));
+//   return distance(this, other) < this.hitbox + other.hitbox;
+// };
 
 // LaserBeam.prototype.collideLeft = function () {
 //   return (this.x - this.hitbox) < 0;
@@ -106,6 +107,7 @@ LaserBeam.prototype.update = function () {
 
   Entity.prototype.update.call(this);
 }
+
 LaserBeam.prototype.draw = function () {
   let degree = getAngle(this.end.x, this.end.y);
   let absDegree = Math.abs(degree);
@@ -130,8 +132,8 @@ LaserBeam.prototype.draw = function () {
 
 function deleteLaserbeam() {
   for (var i = 0; i < gameEngine.entities.length; i++) {
-    if (gameEngine.entities[i].object instanceof LaserBeam) {
-      console.log(gameEngine.entities[i] instanceof LaserBeam);
+    if (gameEngine.entities[i] instanceof LaserBeam) {
+      console.log("Laserbeam deleted");
       gameEngine.entities.splice(i, 1);
     }
   }
@@ -171,6 +173,7 @@ function LightsaberThrow(start, end, game) {
   this.y = start.y;
   this.game = game;
   this.goBack = false;
+  this.tag = "lightsaberthrow";
 
   this.hitbox = 30;
   if (start.x <= end.x) {
@@ -184,10 +187,12 @@ function LightsaberThrow(start, end, game) {
 }
 LightsaberThrow.prototype = new Entity();
 LightsaberThrow.prototype.constructor = LightsaberThrow;
+
 LightsaberThrow.prototype.collide = function (other) {
   // console.log("COLLIDE: " + distance(this, other) +" "+ (this.hitbox + other.hitbox));
   return distance(this, other) < this.hitbox + other.hitbox;
 };
+
 LightsaberThrow.prototype.update = function () {
   for (let i = 0; i < this.game.entities.length; i++) {
     let ent = this.game.entities[i];
@@ -261,8 +266,8 @@ LightsaberThrow.prototype.draw = function () {
 
 function deleteLightsaberThrow() {
   for (var i = 0; i < gameEngine.entities.length; i++) {
-    if (gameEngine.entities[i].object instanceof LightsaberThrow) {
-      // console.log(gameEngine.entities[i] instanceof LightsaberThrow);
+    if (gameEngine.entities[i] instanceof LightsaberThrow) {
+      console.log("lightsaber deleted");
       gameEngine.entities.splice(i, 1);
     }
   }

@@ -224,7 +224,7 @@ Character.prototype.update = function () {
         } else {
             let laserShot = false;
             for (var i = 0; i < gameEngine.entities.length; i++) {
-                if (gameEngine.entities[i].tag === "laser") {
+                if (gameEngine.entities[i].tag == "laser") {
                     laserShot = true;
                 }
             }
@@ -293,17 +293,11 @@ Character.prototype.update = function () {
                 this.standing = true;
             }
             if (degree >= 0) { // facing right
-                if (primaryWeapon) {
-                    jumpDistance = this.jumpRightAnim.elapsedTime / this.jumpRightAnim.totalTime;
-                } else {
-                    jumpDistance = this.gunJumpRightAnim.elapsedTime / this.gunJumpRightAnim.totalTime;
-                }
+                jumpDistance = this.jumpRightAnim.elapsedTime / this.jumpRightAnim.totalTime;
             } else {
-                if (primaryWeapon) {
-                    jumpDistance = this.jumpLeftAnim.elapsedTime / this.jumpLeftAnim.totalTime;
-                } else {
-                    jumpDistance = this.gunJumpLeftAnim.elapsedTime / this.gunJumpLeftAnim.totalTime;
-                }
+
+                jumpDistance = this.jumpLeftAnim.elapsedTime / this.jumpLeftAnim.totalTime;
+
             }
 
         } else {
@@ -315,17 +309,13 @@ Character.prototype.update = function () {
                 this.standing = true;
             }
             if (degree >= 0) { // facing right
-                if (primaryWeapon) {
-                    jumpDistance = this.jumpRightAnim.elapsedTime / this.jumpRightAnim.totalTime;
-                } else {
-                    jumpDistance = this.gunJumpRightAnim.elapsedTime / this.gunJumpRightAnim.totalTime;
-                }
+
+                jumpDistance = this.gunJumpRightAnim.elapsedTime / this.gunJumpRightAnim.totalTime;
+
             } else {
-                if (primaryWeapon) {
-                    jumpDistance = this.jumpLeftAnim.elapsedTime / this.jumpLeftAnim.totalTime;
-                } else {
-                    jumpDistance = this.gunJumpLeftAnim.elapsedTime / this.gunJumpLeftAnim.totalTime;
-                }
+
+                jumpDistance = this.gunJumpLeftAnim.elapsedTime / this.gunJumpLeftAnim.totalTime;
+
             }
         }
         var totalHeight = scale * 300;
@@ -618,22 +608,18 @@ function aimDirection(event) {
     var y = event.clientY - canvas.getBoundingClientRect().top;
     mouseCoor.x = x;
     mouseCoor.y = y;
-    console.log("x:" + center_x + "y:" + center_y);
     var delta_x = (x - center_x);
     var delta_y = (y - center_y);
     var hypotenuse = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
     var radian = Math.asin(delta_x / hypotenuse);
     degree = radian * 180 / Math.PI;
-
     if (y > center_y) {
         if (x > center_x) {
             degree = 180 - degree;
         } else {
             degree = -180 - degree;
         }
-        // console.log("mouse Y > center Y ");
     }
-    console.log("aiming here: " + degree + " DEGREE");
 }
 
 function stand() {
@@ -645,7 +631,7 @@ function stand() {
 function lightsaberThrow(e) {
     let laserthrown = false;
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        if (gameEngine.entities[i].tag === "lightsaberthrow") {
+        if (gameEngine.entities[i].tag == "lightsaberthrow") {
             laserthrown = true;
         }
     }
@@ -655,7 +641,7 @@ function lightsaberThrow(e) {
         var rect = canvas.getBoundingClientRect();
         // var endCoor = {x: e.clientX - rect.left, y: e.clientY - rect.top};
         playerCoor = { x: center_x, y: center_y };
-        console.log("character.js: " + mouseCoor.x + " " + mouseCoor.y);
+        console.log("character.js: " + playerCoor.x + " " + playerCoor.y);
         gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
     }
 }
