@@ -32,11 +32,11 @@ var center_x;
 var center_y;
 var degree;
 var primaryWeapon = true;
-var mouseCoor = {x: 0, y:0};
-var playerCoor = {x: 0, y: 0};
+var mouseCoor = { x: 0, y: 0 };
+var playerCoor = { x: 0, y: 0 };
 /* Character's center. Used to calculate the angle at which the characters should aim their weapon at. */
 
-document.oncontextmenu = function() {
+document.oncontextmenu = function () {
     if (debug) {
         return true;
     } else {
@@ -46,7 +46,7 @@ document.oncontextmenu = function() {
 
 var blocking = false;
 var rightClickIsDown = false;
-function Character(game){
+function Character(game) {
     canvas.addEventListener("keyup", lightsaberThrow);
     canvas.addEventListener("mousemove", aimDirection);
 
@@ -171,20 +171,20 @@ Character.prototype.update = function () {
     // Mouse Events                 //
     // Keyboard Events              //
     // **************************** //
-    if (this.game.d){                                   // Key D: Running Right
+    if (this.game.d) {                                   // Key D: Running Right
         this.running = true;
         this.standing = false;
         this.theD = true;
-    } else if (this.game.a){                            // Key A: Running Left
+    } else if (this.game.a) {                            // Key A: Running Left
         this.running = true;
         this.standing = false;
         this.theD = false;
     }
-    if (this.game.w){                                   // Key W: Jumping
+    if (this.game.w) {                                   // Key W: Jumping
         this.jumping = true;
         this.standing = false;
     }
-    if (this.game.s){                                   // Key S: Crouching
+    if (this.game.s) {                                   // Key S: Crouching
         this.crouching = true;
         this.standing = false;
     }
@@ -193,65 +193,61 @@ Character.prototype.update = function () {
         this.standing = false;
         this.attacking = false;
         // this.aiming = true;
-        if (!primaryWeapon){
-          var audio = AM.getSound('./sounds/LightsaberTurnOn.wav').cloneNode();
-          audio.play();
+        if (!primaryWeapon) {
+            var audio = AM.getSound('./sounds/LightsaberTurnOn.wav').cloneNode();
+            audio.play();
         } else {
-          var audio = AM.getSound('./sounds/LightsaberTurnOff.wav').cloneNode();
-          audio.play();
+            var audio = AM.getSound('./sounds/LightsaberTurnOff.wav').cloneNode();
+            audio.play();
         }
         primaryWeapon = !primaryWeapon;
     }
     if (this.game.i) {                                  // Key I: Dying
         this.dying = !this.dying;
     }
-    if (this.game.keyup && !this.jumping ){              // Keyup: Standing
+    if (this.game.keyup && !this.jumping) {              // Keyup: Standing
         this.standing = true;
         this.running = false;
         this.crouching = false;
     }
-    if (!blocking && !this.jumping){
-      this.standing = true;
+    if (!blocking && !this.jumping) {
+        this.standing = true;
     }
-    if (this.game.click){
-      if(primaryWeapon){
-        if (transitionCounter == 0) {
-            let audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
-            audio.volume = sfxVolume * 0.2;
-            audio.play();
-            statusBars.update(0, -20);
-            this.attacking = true;
-            this.switching = false;
+    if (this.game.click) {
+        if (primaryWeapon) {
+            if (transitionCounter == 0) {
+                let audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
+                audio.volume = sfxVolume * 0.2;
+                audio.play();
+                statusBars.update(0, -20);
+                this.attacking = true;
+                this.switching = false;
+            }
+        } else {
+            let laserShot = false;
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                if (gameEngine.entities[i].tag === "laser") {
+                    laserShot = true;
+                }
+            }
+            if (!laserShot) {
+                let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
+                audio.play();
+                let rect = canvas.getBoundingClientRect();
+                playerCoor = { x: center_x, y: center_y };
+                let endCoor = {x: this.game.clickx, y:this.game.clicky};
+                gameEngine.addEntity({ tag: "laser", object: new LaserBeam(playerCoor, endCoor, gameEngine) });
+            }
         }
-      } else {
-        let laserShot = false;
-        for (var i =0; i < gameEngine.entities.length; i++){
-          if (gameEngine.entities[i].tag === "laser"){
-            laserShot = true;
-          }
-        }
-        if(!laserShot){
-            let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
-            audio.play();          
+    }
 
-            let endCoor = {x:0, y:0};
-            let rect = canvas.getBoundingClientRect();
-            canvas.addEventListener("click", function(e){
-                endCoor.x = e.clientX - rect.left;
-                endCoor.y = e.clientY - rect.top;
-                playerCoor = {x: center_x, y: center_y};
-                gameEngine.addEntity({tag: "laser", object: new LaserBeam(playerCoor, endCoor, gameEngine, degree)});
-            });
-            
-        }
-      }
-    }
+
     // Running
-    if (this.running){
+    if (this.running) {
         this.crouching = false;
         this.standing = false;
         blocking = false;
-        if (this.theD){
+        if (this.theD) {
             if (this.x > this.game.mouseMoveX) {
                 this.x += this.game.clockTick * (this.speed * 0.5);
             } else {
@@ -265,41 +261,78 @@ Character.prototype.update = function () {
             }
         }
     }
-    canvas.addEventListener('mousedown', function(e) {
+    canvas.addEventListener('mousedown', function (e) {
         rightClickIsDown = true;
-        if (e.button ==2 && primaryWeapon){
-          setTimeout(function() {
-            if(rightClickIsDown) {
-              // mouse was held down for > 2 seconds
-              blocking = true;
-              console.log("Right click!!!!! Hold");
-            }
-          }, 50);
+        if (e.button == 2 && primaryWeapon) {
+            setTimeout(function () {
+                if (rightClickIsDown) {
+                    // mouse was held down for > 2 seconds
+                    blocking = true;
+                    console.log("Right click!!!!! Hold");
+                }
+            }, 50);
         }
     });
-    canvas.addEventListener('mouseup', function(e) {
-      rightClickIsDown = false;
-      if (e.button ==2 && primaryWeapon){
-        blocking = false;
-      }
+    canvas.addEventListener('mouseup', function (e) {
+        rightClickIsDown = false;
+        if (e.button == 2 && primaryWeapon) {
+            blocking = false;
+        }
     });
     // Jumping
-    if (this.jumping){
+    if (this.jumping) {
         this.crouching = this.attacking = this.switching = blocking = false;
-        this.yAcceleration -= 20;
-        this.y += this.yAcceleration;
+        // this.running = false;
+        var jumpDistance;
+        if (primaryWeapon) {
+            if (this.jumpRightAnim.isDone() || this.jumpLeftAnim.isDone()) {
+                this.jumpRightAnim.elapsedTime = 0;
+                this.jumpLeftAnim.elapsedTime = 0;
+                this.jumping = false;
+                this.running = false;
+                this.standing = true;
+            }
+            if (degree >= 0) { // facing right
+                jumpDistance = this.jumpRightAnim.elapsedTime / this.jumpRightAnim.totalTime;
+            } else {
+                jumpDistance = this.jumpLeftAnim.elapsedTime / this.jumpLeftAnim.totalTime;
+            }
+        } else {
+            if (this.gunJumpRightAnim.isDone() || this.gunJumpLeftAnim.isDone()) {
+                this.gunJumpRightAnim.elapsedTime = 0;
+                this.gunJumpLeftAnim.elapsedTime = 0;
+                this.jumping = false;
+                this.running = false;
+                this.standing = true;
+            }
+            if (degree >= 0) { // facing right
+                jumpDistance = this.gunJumpRightAnim.elapsedTime / this.gunJumpRightAnim.totalTime;
+            } else {
+                jumpDistance = this.gunJumpLeftAnim.elapsedTime / this.gunJumpLeftAnim.totalTime;
+            }
+        }
+        var totalHeight = scale * 300;
+
+        if (jumpDistance > 0.5) {
+            jumpDistance = 1 - jumpDistance;
+        }
+        var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+        this.y = this.ground - height;
+
+        // this.yAcceleration -= 20;
+        // this.y += this.yAcceleration;
     }
 
     // Attacking
     if (this.attacking) {
         for (let i = 0; i < this.game.entities.length; i++) {
-          let ent = this.game.entities[i];
-          if (ent.tag == "AI"){
-            console.log("enter AI, object: " + ent.tag + " " +this.hitbox);
-            if (ent.object !== this && this.collide(ent.object)){
-              console.log("Attack collision!!!");
+            let ent = this.game.entities[i];
+            if (ent.tag == "AI") {
+                console.log("enter AI, object: " + ent.tag + " " + this.hitbox);
+                if (ent.object !== this && this.collide(ent.object)) {
+                    console.log("Attack collision!!!");
+                }
             }
-          }
         }
         this.standing = false;
         if (this.attk1RightAnim.isDone() || this.attk1LefttAnim.isDone()) {
@@ -341,14 +374,14 @@ Character.prototype.update = function () {
         // this.jumping = false;
     }
     // Blocking
-    if (blocking){
-      this.standing = false;
+    if (blocking) {
+        this.standing = false;
     }
     // World wrapping
-    if (this.x > 1200){
-      this.x=0;
-    } else if (this.x < 0){
-      this.x = 1200;
+    if (this.x > 1200) {
+        this.x = 0;
+    } else if (this.x < 0) {
+        this.x = 1200;
     }
     center_x = this.x;
     center_y = this.y;
@@ -356,17 +389,17 @@ Character.prototype.update = function () {
 }
 
 Character.prototype.collide = function (other) {
-    console.log("COLLIDE: " + distance(this, other) +" "+ (this.hitbox + other.hitbox));
+    console.log("COLLIDE: " + distance(this, other) + " " + (this.hitbox + other.hitbox));
     return distance(this, other) < this.hitbox + other.hitbox;
 };
 function distance(a, b) {
-  console.log(a.x +" "+a.y+ " "+ b.x +" "+b.y);
+    console.log(a.x + " " + a.y + " " + b.x + " " + b.y);
     var dx = a.x - b.x;
     var dy = a.y - b.y;
     return Math.sqrt(dx * dx + dy * dy);
 }
 
-Character.prototype.draw = function(){
+Character.prototype.draw = function () {
     if (this.game.mouseMoveX + cursorOffset > this.x) {
         //console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
         this.drawRight();
@@ -376,10 +409,10 @@ Character.prototype.draw = function(){
     }
 }
 
-Character.prototype.drawRight = function() {
+Character.prototype.drawRight = function () {
     if (primaryWeapon) { // If the character is using their primaryWeapon
-        if (blocking){
-          this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x+10, this.y + groundHeight, scale);
+        if (blocking) {
+            this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 10, this.y + groundHeight, scale);
         }
         if (this.switching) {
             this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
@@ -401,7 +434,7 @@ Character.prototype.drawRight = function() {
             }
         }
         if (this.jumping) {
-            this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y + groundHeight, scale);
+            this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.dying) {
             this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
@@ -446,10 +479,10 @@ Character.prototype.drawRight = function() {
     Entity.prototype.draw.call(this);
 }
 
-Character.prototype.drawLeft = function() {
+Character.prototype.drawLeft = function () {
     if (primaryWeapon) { // If the character is using their primaryWeapon
-        if (blocking){
-          this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x+50, this.y + groundHeight, scale);
+        if (blocking) {
+            this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y + groundHeight, scale);
         }
         if (this.switching) {
             this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
@@ -471,7 +504,7 @@ Character.prototype.drawLeft = function() {
             }
         }
         if (this.jumping) {
-            this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y + groundHeight, scale);
+            this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
         }
         if (this.dying) {
             this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale);
@@ -536,6 +569,7 @@ Character.prototype.drawGunStanding = function () {
     } else {
         (degree > 0) ? this.gunStanding157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, scale) : this.gunStanding157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y + groundHeight, scale);
     }
+    return degree;
 }
 
 Character.prototype.drawGunCrouching = function () {
@@ -565,8 +599,6 @@ function aimDirection(event) {
     } else {
         center_x += 48;
     }
-    //center_y += 210;
-    // console.log("center_x: " + center_x + ", center_y: " + center_y);
     var x = event.clientX - canvas.getBoundingClientRect().left;
     var y = event.clientY - canvas.getBoundingClientRect().top;
     mouseCoor.x = x;
@@ -576,16 +608,13 @@ function aimDirection(event) {
     var hypotenuse = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
     var radian = Math.asin(delta_x/hypotenuse);
     degree = radian * 180 / Math.PI;
-
     if (y > center_y) {
         if (x > center_x) {
             degree = 180 - degree;
         } else {
             degree = -180 - degree;
         }
-        // console.log("mouse Y > center Y ");
     }
-    // console.log("aiming here: " + degree + " DEGREE");
 }
 
 function stand() {
@@ -594,21 +623,21 @@ function stand() {
     this.crouching = false;
 }
 
-function lightsaberThrow(e){
-  let laserthrown = false;
-  for (var i =0; i < gameEngine.entities.length; i++){
-    if (gameEngine.entities[i].tag === "lightsaberthrow"){
-      laserthrown = true;
+function lightsaberThrow(e) {
+    let laserthrown = false;
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        if (gameEngine.entities[i].tag === "lightsaberthrow") {
+            laserthrown = true;
+        }
     }
-  }
-  if (primaryWeapon && e.code === "KeyE" && !laserthrown){
-      var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
-      audio.play();
-      var rect = canvas.getBoundingClientRect();
-      // var endCoor = {x: e.clientX - rect.left, y: e.clientY - rect.top};
-      playerCoor = {x: center_x, y: center_y };
-      console.log("character.js: "+mouseCoor.x + " "+ mouseCoor.y);
-      gameEngine.addEntity({tag: "lightsaberthrow", object: new LightsaberThrow(playerCoor, mouseCoor, gameEngine)} );
-  }
+    if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
+        var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
+        audio.play();
+        var rect = canvas.getBoundingClientRect();
+        // var endCoor = {x: e.clientX - rect.left, y: e.clientY - rect.top};
+        playerCoor = { x: center_x, y: center_y };
+        console.log("character.js: " + mouseCoor.x + " " + mouseCoor.y);
+        gameEngine.addEntity({ tag: "lightsaberthrow", object: new LightsaberThrow(playerCoor, mouseCoor, gameEngine) });
+    }
 }
 

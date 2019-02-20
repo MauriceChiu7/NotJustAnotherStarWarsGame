@@ -49,6 +49,8 @@ GameEngine.prototype.startInput = function () {
     this.ctx.canvas.addEventListener("click", function (e) {
         that.clickPos = getXandY(e);
         that.click = true;
+        that.clickx = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
+        that.clicky = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
         // console.log("Left Click Event - X,Y " + getXandY(e).x + ", " + getXandY(e).y);
     }, false);
 
@@ -182,6 +184,8 @@ GameEngine.prototype.loop = function () {
     this.mouseup = null;
     this.keyup = null;
     this.keyReleased = null;
+    this.clickx = null;
+    this.clicky =null;
 }
 
 function Timer() {
