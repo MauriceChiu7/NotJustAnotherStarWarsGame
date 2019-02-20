@@ -48,21 +48,21 @@ LaserBeam.prototype.collide = function (other) {
   return distance(this, other) < this.hitbox + other.hitbox;
 };
 
-LaserBeam.prototype.collideLeft = function () {
-  return (this.x - this.hitbox) < 0;
-};
+// LaserBeam.prototype.collideLeft = function () {
+//   return (this.x - this.hitbox) < 0;
+// };
 
-LaserBeam.prototype.collideRight = function () {
-  return (this.x + this.hitbox) > 1200;
-};
+// LaserBeam.prototype.collideRight = function () {
+//   return (this.x + this.hitbox) > 1200;
+// };
 
-LaserBeam.prototype.collideTop = function () {
-  return (this.y - this.hitbox) < 0;
-};
+// LaserBeam.prototype.collideTop = function () {
+//   return (this.y - this.hitbox) < 0;
+// };
 
-LaserBeam.prototype.collideBottom = function () {
-  return (this.y + this.hitbox) > 600;
-};
+// LaserBeam.prototype.collideBottom = function () {
+//   return (this.y + this.hitbox) > 600;
+// };
 
 LaserBeam.prototype.update = function () {
   for (let i = 0; i < this.game.entities.length; i++) {

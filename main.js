@@ -15,7 +15,7 @@ var searchingCounter = 0;
 var editingName = false;
 var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
 
-var testingLuke;
+var testingLuke = true;
 
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
@@ -63,8 +63,8 @@ function menuMouseMove(event) {
     var rect = canvas.getBoundingClientRect();
     var x = event.clientX - rect.left;
     var y = event.clientY - rect.top;
-    menuItems.forEach(function(item) {
-        if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+    menuItems.forEach(function (item) {
+        if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
             item.hover = true;
         } else {
             item.hover = false;
@@ -85,10 +85,10 @@ function startScreenFrame() {
     drawStars();
     var img = AM.getAsset("./img/StarWarsLogo.png");
     ctx.drawImage(img,
-              0, 0,  // source from sheet
-              948, 520, // width and height of source
-              390, 50, // destination coordinates
-              400, 300); // destination width and height
+        0, 0,  // source from sheet
+        948, 520, // width and height of source
+        390, 50, // destination coordinates
+        400, 300); // destination width and height
     startScreenPrompt.draw();
     ctx.font = "15px Impact";
     ctx.fillStyle = "#ffd700";
@@ -124,19 +124,18 @@ function mainMenuFrame() {
     mainMenuMusic.play();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
-    menuItems.forEach(function(item) {
+    menuItems.forEach(function (item) {
         item.draw();
     });
     frameId = requestAnimationFrame(mainMenuFrame);
     if (transition) {
 
-        if (menuSelection == "STORY MODE"){
+        if (menuSelection == "STORY MODE") {
             mainMenuMusic.pause();
             screenTransition(inGame);
         } else if (menuSelection == "MULTIPLAYER") {
             mainMenuMusic.pause();
             screenTransition(multiplayer);
-            // testingLuke = true;
         } else if (menuSelection == "CUSTOM GAME") {
             screenTransition(customGame);
         } else if (menuSelection == "SETTINGS") {
@@ -154,8 +153,8 @@ function mainMenuClick(event) {
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
-        menuItems.forEach(function(item) {
-            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+        menuItems.forEach(function (item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
                 menuSelection = item.text;
                 if (menuSelection == "STORY MODE" || menuSelection == "CUSTOM GAME" || menuSelection == "MULTIPLAYER" ||
                     menuSelection == "SETTINGS" || menuSelection == "CREDITS") {
@@ -214,7 +213,7 @@ function customGameFrame() {
     drawCharacterFromData(650, 420, computerCharacter1, 115, 160, 1, 0, 0);
     drawCharacterFromData(780, 420, computerCharacter2, 115, 160, 1, 0, 0);
     drawCharacterFromData(910, 420, computerCharacter3, 115, 160, 1, 0, 0);
-    drawCharacterFromData(1040, 420, computerCharacter4, 115, 160, 1, 0,0);
+    drawCharacterFromData(1040, 420, computerCharacter4, 115, 160, 1, 0, 0);
 
     ctx.font = "20px monospace";
     ctx.fillText("MAP", 35, 150);
@@ -223,7 +222,7 @@ function customGameFrame() {
     ctx.fillText("COMPUTER", 1180, 350);
     ctx.restore();
 
-    menuItems.forEach(function(item) {
+    menuItems.forEach(function (item) {
         item.draw();
     });
     updateCharacterData();
@@ -245,8 +244,8 @@ function customGameClick(event) {
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
-        menuItems.forEach(function(item) {
-            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+        menuItems.forEach(function (item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
                 menuSelection = item.text;
                 if (menuSelection == "BACK" || menuSelection == "START") {
                     var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
@@ -336,7 +335,7 @@ function multiplayerFrame() {
     ctx.rect(175, 160, 173, 240);
     ctx.stroke();
     ctx.restore();
-    menuItems.forEach(function(item) {
+    menuItems.forEach(function (item) {
         item.draw();
     });
 
@@ -353,8 +352,8 @@ function multiplayerClick(event) {
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
-        menuItems.forEach(function(item) {
-            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+        menuItems.forEach(function (item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
                 menuSelection = item.text;
                 if (menuSelection == "BACK") {
                     var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
@@ -437,7 +436,7 @@ function settingsFrame() {
     ctx.fillText(Math.round(musicVolume * 100), 650, 200);
     ctx.fillText(Math.round(sfxVolume * 100), 650, 250);
     ctx.restore();
-    menuItems.forEach(function(item) {
+    menuItems.forEach(function (item) {
         item.draw();
     });
     frameId = requestAnimationFrame(settingsFrame);
@@ -451,8 +450,8 @@ function settingsClick(event) {
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
-        menuItems.forEach(function(item) {
-            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+        menuItems.forEach(function (item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
                 menuSelection = item.text;
                 if (menuSelection == "BACK") {
                     var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
@@ -491,7 +490,7 @@ function settingsClick(event) {
                             audio.volume = sfxVolume;
                             audio.play();
                         }
-                    } else if (item.tag =="sfx-") {
+                    } else if (item.tag == "sfx-") {
                         if (sfxVolume > 0) {
                             sfxVolume -= 0.05;
                             if (sfxVolume < 0) {
@@ -530,7 +529,7 @@ function creditsFrame() {
     ctx.fillText("Jake Yang", 600, 325);
     ctx.fillText("Benjamin Yuen", 600, 375);
     ctx.restore();
-    menuItems.forEach(function(item) {
+    menuItems.forEach(function (item) {
         item.draw();
     });
     frameId = requestAnimationFrame(creditsFrame);
@@ -544,8 +543,8 @@ function creditsClick(event) {
         var rect = canvas.getBoundingClientRect();
         var x = event.clientX - rect.left;
         var y = event.clientY - rect.top;
-        menuItems.forEach(function(item) {
-            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w/2 - 5 && x <= item.w/2 + item.x + 5) {
+        menuItems.forEach(function (item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
                 menuSelection = item.text;
                 if (menuSelection == "BACK") {
                     var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
@@ -574,20 +573,20 @@ function inGame() {
     gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100));
 
 
-      if (playerCharacter == 3) {
-          // gameEngine.addEntity(new Vader());
-          // gameEngine.addEntity(new Character(gameEngine));
-      } else if (playerCharacter == 2 || playerCharacter == 1) {
-          // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
-          // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
-          if (testingLuke){
+    if (playerCharacter == 3) {
+        // gameEngine.addEntity(new Vader());
+        // gameEngine.addEntity(new Character(gameEngine));
+    } else if (playerCharacter == 2 || playerCharacter == 1) {
+        // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
+        // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
+        if (testingLuke) {
             gameEngine.addEntity(new Character(gameEngine));
-            gameEngine.addEntity(new Dummy(gameEngine));
-          } else {
+            // gameEngine.addEntity(new Dummy(gameEngine));
+        } else {
             gameEngine.addEntity(new Vader());
             gameEngine.addEntity(new Dummy(gameEngine));
-          }
-      }
+        }
+    }
 
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
 }
