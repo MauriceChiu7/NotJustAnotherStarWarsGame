@@ -128,7 +128,7 @@ Vader.prototype.update = function() {
             this.xAcceleration -= 1;
         } else {
             if (this.yAcceleration == 0) {
-                this.xAcceleration -= 1.5;    
+                this.xAcceleration -= 1.5;
             } else {
                 this.xAcceleration -= 1.5;
             }

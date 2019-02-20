@@ -573,7 +573,7 @@ function inGame() {
     gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
     gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100));
 
-    
+
       if (playerCharacter == 3) {
           // gameEngine.addEntity(new Vader());
           // gameEngine.addEntity(new Character(gameEngine));
@@ -588,7 +588,7 @@ function inGame() {
             gameEngine.addEntity(new Dummy(gameEngine));
           }
       }
-    
+
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
 }
 
