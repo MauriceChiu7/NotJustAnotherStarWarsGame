@@ -145,8 +145,8 @@ GameEngine.prototype.draw = function () {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
     for (var i = 0; i < this.entities.length; i++) {
-        this.entities[i].object.checkCollisions();
-        this.entities[i].object.draw(this.ctx);
+        this.entities[i].checkCollisions();
+        this.entities[i].draw(this.ctx);
     }
     statusBars.draw();
     this.ctx.restore();
@@ -158,7 +158,7 @@ GameEngine.prototype.update = function () {
     var entitiesCount = this.entities.length;
 
     for (var i = 0; i < entitiesCount; i++) {
-        var entity = this.entities[i].object;
+        var entity = this.entities[i];
 
         entity.update();
     }

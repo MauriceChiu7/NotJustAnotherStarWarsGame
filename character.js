@@ -165,6 +165,7 @@ function Character(game){
     this.switching = false;
     this.dying = false;
     this.dead = false;
+    this.tag = "player";
     this.width = 20;
 
     this.ground = 500;
@@ -246,7 +247,7 @@ Character.prototype.update = function () {
         playerCoor = {x: center_x, y: center_y};
         const endx = mouseCoor.x; const endy = mouseCoor.y;
         let endCoor = {x: endx, y: endy};
-        gameEngine.addEntity({tag: "laser", object: new LaserBeam(playerCoor, endCoor, gameEngine, degree)});
+        gameEngine.addEntity(new LaserBeam(playerCoor, endCoor, gameEngine, degree));
       }
     }
 
@@ -336,8 +337,8 @@ Character.prototype.update = function () {
         for (let i = 0; i < this.game.entities.length; i++) {
           let ent = this.game.entities[i];
           if (ent.tag == "AI"){
-            console.log("enter AI, object: " + ent.object + " " +this.width);
-            if (ent.object !== this && this.collide(ent.object)){
+            console.log("enter AI, object: " + ent + " " +this.width);
+            if (ent !== this && this.collide(ent)){
               console.log("Attack collision!!!");
             }
           }
@@ -641,7 +642,7 @@ function lightsaberThrow(e){
       playerCoor = {x: center_x, y: center_y };
       console.log("character.js: "+mouseCoor.x + " "+ mouseCoor.y);
       // console.log("GameEntities1: "+ gameEngine.entities.length);
-      gameEngine.addEntity({tag: "lightsaberthrow", object: new LightsaberThrow(playerCoor, mouseCoor, gameEngine)} );
+      gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine) );
       // console.log("GameEntities2: "+ gameEngine.entities.length);
   }
 }

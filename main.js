@@ -570,23 +570,25 @@ function inGame() {
     // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
     gameEngine.start();
-    gameEngine.addEntity({tag: "platform", object: new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)});
-    gameEngine.addEntity({tag: "platform", object: new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100)});
+    gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
+    gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100));
 
-    if (testingLuke){
-      gameEngine.addEntity({tag: "player", object: new Character(gameEngine)});
-      gameEngine.addEntity({tag: "AI", object: new Dummy(gameEngine)});
-    } else {
+    
       if (playerCharacter == 3) {
           // gameEngine.addEntity(new Vader());
           // gameEngine.addEntity(new Character(gameEngine));
       } else if (playerCharacter == 2 || playerCharacter == 1) {
           // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
           // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
-          gameEngine.addEntity({tag: "player", object: new Vader()});
-          gameEngine.addEntity({tag: "AI", object: new Dummy(gameEngine)});
+          if (testingLuke){
+            gameEngine.addEntity(new Character(gameEngine));
+            gameEngine.addEntity(new Dummy(gameEngine));
+          } else {
+            gameEngine.addEntity(new Vader());
+            gameEngine.addEntity(new Dummy(gameEngine));
+          }
       }
-    }
+    
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
 }
 

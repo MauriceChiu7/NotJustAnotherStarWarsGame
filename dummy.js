@@ -44,9 +44,8 @@ function Dummy(game) {
    this.ctx = game.ctx;
    for (let i = 0; i < this.game.entities.length; i++) {
      let object = this.game.entities[i];
-     console.log("ENTER: "+object.tag);
      if (object.tag == "player"){
-       this.player = object.object;
+       this.player = object;
      }
    }
 

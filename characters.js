@@ -21,6 +21,7 @@ function Vader() {
     this.movingRight = false;
     this.movingLeft = false;
     this.platformCollisions = [];
+    this.tag = "player";
 }
 
 Vader.prototype = new Entity();
@@ -30,7 +31,7 @@ Vader.prototype.collide = function(xDisplacement, yDisplacement, tag) {
     var collisions = [];
     for (var i = 0; i < gameEngine.entities.length; i++) {
         let theTag = gameEngine.entities[i].tag;
-        let current = gameEngine.entities[i].object;
+        let current = gameEngine.entities[i];
         if (theTag == tag) {
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
                 this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
