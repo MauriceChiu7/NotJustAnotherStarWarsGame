@@ -384,19 +384,55 @@ function drawStars() {
 }
 
 // --------------------- ENTITIES ----------------------------
-function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight, collisionX, collisionY, collisionWidth, collisionHeight) {
+// function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight, collisionX, collisionY, collisionWidth, collisionHeight) {
+function Platform(x, y, type, collisionWidth, collisionHeight) {
     this.tag = "Platform";
     this.x = x;
     this.y = y;
-    this.width = width;
-    this.height = height;
-    this.spritesheet = spritesheet;
-    this.spritesheetX = spritesheetX;
-    this.spritesheetY = spritesheetY;
-    this.spritesheetWidth = spritesheetWidth;
-    this.spritesheetHeight = spritesheetHeight;
-    this.collisionX = collisionX;
-    this.collisionY = collisionY;
+    this.type = type;
+    // this.width = width;
+    // this.height = height;
+    this.mapAsset = AM.getAsset('./img/mapAssets1.png');
+
+    // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
+    this.longPlatFrame = new Animation(this.mapAsset, 0, 700, 514, 30, 1, 1, true, false);
+    this.shortPlatFrame = new Animation(this.mapAsset, 0, 700, 130, 30, 1, 1, true, false);
+    this.darkWallFrame = new Animation(this.mapAsset, 0, 512, 281, 186, 1, 1, true, false);
+    this.electronicsFrame = new Animation(this.mapAsset, 64, 126, 64, 64, 1, 1, true, false);
+    this.smallCrateFrame = new Animation(this.mapAsset, 160, 125, 64, 64, 1, 1, true, false);
+    this.bigCrateFrame = new Animation(this.mapAsset, 576, 254, 96, 96, 1, 1, true, false);
+    
+    // this.spritesheet = spritesheet;
+    // this.spritesheetX = spritesheetX;
+    // this.spritesheetY = spritesheetY;
+    // this.spritesheetWidth = spritesheetWidth;
+    // this.spritesheetHeight = spritesheetHeight;
+
+    this.collisionX = this.x - 60;
+
+    switch (this.type) {
+        case 'longPlat':
+            this.collisionY = this.y - 67;
+            break;
+        case 'shortPlat':
+            this.collisionY = this.y - 67;
+            break;
+        case 'darkWall':
+            this.collisionY = this.y - 67;
+            break;
+        case 'electronics':
+            this.collisionY = this.y - 67;
+            break;
+        case 'smallCrate':
+            this.collisionY = this.y - 67;
+            break;
+        case 'bigCrate':
+            this.collisionY = this.y - 67;
+            break;
+        default:
+            break;
+    }
+    
     this.collisionWidth = collisionWidth;
     this.collisionHeight = collisionHeight;
 }
@@ -409,9 +445,31 @@ Platform.prototype.update = function() {
 }
 
 Platform.prototype.draw = function() {
-    ctx.drawImage(this.spritesheet,
-        this.spritesheetX, this.spritesheetY,  // source from sheet
-        this.spritesheetWidth, this.spritesheetHeight, // width and height of source
-        this.x, this.y, // destination coordinates
-        this.width, this.height); // destination width and height
+    // ctx.drawImage(this.spritesheet,
+    //     this.spritesheetX, this.spritesheetY,  // source from sheet
+    //     this.spritesheetWidth, this.spritesheetHeight, // width and height of source
+    //     this.x, this.y, // destination coordinates
+    //     this.width, this.height); // destination width and height
+    switch (this.type) {
+        case 'longPlat':
+            this.longPlatFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
+            break;
+        case 'shortPlat':
+            this.shortPlatFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
+            break;
+        case 'darkWall':
+            this.darkWallFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
+            break;
+        case 'electronics':
+            this.electronicsFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
+            break;
+        case 'smallCrate':
+            this.smallCrateFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
+            break;
+        case 'bigCrate':
+            this.bigCrateFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
+            break;
+        default:
+            break;
+    }
 }
