@@ -581,7 +581,7 @@ function inGame() {
         // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
         if (testingLuke) {
             gameEngine.addEntity(new Character(gameEngine));
-            // gameEngine.addEntity(new Dummy(gameEngine));
+            gameEngine.addEntity(new Dummy(gameEngine));
         } else {
             gameEngine.addEntity(new Vader());
             gameEngine.addEntity(new Dummy(gameEngine));
