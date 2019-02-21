@@ -212,7 +212,7 @@ Luke.prototype.collide = function(xDisplacement, yDisplacement, tag) {
         //         }
         //     }
         } else if (tag === 'laser') {
-            console.log('Luke Health (laser): ' + this.health);
+            // console.log('Luke Health (laser): ' + this.health);
             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
                 // direction = "right";
                 statusBars.update(-DAMAGE_LUKE, 0);
@@ -449,7 +449,7 @@ Luke.prototype.update = function() {
             }
         } else {
             if (this.gunJumpRightAnim.isDone() || this.gunJumpLeftAnim.isDone()) {
-                console.log('if (this.gunJumpAnim.isDone()');
+                // console.log('if (this.gunJumpAnim.isDone()');
                 this.gunJumpRightAnim.elapsedTime = 0;
                 this.gunJumpLeftAnim.elapsedTime = 0;
                 this.jumping = false;
@@ -462,10 +462,12 @@ Luke.prototype.update = function() {
     if (this.attacking) {
         for (let i = 0; i < this.game.entities.length; i++) {
             let ent = this.game.entities[i];
-            if (ent.tag == "AI") {
+            // if (ent.tag == "AI" || ent.tag === "trooper") {
+            if (ent.tag === "trooper") {
                 console.log("enter AI, object: " + ent + " " + this.hitbox);
                 if (ent !== this && this.collide(ent)) {
                     console.log("Attack collision!!!");
+                    ent.health -= 10; // putting this here won't work cuz it wud be instant death for the troopers.
                 }
             }
         }
