@@ -162,7 +162,7 @@ Dummy.prototype.update = function () {
        this.x -= this.game.clockTick*this.speed;
     } else {
        this.jumping = true;
-       console.log(this.jumping);
+      //  console.log(this.jumping);
        if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
            this.jumpingRightAnim.elapsedTime = 0;
            this.jumpingLeftAnim.elapsedTime = 0;
