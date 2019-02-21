@@ -15,7 +15,7 @@ var searchingCounter = 0;
 var editingName = false;
 var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
 
-var testingLuke = false;
+var testingLuke = true;
 // var testingVader = false;
 var testingLukeWithPhys = true;
 
@@ -608,15 +608,17 @@ function inGame() {
         // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
         // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
         if (testingLuke) {
+            gameEngine.addEntity(new Luke(gameEngine));
+
             gameEngine.addEntity(new Trooper(gameEngine));
             let trooper2 = new Trooper(gameEngine);            
-            trooper2.x = 300;
+            trooper2.x = 900;
             trooper2.y = 300-80;
             gameEngine.addEntity(trooper2);
-            // let trooper3 = new Trooper(gameEngine);            
-            // trooper3.x -= 300;
-            // trooper3.y += 70;
-            // gameEngine.addEntity(trooper3);
+            let trooper3 = new Trooper(gameEngine);            
+            trooper3.x += 200;
+            trooper3.y += 70;
+            gameEngine.addEntity(trooper3);
             // gameEngine.addEntity(new Dummy(gameEngine));
         } else if (testingLukeWithPhys) {
             gameEngine.addEntity(new Luke());
