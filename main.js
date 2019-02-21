@@ -15,7 +15,9 @@ var searchingCounter = 0;
 var editingName = false;
 var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
 
-var testingLuke = true;
+var testingLuke = false;
+// var testingVader = false;
+var testingLukeWithPhys = true;
 
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
@@ -569,7 +571,9 @@ function inGame() {
     // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
     gameEngine.start();
-    gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
+    // function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, frameWidth, frameHeight, collisionX, collisionY, collisionWidth, collisionHeight)
+    gameEngine.addEntity(new Platform(0, 500, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Actual ground. This is what luke is standing on.
+    gameEngine.addEntity(new Platform(0, 565, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 600, 1200, 100)); // Fake ground... the collision box is different than the pixles location.
     gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100));
 
 
@@ -582,6 +586,8 @@ function inGame() {
         if (testingLuke) {
             gameEngine.addEntity(new Character(gameEngine));
             // gameEngine.addEntity(new Dummy(gameEngine));
+        } else if (testingLukeWithPhys) {
+            gameEngine.addEntity(new Luke());
         } else {
             gameEngine.addEntity(new Vader());
             gameEngine.addEntity(new Dummy(gameEngine));
