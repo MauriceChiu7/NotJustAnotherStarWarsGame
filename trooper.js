@@ -17,7 +17,6 @@ function Trooper(game) {
     this.standLeftAnim = new Animation(this.spriteSheetLeft, 558, 74, 62, 74, frameDuration, 1, true, false);
     this.attackLeftAnim = new Animation(this.spriteSheetLeft, 124, 444, 62, 74, frameDuration, 9, true, true);
 
-
     this.x = 600;
     this.y = 450;
     this.speed = 100;
@@ -71,13 +70,14 @@ Trooper.prototype.update = function () {
 
     this.distance = this.player.x + 50 - this.x;
     if (Math.abs(this.distance) > 80) {
-        this.chanceToShoot = Math.round(Math.random() * 10);
+        this.chanceToShoot = Math.round(Math.random() * 7);
 
         if (this.chanceToShoot == 0) {
             this.action = this.standing;
             this.shotsFired = false;
             for (var i = 0; i < gameEngine.entities.length; i++) {
-                if (gameEngine.entities[i].tag == "trooperLaser" && gameEngine.entities[i].laserID == this.id) {
+                if (gameEngine.entities[i].tag == "trooperLaser" ){
+                            // && gameEngine.entities[i].laserID == this.id) {
                     // console.log("shotsFired");
                     this.shotsFired = true;
                 }
@@ -90,12 +90,12 @@ Trooper.prototype.update = function () {
             this.action = this.standing;
         }
 
-    } else if (this.distance > 70) {
-        this.x += this.game.clockTick * this.speed;
-        this.action = this.walking;
-    } else if (this.distance < -70) {
-        this.x -= this.game.clockTick * this.speed;
-        this.action = this.walking;
+    // } else if (this.distance > 70) {
+    //     this.x += this.game.clockTick * this.speed;
+    //     this.action = this.walking;
+    // } else if (this.distance < -70) {
+    //     this.x -= this.game.clockTick * this.speed;
+    //     this.action = this.walking;
     } else if (Math.abs(this.player.y - this.y) < 70) {
         this.action = this.attacking;
     } else {
@@ -116,13 +116,6 @@ Trooper.prototype.draw = function () {
 }
 
 Trooper.prototype.drawRight = function () {
-    // if (this.walking) {
-    //     this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 30, this.y + 5, scale);
-    // } else if (this.standing) {
-    //     this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
-    // } else if (this.attacking) {
-    //     this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 30, this.y, scale);
-    // }
     switch (this.action) {
         case this.walking:         //walking
             this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 30, this.y + 5, scale);
@@ -139,13 +132,6 @@ Trooper.prototype.drawRight = function () {
 }
 
 Trooper.prototype.drawLeft = function () {
-    // if (this.walking) {
-    //     this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 5, scale);
-    // } else if (this.standing) {
-    //     this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
-    // } else if (this.attacking) {
-    //     this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
-    // }
     switch (this.action) {
         case this.walking:         //walking
             this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 30, this.y + 5, scale);

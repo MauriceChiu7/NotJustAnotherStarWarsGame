@@ -36,7 +36,7 @@ function LaserBeam(start, end, game) {
   this.y = start.y;
   this.game = game;
   this.tag = "laser";
-  
+
   this.laserID = null;
   this.enemyTag = null;
 
@@ -118,7 +118,7 @@ LaserBeam.prototype.deleteLaserbeam = function () {
     // if (gameEngine.entities[i] instanceof LaserBeam 
     //   && gameEngine.entities[i].laserID == this.laserID) {  
     if (gameEngine.entities[i] == this) {
-      // console.log("Laserbeam delthis.shoot();eted with tag" + this.laserID);
+      console.log("Laserbeam delthis.shoot();eted with tag" + this.laserID);
       // console.log(gameEngine.entities[i].laserID == this.laserID);
       gameEngine.entities.splice(i, 1);
     }
