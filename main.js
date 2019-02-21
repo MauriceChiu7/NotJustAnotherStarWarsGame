@@ -15,7 +15,7 @@ var searchingCounter = 0;
 var editingName = false;
 var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
 
-var testingLuke = false;
+var testingLuke = true;
 // var testingVader = false;
 var testingLukeWithPhys = false;
 
@@ -587,7 +587,7 @@ function inGame() {
         // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
         // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
         if (testingLuke) {
-            gameEngine.addEntity(new Character(gameEngine));
+            gameEngine.addEntity(new Luke(gameEngine));
 
             gameEngine.addEntity(new Trooper(gameEngine));
             let trooper2 = new Trooper(gameEngine);            
