@@ -3,6 +3,7 @@ const SCALE_LUKE = 1;
 var attkNumLuke = 1;
 const rightToLeftOffset = 92;//144
 const cursorOffset = -48; // -20 // Question
+const DAMAGE_LUKE = 2;
 var canvas = document.getElementById("gameWorld");
 
 /*
@@ -198,12 +199,12 @@ Luke.prototype.collide = function(xDisplacement, yDisplacement, tag) {
         //             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
         //                 // direction = "right";
         //                 if (gameEngine.entities[i].attacking){
-        //                     this.health -= 5;
+        //                     this.health -= DAMAGE_LUKE;
         //                 }
         //             } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
         //                 // direction = "left";
         //                 if (gameEngine.entities[i].attacking){
-        //                     this.health -= 5;
+        //                     this.health -= DAMAGE_LUKE;
         //                 }
         //             }
         //             // collisions.push({entity: current, direction: direction});
@@ -213,10 +214,12 @@ Luke.prototype.collide = function(xDisplacement, yDisplacement, tag) {
             console.log('Luke Health (laser): ' + this.health);
             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
                 // direction = "right";
-                this.health -= 5;
+                statusBars.update(-DAMAGE_LUKE, 0);
+                this.health -= DAMAGE_LUKE;
             } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
                 // direction = "left";
-                this.health -= 5;
+                statusBars.update(-DAMAGE_LUKE, 0);
+                this.health -= DAMAGE_LUKE;
             }
         }
     }
@@ -269,31 +272,31 @@ Luke.prototype.update = function() {
     }
 
     // movement
-    if (gameEngine.w && this.getCollision("bottom") != null) {
+    if (gameEngine.w && this.getCollision("bottom") != null && !this.dead) {
         this.jumping = true;
         this.yAcceleration -= 13;
         // console.log('if (gameEngine.w)');
     }
-    if (gameEngine.d) {
+    if (gameEngine.d && !this.dead) {
         this.movingRight = true;
         this.movingLeft = false;
         this.standing = false;
         this.crouching = false;
     }
-    if (gameEngine.a) {
+    if (gameEngine.a && !this.dead) {
         this.movingRight = false;
         this.movingLeft = true;
         this.standing = false;
         this.crouching = false;
     }
-    if (gameEngine.s) {
+    if (gameEngine.s && !this.dead) {
         this.crouching = true;
         this.movingLeft = false;
         this.movingRight = false;
         this.standing = false;
         blocking = false;
     }
-    if (gameEngine.keyup) {
+    if (gameEngine.keyup && !this.dead) {
         if (gameEngine.keyReleased == 'd') {
             this.movingRight = false;
             this.standing = true;
@@ -305,7 +308,7 @@ Luke.prototype.update = function() {
             this.standing = true;
         }
     }
-    if (this.movingLeft) {
+    if (this.movingLeft && !this.dead) {
         if (this.attacking) {
             this.xAcceleration -= 1;
         } else {
@@ -315,7 +318,7 @@ Luke.prototype.update = function() {
                 this.xAcceleration -= 1.5;
             }
         }
-    } else if (this.movingRight) {
+    } else if (this.movingRight && !this.dead) {
         if (this.attacking) {
             this.xAcceleration += 1;
         } else {
@@ -345,7 +348,7 @@ Luke.prototype.update = function() {
         this.x = 40;
     }
 
-    if (this.game.r) {                                  // Key R: Switching between primary and secondary weapon
+    if (this.game.r && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
         this.switching = true;
         this.standing = false;
         this.attacking = false;
@@ -377,7 +380,7 @@ Luke.prototype.update = function() {
         }
     }
 
-    if (this.game.click) {
+    if (this.game.click && !this.dead) {
         if (primaryWeapon) {
             if (transitionCounter == 0) {
                 let audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
