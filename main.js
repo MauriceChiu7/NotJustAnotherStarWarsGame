@@ -31,6 +31,7 @@ AM.queueDownload("./img/macewindu_left.png");
 AM.queueDownload("./img/macewindu_right.png");
 AM.queueDownload("./img/trooper_right.png");
 AM.queueDownload("./img/trooper_left.png");
+AM.queueDownload("./img/background.png");
 
 AM.queueSound("./sounds/VaderVsLukeTheme.wav");
 AM.queueSound("./sounds/Swing2.WAV");
@@ -126,7 +127,7 @@ function mainMenu() {
 }
 
 function mainMenuFrame() {
-    mainMenuMusic.play();
+    // mainMenuMusic.play();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
     menuItems.forEach(function (item) {
@@ -588,18 +589,18 @@ function inGame() {
     // bigCrate - 96, 96
 
     // function Platform(x, y, type, collisionWidth, collisionHeight) {
-    gameEngine.addEntity(new Platform(0, 389, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(0, 570, 'longPlat', 514, 30));
-    gameEngine.addEntity(new Platform(512, 570, 'longPlat', 514, 30));
-    gameEngine.addEntity(new Platform(1024, 570, 'longPlat', 514, 30));
-    gameEngine.addEntity(new Platform(120, 460, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(300, 320, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(600, 250, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(900, 320, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(950, 460, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
-    gameEngine.addEntity(new Platform(1000, 480, 'bigCrate', 96, 96));
-    gameEngine.addEntity(new Platform(600, 220, 'electronics', 64, 64));
+    // gameEngine.addEntity(new Platform(0, 389, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(0, 570, 'longPlat', 514, 30));
+    // gameEngine.addEntity(new Platform(512, 570, 'longPlat', 514, 30));
+    // gameEngine.addEntity(new Platform(1024, 570, 'longPlat', 514, 30));
+    // gameEngine.addEntity(new Platform(120, 460, 'shortPlat', 130, 30));
+    // gameEngine.addEntity(new Platform(300, 320, 'shortPlat', 130, 30));
+    // gameEngine.addEntity(new Platform(600, 250, 'shortPlat', 130, 30));
+    // gameEngine.addEntity(new Platform(900, 320, 'shortPlat', 130, 30));
+    // gameEngine.addEntity(new Platform(950, 460, 'shortPlat', 130, 30));
+    // gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
+    // gameEngine.addEntity(new Platform(1000, 480, 'bigCrate', 96, 96));
+    // gameEngine.addEntity(new Platform(600, 220, 'electronics', 64, 64));
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
