@@ -15,27 +15,32 @@ function LaserBeam(start, end, game) {
   // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
   this.spriteSheet = AM.getAsset("./img/laserbeams_angle.png");
   let frameDuration = 0.5;
-  this.shootAnim0 = new Animation(this.spriteSheet, 0, 0, 120, 375, frameDuration, 1, false, false);
-  this.shootAnim22 = new Animation(this.spriteSheet, 600, 0, 250, 375, frameDuration, 1, false, false);
-  this.shootAnim45 = new Animation(this.spriteSheet, 1200, 110, 350, 250, frameDuration, 1, false, false);
-  this.shootAnim67 = new Animation(this.spriteSheet, 1800, 100, 400, 300, frameDuration, 1, false, false);
-  this.shootAnim90 = new Animation(this.spriteSheet, 2430, 303, 350, 60, frameDuration, 1, false, false);
-  this.shootAnim135 = new Animation(this.spriteSheet, 3000, 145, 350, 200, frameDuration, 1, false, false);
+  this.shootAnim0 = new Animation(this.spriteSheet, 0, 0, 120, 375, frameDuration, 1, true, false);
+  this.shootAnim22 = new Animation(this.spriteSheet, 600, 0, 250, 375, frameDuration, 1, true, false);
+  this.shootAnim45 = new Animation(this.spriteSheet, 1200, 110, 350, 250, frameDuration, 1, true, false);
+  this.shootAnim67 = new Animation(this.spriteSheet, 1800, 100, 400, 300, frameDuration, 1, true, false);
+  this.shootAnim90 = new Animation(this.spriteSheet, 2430, 303, 350, 60, frameDuration, 1, true, false);
+  this.shootAnim135 = new Animation(this.spriteSheet, 3000, 145, 350, 200, frameDuration, 1, true, false);
   this.spriteSheetLeft = AM.getAsset("./img/laserbeams_angle_left.png");
-  this.shootAnim0Left = new Animation(this.spriteSheetLeft, 1284, 13, 40, 120, frameDuration, 1, false, false);
-  this.shootAnim22Left = new Animation(this.spriteSheetLeft, 1038, 13, 70, 140, frameDuration, 1, false, false);
-  this.shootAnim45Left = new Animation(this.spriteSheetLeft, 800, 45, 95, 90, frameDuration, 1, false, false);
-  this.shootAnim67Left = new Animation(this.spriteSheetLeft, 580, 75, 120, 75, frameDuration, 1, false, false);
-  this.shootAnim90Left = new Animation(this.spriteSheetLeft, 375, 100, 120, 30, frameDuration, 1, false, false);
-  this.shootAnim135Left = new Animation(this.spriteSheetLeft, 180, 60, 120, 70, frameDuration, 1, false, false);
+  this.shootAnim0Left = new Animation(this.spriteSheetLeft, 1284, 13, 40, 120, frameDuration, 1, true, false);
+  this.shootAnim22Left = new Animation(this.spriteSheetLeft, 1038, 13, 70, 140, frameDuration, 1, true, false);
+  this.shootAnim45Left = new Animation(this.spriteSheetLeft, 800, 45, 95, 90, frameDuration, 1, true, false);
+  this.shootAnim67Left = new Animation(this.spriteSheetLeft, 580, 75, 120, 75, frameDuration, 1, true, false);
+  this.shootAnim90Left = new Animation(this.spriteSheetLeft, 375, 100, 120, 30, frameDuration, 1, true, false);
+  this.shootAnim135Left = new Animation(this.spriteSheetLeft, 180, 60, 120, 70, frameDuration, 1, true, false);
 
   this.start = start;
-  this.speed = 20;
   this.end = end;
   this.x = start.x;
   this.y = start.y;
   this.game = game;
   this.tag = "laser";
+  // this.speed = 20;
+  this.velocityX = 20;
+  this.velocityY = 20;
+
+  this.width = 50;
+  this.height = 50;
 
   this.laserID = null;
   this.enemyTag = null;
@@ -47,34 +52,36 @@ function LaserBeam(start, end, game) {
 LaserBeam.prototype = new Entity();
 LaserBeam.prototype.constructor = LaserBeam;
 
-// LaserBeam.prototype.collide = function (other) {
-//   // console.log("COLLIDE: " + distance(this, other) +" "+ (this.hitbox + other.hitbox));
-//   return distance(this, other) < this.hitbox + other.hitbox;
-// };
-
-// LaserBeam.prototype.collideLeft = function () {
-//   return (this.x - this.hitbox) < 0;
-// };
-
-// LaserBeam.prototype.collideRight = function () {
-//   return (this.x + this.hitbox) > 1200;
-// };
-
-// LaserBeam.prototype.collideTop = function () {
-//   return (this.y - this.hitbox) < 0;
-// };
-
-// LaserBeam.prototype.collideBottom = function () {
-//   return (this.y + this.hitbox) > 600;
-// };
-LaserBeam.prototype.setID = function (theID) {
-  this.laserID = theID;
-}
 LaserBeam.prototype.update = function () {
+
+  this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+
+  if (this.getCollision("right") != null) {
+    this.x = this.getCollision("right").entity.collisionX + this.getCollision("right").entity.collisionWidth + 2;
+    this.velocityX = -this.velocityX;
+  } else if (this.getCollision("left") != null) {
+    this.x = this.getCollision("left").entity.collisionX - 2;
+    this.velocityX = -this.velocityX;
+  } else  if (this.getCollision("top") != null) {
+    this.velocityY = -this.velocityY;
+  } else if (this.getCollision("bottom") != null) {
+    this.y = this.getCollision("bottom").entity.collisionY + 1;
+    this.velocityY = -this.velocityY;
+  } else {
+    var x = this.end.x - this.start.x;
+    var y = this.end.y - this.start.y;
+    var l = Math.sqrt(x * x + y * y);
+    x = x / l;
+    y = y / l;
+    this.x += x * this.velocityX;
+    this.y += y * this.velocityY;
+  }
+
+
+
   for (let i = 0; i < this.game.entities.length; i++) {
     let ent = this.game.entities[i];
     if (ent.tag == this.enemyTag) {
-      // console.log("enter AI, object: " + ent.tag + " " +this.hitbox);
       if (ent.object !== this && this.collide(ent.object)) {
         console.log("Laserbeam collision!!!");
         this.deleteLaserbeam();
@@ -82,35 +89,48 @@ LaserBeam.prototype.update = function () {
     }
   }
 
-  // if (this.collideLeft() || this.collideRight()) {
-  //   if (this.collideLeft()) this.x = this.radius;
-  //   if (this.collideRight()) this.x = 800 - this.radius;
-  //   this.x += this.speed * this.game.clockTick;
-  //   this.y += this.speed * this.game.clockTick;
-  // }
 
-  // if (this.collideTop() || this.collideBottom()) {
-  //   if (this.collideTop()) this.y = this.radius;
-  //   if (this.collideBottom()) this.y = 800 - this.radius;
-  //   this.x += this.speed * this.game.clockTick;
-  //   this.y += this.speed * this.game.clockTick;
-  // }
-
-  var rect = canvas.getBoundingClientRect();
-  var x = this.end.x - this.start.x;
-  var y = this.end.y - this.start.y;
-  var l = Math.sqrt(x * x + y * y);
-  x = x / l;
-  y = y / l;
-  this.x += x * this.speed;
-  this.y += y * this.speed;
-
-  // console.log(this.x+" "+this.y);
-  if (this.x > 1200 || this.x < 0 || this.y > 600 || this.y < 0) {
+  // laser goes out of bounds
+  if (this.x > 1500 || this.x < 0 || this.y > 700 || this.y < 0) {
     this.deleteLaserbeam();
   }
 
   Entity.prototype.update.call(this);
+}
+
+LaserBeam.prototype.collide = function (xDisplacement, yDisplacement, tag) {
+  var collisions = [];
+  for (var i = 0; i < gameEngine.entities.length; i++) {
+    let theTag = gameEngine.entities[i].tag;
+    let current = gameEngine.entities[i];
+    if (theTag == tag) {
+      if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
+        this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
+        var direction = 'bottom';
+        if (this.y > current.collisionY + current.collisionHeight) {
+          direction = "top";
+        } else if (this.y + this.height > current.collisionY) {
+          direction = "bottom";
+        }
+        if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+          direction = "right";
+        } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+          direction = "left";
+        }
+        collisions.push({ entity: current, direction: direction });
+      }
+    }
+  }
+  // console.log(collisions);
+  return collisions;
+}
+LaserBeam.prototype.getCollision = function(direction) {
+  for(var i = 0; i < this.platformCollisions.length; i++) {
+      if (this.platformCollisions[i].direction == direction) {
+          return this.platformCollisions[i];
+      }
+  }
+  return null;
 }
 
 LaserBeam.prototype.deleteLaserbeam = function () {
@@ -146,8 +166,6 @@ LaserBeam.prototype.draw = function () {
 
   Entity.prototype.draw.call(this);
 }
-
-
 
 LaserBeam.prototype.getDegree = function () {
   let delta_x = (this.end.x - this.start.x);
@@ -235,7 +253,7 @@ LightsaberThrow.prototype.update = function () {
         deleteLightsaberThrow();
       }
     }
-    if (this.x > this.end.x ) {
+    if (this.x > this.end.x) {
       this.goBack = true;
     }
   } else {      // Throwing to the left side
@@ -260,7 +278,7 @@ LightsaberThrow.prototype.update = function () {
         deleteLightsaberThrow();
       }
     }
-    if (this.x < this.end.x ) {
+    if (this.x < this.end.x) {
       this.goBack = true;
     }
   }
@@ -270,7 +288,7 @@ LightsaberThrow.prototype.update = function () {
 }
 
 LightsaberThrow.prototype.draw = function () {
-  this.throwAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, 1.7);
+  this.throwAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, 1.4);
   Entity.prototype.draw.call(this);
 }
 
