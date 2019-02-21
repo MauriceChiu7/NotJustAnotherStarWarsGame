@@ -173,7 +173,7 @@ Dummy.prototype.update = function () {
            this.jumpingRightAnim.elapsedTime = 0;
            this.jumpingLeftAnim.elapsedTime = 0;
            this.jumping = false;
-       }
+       }/*
        if (this.distance > 0) {
           var totalHeight = 200;
           var jumpDistance = this.jumpingRightAnim.elapsedTime / this.jumpingRightAnim.totalTime;
@@ -187,10 +187,8 @@ Dummy.prototype.update = function () {
           var jumpDistance = this.jumpingLeftAnim.elapsedTime / this.jumpingLeftAnim.totalTime;
           if (jumpDistance > 0.5) {
              jumpDistance = 1 - jumpDistance;
-          }
-          var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-          this.y = 500 - height;
-       } 
+          }    
+       } */
     } 
   }
 
@@ -265,7 +263,7 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
               this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
               var direction = "";
-              //console.log(current);
+              console.log(current);
               if (gameEngine.click)
                 console.log("this.y: " + this.y + " current.collisionY " + current.collisionY + " current.collisionHeight: " + current.collisionHeight);
               if (this.y > current.collisionY + current.collisionHeight) {

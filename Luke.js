@@ -178,6 +178,7 @@ Luke.prototype.collide = function(xDisplacement, yDisplacement, tag) {
                 if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
                     this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
                     var direction = 'bottom';
+                //console.log(current);
                     if (this.y > current.collisionY + current.collisionHeight) {
                         direction = "top";
                     } else if (this.y + this.height > current.collisionY) {
