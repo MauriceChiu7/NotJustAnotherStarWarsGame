@@ -33,7 +33,6 @@ var center_y;
 var degree;
 var primaryWeapon = true;
 var mouseCoor = { x: 0, y: 0 };
-var playerCoor = { x: 0, y: 0 };
 /* Character's center. Used to calculate the angle at which the characters should aim their weapon at. */
 
 document.oncontextmenu = function () {
@@ -185,6 +184,7 @@ Character.prototype.update = function () {
     if (this.game.s) {                                   // Key S: Crouching
         this.crouching = true;
         this.standing = false;
+        blocking = false;
     }
     if (this.game.r) {                                  // Key R: Switching between primary and secondary weapon
         this.switching = true;
@@ -232,7 +232,7 @@ Character.prototype.update = function () {
                 let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
                 audio.play();
                 let rect = canvas.getBoundingClientRect();
-                playerCoor = { x: center_x, y: center_y };
+                let playerCoor = { x: center_x, y: center_y };
                 let endCoor = { x: this.game.clickx, y: this.game.clicky };
                 gameEngine.addEntity(new LaserBeam(playerCoor, endCoor, gameEngine));
             }
@@ -380,6 +380,7 @@ Character.prototype.update = function () {
     // Blocking
     if (blocking) {
         this.standing = false;
+        this.crouching = false;
     }
     // World wrapping
     if (this.x > 1200) {
@@ -620,6 +621,7 @@ function aimDirection(event) {
             degree = -180 - degree;
         }
     }
+
 }
 
 function stand() {
@@ -640,8 +642,8 @@ function lightsaberThrow(e) {
         audio.play();
         var rect = canvas.getBoundingClientRect();
         // var endCoor = {x: e.clientX - rect.left, y: e.clientY - rect.top};
-        playerCoor = { x: center_x, y: center_y };
-        console.log("character.js: " + playerCoor.x + " " + playerCoor.y);
+        let playerCoor = { x: center_x, y: center_y };
+        // console.log("character.js: " + playerCoor.x + " " + playerCoor.y);
         gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
     }
 }

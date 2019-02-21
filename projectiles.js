@@ -30,12 +30,15 @@ function LaserBeam(start, end, game) {
   this.shootAnim135Left = new Animation(this.spriteSheetLeft, 180, 60, 120, 70, frameDuration, 1, false, false);
 
   this.start = start;
-  this.speed = 30;
+  this.speed = 20;
   this.end = end;
   this.x = start.x;
   this.y = start.y;
   this.game = game;
   this.tag = "laser";
+  
+  this.laserID = null;
+  this.enemyTag = null;
 
   this.hitbox = 30;
   Entity.call(this, game, this.x, this.y);
@@ -64,15 +67,17 @@ LaserBeam.prototype.constructor = LaserBeam;
 // LaserBeam.prototype.collideBottom = function () {
 //   return (this.y + this.hitbox) > 600;
 // };
-
+LaserBeam.prototype.setID = function (theID) {
+  this.laserID = theID;
+}
 LaserBeam.prototype.update = function () {
   for (let i = 0; i < this.game.entities.length; i++) {
     let ent = this.game.entities[i];
-    if (ent.tag == "AI") {
+    if (ent.tag == this.enemyTag) {
       // console.log("enter AI, object: " + ent.tag + " " +this.hitbox);
       if (ent.object !== this && this.collide(ent.object)) {
         console.log("Laserbeam collision!!!");
-        deleteLaserbeam();
+        this.deleteLaserbeam();
       }
     }
   }
@@ -102,54 +107,59 @@ LaserBeam.prototype.update = function () {
 
   // console.log(this.x+" "+this.y);
   if (this.x > 1200 || this.x < 0 || this.y > 600 || this.y < 0) {
-    deleteLaserbeam();
+    this.deleteLaserbeam();
   }
 
   Entity.prototype.update.call(this);
 }
 
-LaserBeam.prototype.draw = function () {
-  let degree = getAngle(this.end.x, this.end.y);
-  let absDegree = Math.abs(degree);
-  if (absDegree >= 0 && absDegree < 11) {
-    (degree > 0) ? this.shootAnim0.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim0Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
-  } else if (absDegree >= 11 && absDegree < 33) {
-    (degree > 0) ? this.shootAnim22.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim22Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
-  } else if (absDegree >= 33 && absDegree < 56) {
-    (degree > 0) ? this.shootAnim45.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim45Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
-  } else if (absDegree >= 56 && absDegree < 78) {
-    (degree > 0) ? this.shootAnim67.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim67Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
-  } else if (absDegree >= 78 && absDegree < 112) {
-    (degree > 0) ? this.shootAnim90.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim90Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
-  } else if (absDegree >= 112 && absDegree < 146) {
-    (degree > 0) ? this.shootAnim135.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim135Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
-  } else {
-    (degree > 0) ? this.shootAnim135.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim135Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
-  }
-
-  Entity.prototype.draw.call(this);
-}
-
-function deleteLaserbeam() {
+LaserBeam.prototype.deleteLaserbeam = function () {
   for (var i = 0; i < gameEngine.entities.length; i++) {
-    if (gameEngine.entities[i] instanceof LaserBeam) {
-      console.log("Laserbeam deleted");
+    // if (gameEngine.entities[i] instanceof LaserBeam 
+    //   && gameEngine.entities[i].laserID == this.laserID) {  
+    if (gameEngine.entities[i] == this) {
+      // console.log("Laserbeam delthis.shoot();eted with tag" + this.laserID);
+      // console.log(gameEngine.entities[i].laserID == this.laserID);
       gameEngine.entities.splice(i, 1);
     }
   }
 }
 
-function getAngle(xCoor, yCoor) {
-  let delta_x = (xCoor - center_x);
-  let delta_y = (yCoor - center_y);
+LaserBeam.prototype.draw = function () {
+  let theDeg = this.getDegree()
+  let absDegree = Math.abs(theDeg);
+  if (absDegree >= 0 && absDegree < 11) {
+    (theDeg > 0) ? this.shootAnim0.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim0Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
+  } else if (absDegree >= 11 && absDegree < 33) {
+    (theDeg > 0) ? this.shootAnim22.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim22Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
+  } else if (absDegree >= 33 && absDegree < 56) {
+    (theDeg > 0) ? this.shootAnim45.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim45Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
+  } else if (absDegree >= 56 && absDegree < 78) {
+    (theDeg > 0) ? this.shootAnim67.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim67Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
+  } else if (absDegree >= 78 && absDegree < 112) {
+    (theDeg > 0) ? this.shootAnim90.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim90Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
+  } else if (absDegree >= 112 && absDegree < 146) {
+    (theDeg > 0) ? this.shootAnim135.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim135Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
+  } else {
+    (theDeg > 0) ? this.shootAnim135.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim135Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
+  }
+
+  Entity.prototype.draw.call(this);
+}
+
+
+
+LaserBeam.prototype.getDegree = function () {
+  let delta_x = (this.end.x - this.start.x);
+  let delta_y = (this.end.y - this.start.y);
   let hypotenuse = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
   let radian = Math.asin(delta_x / hypotenuse);
   let theDegree = radian * 180 / Math.PI;
-  if (yCoor > center_y) {
-    if (xCoor > center_x) {
-      degree = 180 - degree;
+  if (this.end.y > this.start.y) {
+    if (this.end.x > this.start.x) {
+      theDegree = 180 - theDegree;
     } else {
-      degree = -180 - degree;
+      theDegree = -180 - theDegree;
     }
   }
   return theDegree;
@@ -225,7 +235,7 @@ LightsaberThrow.prototype.update = function () {
         deleteLightsaberThrow();
       }
     }
-    if (this.x > this.end.x && this.y < this.end.y) {
+    if (this.x > this.end.x ) {
       this.goBack = true;
     }
   } else {      // Throwing to the left side
@@ -250,7 +260,7 @@ LightsaberThrow.prototype.update = function () {
         deleteLightsaberThrow();
       }
     }
-    if (this.x < this.end.x && this.y < this.end.y) {
+    if (this.x < this.end.x ) {
       this.goBack = true;
     }
   }
