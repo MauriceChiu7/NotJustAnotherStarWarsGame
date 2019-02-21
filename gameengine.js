@@ -139,7 +139,7 @@ GameEngine.prototype.startInput = function () {
 }
 
 GameEngine.prototype.addEntity = function (entity) {
-    console.log('added entity: ' + entity.tag);
+    // console.log('added entity: ' + entity.tag);
     this.entities.push(entity);
 }
 
@@ -161,7 +161,9 @@ GameEngine.prototype.update = function () {
 
     for (var i = 0; i < entitiesCount; i++) {
         var entity = this.entities[i];
-        entity.update();
+        if(entity !== undefined){
+            entity.update();
+        }
     }
 }
 
