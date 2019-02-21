@@ -12,10 +12,15 @@ function Trooper(game) {
     this.standRightAnim = new Animation(this.spriteSheetRight, 62, 74, 62, 74, frameDuration, 1, true, false);
     this.attackRightAnim = new Animation(this.spriteSheetRight, 0, 444, 62, 74, frameDuration, 9, true, false);
 
+    this.dyingRightAnim = new Animation(this.spriteSheetRight, 0, 3*74, 62, 74, frameDuration, 6, false, false);
+    this.deadRightAnim = new Animation(this.spriteSheetRight, 5*62, 3*74, 62, 74, frameDuration, 6, false, false);
+
     this.spriteSheetLeft = AM.getAsset("./img/trooper_left.png");
     this.walkLeftAnim = new Animation(this.spriteSheetLeft, 124, 74, 62, 74, frameDuration, 9, true, true);
     this.standLeftAnim = new Animation(this.spriteSheetLeft, 558, 74, 62, 74, frameDuration, 1, true, false);
     this.attackLeftAnim = new Animation(this.spriteSheetLeft, 124, 444, 62, 74, frameDuration, 9, true, true);
+
+    this.health = 3000; // added by maurice
 
     this.x = 600;
     this.y = 400;
@@ -26,6 +31,7 @@ function Trooper(game) {
     this.platformCollisions = [];
 
     this.speed = 100;
+    this.dead = false; // added by maurice
     this.walking = "walk";
     this.standing = "stand";
     this.attacking = "attack";
@@ -97,47 +103,58 @@ Trooper.prototype.getCollision = function (direction) {
 }
 
 Trooper.prototype.update = function () {
+    console.log('Trooper health: ' + this.health);
     this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
 
     this.distance = this.player.x - this.x;
-    if (Math.abs(this.distance) > 50) {
-        this.chanceToShoot = Math.round(Math.random() * 7);
 
-        if (this.chanceToShoot == 0) {
-            this.action = this.standing;
-            this.shotsFired = false;
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-                if (gameEngine.entities[i].tag == "trooperLaser") {
-                    // && gameEngine.entities[i].laserID == this.id) {
-                    // console.log("shotsFired");
-                    this.shotsFired = true;
+    if (this.health <= 0) {
+        this.dead = true;
+        this.walking = false;
+        this.standing = false;
+        this.attacking = false;
+    }
+
+    if (!this.dead){
+        if (Math.abs(this.distance) > 50) {
+            this.chanceToShoot = Math.round(Math.random() * 7);
+
+            if (this.chanceToShoot == 0) {
+                this.action = this.standing;
+                this.shotsFired = false;
+                for (var i = 0; i < gameEngine.entities.length; i++) {
+                    if (gameEngine.entities[i].tag == "trooperLaser") {
+                        // && gameEngine.entities[i].laserID == this.id) {
+                        // console.log("shotsFired");
+                        this.shotsFired = true;
+                    }
                 }
-            }
-            if (!this.shotsFired) {
-                this.shoot();
-            }
-            this.action = this.standing;
-        } 
-        // else {
+                if (!this.shotsFired) {
+                    this.shoot();
+                }
+                this.action = this.standing;
+            } 
+            // else {
+            //     this.action = this.walking;
+            //     if (this.distance > 70) {
+            //         this.xAcceleration += 1;
+            //     } else if (this.distance < -70) {
+            //         this.xAcceleration -= 1;
+            //     }
+            // }
+        // } else if (Math.abs(this.distance) < 70) {
         //     this.action = this.walking;
-        //     if (this.distance > 70) {
-        //         this.xAcceleration += 1;
-        //     } else if (this.distance < -70) {
+        //     if (this.distance > 0) {
+        //         this.xAcceleration += 1;            
+        //     } else if (this.distance < 0) {
         //         this.xAcceleration -= 1;
-        //     }
-        // }
-    // } else if (Math.abs(this.distance) < 70) {
-    //     this.action = this.walking;
-    //     if (this.distance > 0) {
-    //         this.xAcceleration += 1;            
-    //     } else if (this.distance < 0) {
-    //         this.xAcceleration -= 1;
-    //     }    
-    } else if (Math.abs(this.player.y - this.y) < 70) {
-        this.action = this.attacking;
-    } else {
-        this.action = this.standing;
+        //     }    
+        } else if (Math.abs(this.player.y - this.y) < 70) {
+            this.action = this.attacking;
+        } else {
+            this.action = this.standing;
+        }
     }
 
     // stops movement if collision encountered
@@ -196,6 +213,15 @@ Trooper.prototype.update = function () {
 
 Trooper.prototype.draw = function () {
     // this.drawRight();
+    if (this.dead && this.dyingRightAnim.isDone()) {
+        this.deadRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y, scale);
+    }
+
+    if (this.dead) {
+        this.dyingRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y, scale);
+    }
+    
+
     if (this.player.x + 50 > this.x) {
         this.drawRight();
     } else if (this.player.x + 50 < this.x) {
