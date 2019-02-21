@@ -29,6 +29,9 @@ AM.queueDownload("./img/laserbeams_angle.png");
 AM.queueDownload("./img/laserbeams_angle_left.png");
 AM.queueDownload("./img/macewindu_left.png");
 AM.queueDownload("./img/macewindu_right.png");
+AM.queueDownload("./img/trooper_right.png");
+AM.queueDownload("./img/trooper_left.png");
+
 AM.queueSound("./sounds/VaderVsLukeTheme.wav");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
@@ -572,10 +575,31 @@ function inGame() {
     gameEngine.init(ctx);
     gameEngine.start();
     // function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, frameWidth, frameHeight, collisionX, collisionY, collisionWidth, collisionHeight)
-    gameEngine.addEntity(new Platform(0, 500, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Actual ground. This is what luke is standing on.
-    gameEngine.addEntity(new Platform(0, 565, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 600, 1200, 100)); // Fake ground... the collision box is different than the pixles location.
-    gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 300, 100, 100));
+    // gameEngine.addEntity(new Platform(0, 500, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Actual ground. This is what luke is standing on.
+    // gameEngine.addEntity(new Platform(0, 565, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Fake ground... the collision box is different than the pixles location.
+    // gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 235, 300, 100));
+    
+    // longPlat / shortPlat / darkWall / electronics / smallCrate / bigCrate
+    // longPlat - collision width:  514, collision height 30
+    // shortPlat - 130, 30
+    // darkWall -  281, 186
+    // electronics - 64, 64
+    // smallCrate - 64, 64
+    // bigCrate - 96, 96
 
+    // function Platform(x, y, type, collisionWidth, collisionHeight) {
+    gameEngine.addEntity(new Platform(0, 389, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(0, 570, 'longPlat', 514, 30));
+    gameEngine.addEntity(new Platform(512, 570, 'longPlat', 514, 30));
+    gameEngine.addEntity(new Platform(1024, 570, 'longPlat', 514, 30));
+    gameEngine.addEntity(new Platform(120, 460, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(300, 320, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(600, 250, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(900, 320, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(950, 460, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
+    gameEngine.addEntity(new Platform(1000, 480, 'bigCrate', 96, 96));
+    gameEngine.addEntity(new Platform(600, 220, 'electronics', 64, 64));
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
@@ -585,6 +609,16 @@ function inGame() {
         // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
         if (testingLuke) {
             gameEngine.addEntity(new Character(gameEngine));
+
+            gameEngine.addEntity(new Trooper(gameEngine));
+            let trooper2 = new Trooper(gameEngine);            
+            trooper2.x = 300;
+            trooper2.y = 300-80;
+            gameEngine.addEntity(trooper2);
+            // let trooper3 = new Trooper(gameEngine);            
+            // trooper3.x -= 300;
+            // trooper3.y += 70;
+            // gameEngine.addEntity(trooper3);
             // gameEngine.addEntity(new Dummy(gameEngine));
         } else if (testingLukeWithPhys) {
             gameEngine.addEntity(new Luke());
@@ -604,3 +638,4 @@ function inGameFrame() {
         screenTransition(inGame);
     }
 }
+

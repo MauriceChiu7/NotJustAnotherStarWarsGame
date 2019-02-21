@@ -41,10 +41,10 @@ function Luke() {
     this.platformCollisions = [];
     this.tag = "player";
     // ^^^^^ JAKE's STUFF ^^^^^
-    
+
     canvas.addEventListener("keyup", lightsaberThrow);
     canvas.addEventListener("mousemove", aimDirection);
-    
+
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     // *********************** //
     // Right-Facing Animations //
@@ -260,6 +260,7 @@ Luke.prototype.update = function() {
         this.movingLeft = false;
         this.movingRight = false;
         this.standing = false;
+        blocking = false;
     }
     if (gameEngine.keyup) {
         if (gameEngine.keyReleased == 'd') {
@@ -359,7 +360,7 @@ Luke.prototype.update = function() {
                 let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
                 audio.play();
                 let rect = canvas.getBoundingClientRect();
-                playerCoor = { x: center_x, y: center_y };
+                let playerCoor = { x: center_x, y: center_y };
                 let endCoor = { x: this.game.clickx, y: this.game.clicky };
                 gameEngine.addEntity(new LaserBeam(playerCoor, endCoor, gameEngine));
             }
@@ -505,6 +506,7 @@ Luke.prototype.update = function() {
     // Blocking
     if (blocking) {
         this.standing = false;
+        this.crouching = false;
     }
     // World wrapping
     // if (this.x > 1200) {
@@ -725,6 +727,7 @@ function aimDirection(event) {
             degree = -180 - degree;
         }
     }
+
 }
 
 function lightsaberThrow(e) {
