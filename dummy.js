@@ -51,7 +51,7 @@ function Dummy(game) {
    }
 
 
-   Entity.call(this, game, 1000, 490);
+   Entity.call(this, game, 1000, 300);
 }
 
 Dummy.prototype = new Entity();
@@ -59,7 +59,7 @@ Dummy.prototype.constructor = Dummy;
 
 Dummy.prototype.update = function () {
   this.distance = this.player.x + 50 - this.x;
-  this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "platform");
+  this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
 
   if (this.getCollision("right") != null) {
       this.x = this.getCollision("right").entity.collisionX + this.getCollision("right").entity.collisionWidth + 2;
@@ -167,6 +167,7 @@ Dummy.prototype.update = function () {
     this.yAcceleration -= 13;
   }
 
+  //speed limits
   if (this.xAcceleration > 7) {
       this.xAcceleration = 7;
   } else if (this.xAcceleration < -7) {
@@ -180,7 +181,7 @@ Dummy.prototype.update = function () {
 
   }
   console.log("yAcceleration: "+ this.yAcceleration);
-  //this.y += this.yAcceleration;
+  this.y += this.yAcceleration;
   this.x += this.xAcceleration;
   } 
   Entity.prototype.update.call(this);
@@ -234,7 +235,7 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
         if (current.tag == tag) {
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
                 this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-                var direction = [];
+                var direction = "bottom";
                 if (this.y > current.collisionY + current.collisionHeight) {
                     direction = "top";
                 } else if (this.y + this.height > current.collisionY) {
@@ -254,10 +255,10 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
 }
 
 Dummy.prototype.getCollision = function(direction) {
-    for(var i = 0; i < this.platformCollisions.length; i++) {
-        if (this.platformCollisions[i].direction == direction) {
-            return this.platformCollisions[i];
-        }
-}
-    return null;
+  for(var i = 0; i < this.platformCollisions.length; i++) {
+      if (this.platformCollisions[i].direction == direction) {
+          return this.platformCollisions[i];
+      }
+  }
+  return null;
 }

@@ -17,7 +17,7 @@ var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
 
 var testingLuke = false;
 // var testingVader = false;
-var testingLukeWithPhys = false;
+var testingLukeWithPhys = true;
 
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
@@ -592,6 +592,7 @@ function inGame() {
             gameEngine.addEntity(new Vader());
             gameEngine.addEntity(new Dummy(gameEngine));
         }
+        gameEngine.addEntity(new Dummy(gameEngine));
     }
 
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
