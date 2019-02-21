@@ -247,14 +247,18 @@ Luke.prototype.update = function() {
         this.movingRight = true;
         this.movingLeft = false;
         this.standing = false;
+        this.crouching = false;
     }
     if (gameEngine.a) {
         this.movingRight = false;
         this.movingLeft = true;
         this.standing = false;
+        this.crouching = false;
     }
     if (gameEngine.s) {
         this.crouching = true;
+        this.movingLeft = false;
+        this.movingRight = false;
         this.standing = false;
     }
     if (gameEngine.keyup) {

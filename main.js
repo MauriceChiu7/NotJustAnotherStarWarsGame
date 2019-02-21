@@ -17,7 +17,7 @@ var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
 
 var testingLuke = false;
 // var testingVader = false;
-var testingLukeWithPhys = true;
+var testingLukeWithPhys = false;
 
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
