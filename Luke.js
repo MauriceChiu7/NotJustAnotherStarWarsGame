@@ -33,7 +33,7 @@ var rightClickIsDown = false;
 
 function Luke() {
     this.x = 600;
-    this.y = 300;
+    //this.y = 300;
     this.width = 50;
     this.height = 50;
     this.xAcceleration = 0;
@@ -161,7 +161,7 @@ function Luke() {
     this.speed = 500;
 
     this.ctx = gameEngine.ctx;
-    Entity.call(this, gameEngine, 300, 500);
+    Entity.call(this, gameEngine, 300, 100);
 }
 
 Luke.prototype = new Entity();

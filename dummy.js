@@ -37,10 +37,10 @@ function Dummy(game) {
    this.chanceToBlock = 0;
    this.lives = 3;
    this.width = 20;
-   this.platformCollisions = [];
    this.xAcceleration = 0;
    this.yAcceleration = 0;
    this.platformCollisions = [];
+   this.tag = "enemy";
 
    this.ctx = game.ctx;
    for (let i = 0; i < this.game.entities.length; i++) {
@@ -51,7 +51,7 @@ function Dummy(game) {
    }
 
 
-   Entity.call(this, game, 1000, 300);
+   Entity.call(this, game, 900, 400);
 }
 
 Dummy.prototype = new Entity();
@@ -73,11 +73,35 @@ Dummy.prototype.update = function () {
   } else if (this.getCollision("bottom") != null) {
       this.y = this.getCollision("bottom").entity.collisionY + 1;
       this.yAcceleration = 0;
+      console.log("bottom :" + this.getCollision("bottom").entity.collisionY);
   } else {
       this.yAcceleration += 0.4;
   }
 
-      // friction
+  if (gameEngine.click) {
+  console.log("x :" + this.x + " y :" + this.y);
+  console.log("distance: " + this.distance);
+
+  if (this.getCollision("right")) 
+    console.log("right x :" + this.getCollision("right").entity.collisionX + "right y:" + this.getCollision("right").entity.collisionY);
+  else
+    console.log("right :" + this.getCollision("right"));
+  if (this.getCollision("left")) 
+    console.log("left x :" + this.getCollision("left").entity.collisionX + "left y:" + this.getCollision("left").entity.collisionY);
+  else
+    console.log("left :" + this.getCollision("left"));
+  if (this.getCollision("top")) 
+    console.log("top x :" + this.getCollision("top").entity.collisionX + "top y:" + this.getCollision("top").entity.collisionY);
+  else
+    console.log("top :" + this.getCollision("top"));
+  if (this.getCollision("bottom")) 
+    console.log("bottom x :" + this.getCollision("bottom").entity.collisionX + "bottom y:" + this.getCollision("bottom").entity.collisionY);
+  else
+    console.log("bottom :" + this.getCollision("bottom"));
+
+}
+
+  // friction
   if (this.xAcceleration > 0) {
       this.xAcceleration -= 0.5;
       if (this.xAcceleration < 0) {
@@ -177,8 +201,6 @@ Dummy.prototype.update = function () {
       this.yAcceleration = 15;
   } else if (this.yAcceleration < -15) {
       this.yAcceleration = -15;
-  } else if (Math.abs(this.player.y - this.y) > 40) {
-
   }
   console.log("yAcceleration: "+ this.yAcceleration);
   this.y += this.yAcceleration;
@@ -205,9 +227,9 @@ Dummy.prototype.drawRight = function() {
     } else if (this.hurting){
       this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
     } else if (this.dead){
-      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y - 5, scale);
+      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y, scale);
     } else {
-      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y , scale);
+      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y + 12, scale);
     }
    Entity.prototype.draw.call(this);
 }
@@ -224,7 +246,7 @@ Dummy.prototype.drawLeft = function() {
   } else if (this.dead){
     this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y - 5, scale);
   } else {
-    this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y, scale);
+    this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y + 12, scale);
   }
 
 }
