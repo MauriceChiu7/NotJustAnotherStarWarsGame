@@ -171,21 +171,47 @@ Luke.prototype.collide = function(xDisplacement, yDisplacement, tag) {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         let theTag = gameEngine.entities[i].tag;
         let current = gameEngine.entities[i];
-        if (theTag == tag) {
-            if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-                this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-                var direction = 'bottom';
-                if (this.y > current.collisionY + current.collisionHeight) {
-                    direction = "top";
-                } else if (this.y + this.height > current.collisionY) {
-                    direction = "bottom";
+        if (tag === 'Platform'){
+            if (theTag == tag) {
+                if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
+                    this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
+                    var direction = 'bottom';
+                    if (this.y > current.collisionY + current.collisionHeight) {
+                        direction = "top";
+                    } else if (this.y + this.height > current.collisionY) {
+                        direction = "bottom";
+                    }
+                    if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+                        direction = "right";
+                    } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+                        direction = "left";
+                    }
+                    collisions.push({entity: current, direction: direction});
                 }
-                if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                    direction = "right";
-                } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                    direction = "left";
+            }
+        } else if (tag === 'enemy') {
+            if (theTag == tag) {
+                if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
+                    this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
+                    var direction = '';
+                    // if (this.y > current.collisionY + current.collisionHeight) {
+                    //     direction = "top";
+                    // } else if (this.y + this.height > current.collisionY) {
+                    //     direction = "bottom";
+                    // }
+                    if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+                        direction = "right";
+                        if (gameEngine.entities[i].attacking){
+                            this.health -= 5;
+                        }
+                    } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+                        direction = "left";
+                        if (gameEngine.entities[i].attacking){
+                            this.health -= 5;
+                        }
+                    }
+                    // collisions.push({entity: current, direction: direction});
                 }
-                collisions.push({entity: current, direction: direction});
             }
         }
     }
@@ -204,7 +230,7 @@ Luke.prototype.getCollision = function(direction) {
 
 Luke.prototype.update = function() {
     this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
-    // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
+    this.enemyCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'enemy');
 
     // stops movement if collision encountered
     if (this.getCollision("right") != null) {
@@ -327,17 +353,11 @@ Luke.prototype.update = function() {
         }
         primaryWeapon = !primaryWeapon;
     }
-    if (this.game.i) {                                  // Key I: Dying
+    if (this.health <= 0) {
         this.dying = !this.dying;
+        this.dead;
     }
-    // if (this.game.keyup && !this.jumping) {              // Keyup: Standing
-    //     this.standing = true;
-    //     // this.running = false;
-    //     this.crouching = false;
-    // }
-    // if (!blocking && !this.jumping) {
-    //     this.standing = true;
-    // }
+
     if (this.game.click) {
         if (primaryWeapon) {
             if (transitionCounter == 0) {
@@ -366,25 +386,6 @@ Luke.prototype.update = function() {
         }
     }
 
-    // Running See if (gameEngine.a)
-    // if (this.running) {
-    //     this.crouching = false;
-    //     this.standing = false;
-    //     blocking = false;
-    //     if (this.theD) {
-    //         if (this.x > this.game.mouseMoveX) {
-    //             this.x += this.game.clockTick * (this.speed * 0.5);
-    //         } else {
-    //             this.x += this.game.clockTick * this.speed;
-    //         }
-    //     } else {
-    //         if (this.x < this.game.mouseMoveX) {
-    //             this.x -= this.game.clockTick * (this.speed * 0.5);
-    //         } else {
-    //             this.x -= this.game.clockTick * this.speed;
-    //         }
-    //     }
-    // }
     canvas.addEventListener('mousedown', function (e) {
         rightClickIsDown = true;
         if (e.button == 2 && primaryWeapon) {
@@ -410,51 +411,28 @@ Luke.prototype.update = function() {
     });
     // Jumping
     if (this.jumping) {
-        // console.log('if (this.jumping)');
         this.crouching = false;
         this.attacking = false;
         this.switching = false;
         this.standing = false;
         blocking = false;
-        // this.running = false;
         var jumpDistance;
         if (primaryWeapon) {
             if (this.jumpRightAnim.isDone() || this.jumpLeftAnim.isDone()) {
-                // console.log('if (this.jumpAnim.isDone()');
                 this.jumpRightAnim.elapsedTime = 0;
                 this.jumpLeftAnim.elapsedTime = 0;
                 this.jumping = false;
-                // this.running = false;
                 this.standing = true;
             }
-            // if (degree >= 0) { // facing right
-            //     jumpDistance = this.jumpRightAnim.elapsedTime / this.jumpRightAnim.totalTime;
-            // } else {
-            //     jumpDistance = this.jumpLeftAnim.elapsedTime / this.jumpLeftAnim.totalTime;
-            // }
-
         } else {
             if (this.gunJumpRightAnim.isDone() || this.gunJumpLeftAnim.isDone()) {
                 console.log('if (this.gunJumpAnim.isDone()');
                 this.gunJumpRightAnim.elapsedTime = 0;
                 this.gunJumpLeftAnim.elapsedTime = 0;
                 this.jumping = false;
-                // this.running = false;
                 this.standing = true;
             }
-            // if (degree >= 0) { // facing right
-            //     jumpDistance = this.gunJumpRightAnim.elapsedTime / this.gunJumpRightAnim.totalTime;
-            // } else {
-            //     jumpDistance = this.gunJumpLeftAnim.elapsedTime / this.gunJumpLeftAnim.totalTime;
-            // }
         }
-        // var totalHeight = SCALE_LUKE * 300;
-
-        // if (jumpDistance > 0.5) {
-        //     jumpDistance = 1 - jumpDistance;
-        // }
-        // var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-        // this.y = this.ground - height;
     }
 
     // Attacking
@@ -512,12 +490,7 @@ Luke.prototype.update = function() {
         this.standing = false;
         this.crouching = false;
     }
-    // World wrapping
-    // if (this.x > 1200) {
-    //     this.x = 0;
-    // } else if (this.x < 0) {
-    //     this.x = 1200;
-    // }
+    
     center_x = this.x;
     center_y = this.y;
     Entity.prototype.update.call(this);
@@ -532,16 +505,6 @@ Luke.prototype.draw = function () {
         this.drawLeft();
     }
 }
-
-// Luke.prototype.draw = function() {
-//     if (this.getCollision("bottom") == null) {
-//         this.standRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
-//     } else if (this.jumping) {
-//         this.jumpRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
-//     } else {
-//         this.standRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
-//     }
-// }
 
 Luke.prototype.drawRight = function () {
     if (primaryWeapon) { // If the character is using their primaryWeapon
