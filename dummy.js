@@ -1,5 +1,6 @@
 var scale = 1;
 var canvas = document.getElementById("gameWorld");
+var height = 50;
 
 function Dummy(game) {
    //right
@@ -36,7 +37,10 @@ function Dummy(game) {
    this.game = game;
    this.chanceToBlock = 0;
    this.lives = 3;
-   this.width = 20;
+   this.x = 900;
+   this.y = 400;
+   //this.width = 20;
+   //this.height = 50;
    this.xAcceleration = 0;
    this.yAcceleration = 0;
    this.platformCollisions = [];
@@ -98,6 +102,7 @@ Dummy.prototype.update = function () {
   else
     console.log("bottom :" + this.getCollision("bottom"));
 
+
 }
 
   // friction
@@ -114,7 +119,7 @@ Dummy.prototype.update = function () {
   }
 
 
-  if (this.distance > 70 && Math.abs(this.player.y - this.y) < 50) {
+  if (this.distance > 60) {
     this.x += this.game.clockTick * this.speed;
     this.chanceToBlock = Math.round(Math.random());
     this.block =false;
@@ -122,7 +127,7 @@ Dummy.prototype.update = function () {
     this.jumping = false;
     this.hurting = false;
     this.dead = false;
-  } else if (this.distance < -70 && Math.abs(this.player.y - this.y) < 50) {
+  } else if (this.distance < -60) {
     this.x -= this.game.clockTick * this.speed;
     this.chanceToBlock = Math.round(Math.random());
     this.block =false;
@@ -130,9 +135,13 @@ Dummy.prototype.update = function () {
     this.jumping = false;
     this.hurting = false;
     this.dead = false;
-  } else if (!this.block && !this.attack && Math.abs(this.player.y - this.y) < 50) {
+  } else if (!this.block && !this.attack && Math.abs(this.player.y - this.y) < 100
+    && this.getCollision("bottom") != null) {
 
     this.chanceToBlock = Math.round(Math.random()*5);
+    this.blocking =false;
+    this.attack = false;
+    this.jumping = false;
     // this.chanceToBlock = 1;
     if (this.chanceToBlock === 1){
       this.block = true;
@@ -142,16 +151,13 @@ Dummy.prototype.update = function () {
     if (this.player.attacking) {
       // this.blocking =false;
       this.chanceToBlock = -1;
-      this.blocking =false;
-      this.attack = false;
-      this.jumping = false;
       this.hurting = true;
       this.lives--;
       if (this.lives ===0){
         this.dead = true;
       }
     } 
-  }else if (Math.abs(this.player.y - this.y) > 50) {
+  }else if (this.player.y - this.y < -100) {
     this.block =false;
     this.attack = false;
     this.hurting = false;
@@ -162,7 +168,6 @@ Dummy.prototype.update = function () {
        this.x -= this.game.clockTick*this.speed;
     } else {
        this.jumping = true;
-       console.log(this.jumping);
        if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
            this.jumpingRightAnim.elapsedTime = 0;
            this.jumpingLeftAnim.elapsedTime = 0;
@@ -219,11 +224,11 @@ Dummy.prototype.draw = function() {
 Dummy.prototype.drawRight = function() {
       
     if(this.block){
-      this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 20, this.y - 10, scale);
+      this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 20, this.y + 5, scale);
     } else if (this.jumping) {
       this.jumpingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
     } else if (this.attack) {
-      this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 90, this.y - 20, scale);
+      this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 85, this.y , scale);
     } else if (this.hurting){
       this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
     } else if (this.dead){
@@ -236,11 +241,11 @@ Dummy.prototype.drawRight = function() {
 
 Dummy.prototype.drawLeft = function() {
   if(this.block){
-    this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x -5 , this.y - 5, scale);
+    this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x -5 , this.y + 5, scale);
   } else if (this.jumping) {
     this.jumpingLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, scale);
   } else if (this.attack) {
-    this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 35, this.y -15, scale);
+    this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y , scale);
   } else if (this.hurting){
     this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
   } else if (this.dead){
@@ -253,23 +258,32 @@ Dummy.prototype.drawLeft = function() {
 Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
     var collisions = [];
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        var current = gameEngine.entities[i];
-        if (current.tag === tag) {
-            if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-                this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-                var direction = "bottom";
-                if (this.y > current.collisionY + current.collisionHeight) {
-                    direction = "top";
-                } else if (this.y + this.height > current.collisionY) {
-                    direction = "bottom";
-                }
-                if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                    direction = "right";
-                } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                    direction = "left";
-                }
-                collisions.push({entity: current, direction: direction});
+        let current = gameEngine.entities[i];
+        let theTag = gameEngine.entities[i].tag;
+        if (theTag === tag) {
+            if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX /*&&
+              this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY*/) {
+              var direction = "";
+              console.log(current);
+              if (gameEngine.click)
+                console.log("this.y: " + this.y + " current.collisionY " + current.collisionY + " current.collisionHeight: " + current.collisionHeight);
+              if (this.y > current.collisionY + current.collisionHeight) {
+                  direction = "top";
+              } 
+              if (this.y + height > current.collisionY) {
+                  direction = "bottom";
+              }
+              if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth 
+                && this.x + xDisplacement > current.collisionX) {
+                  direction = "right";
+              } 
+              if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth 
+                && this.x + xDisplacement > current.collisionX) {
+                  direction = "left";
+              }
+              collisions.push({entity: current, direction: direction});
             }
+            
         }
     }
     // console.log(collisions);
