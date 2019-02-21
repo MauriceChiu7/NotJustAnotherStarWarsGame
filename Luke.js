@@ -63,7 +63,8 @@ function Luke() {
     this.attk2RightAnim = new Animation(rightLukeSpriteSheet, 0, 1960, 144, 140, 0.07, 5, false, false);
     this.saberOnRightAnim = new Animation(rightLukeSpriteSheet, 0, 1750, 96, 70, 0.1, 3, false, false);
     this.saberOffRightAnim = new Animation(rightLukeSpriteSheet, 0, 1750, 96, 70, 0.1, 3, false, true);
-    this.dyingRightAnim = new Animation(rightLukeSpriteSheet, 0, 630, 96, 70, 0.5, 6, false, false);
+    this.dyingRightAnim = new Animation(rightLukeSpriteSheet, 0, 630, 96, 70, 0.2, 6, false, false);
+    this.deadAnim = new Animation(rightLukeSpriteSheet, 5*96, 630, 96, 70, 1, 1, true, false);
 
     /** Edit by Steven **/
     // Secondary weapon animations
@@ -515,6 +516,9 @@ Luke.prototype.update = function() {
 }
 
 Luke.prototype.draw = function () {
+    if (this.dead && this.dyingRightAnim.isDone()) {
+        this.deadAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
+    }
     if (this.game.mouseMoveX + cursorOffset > this.x) {
         //console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
         this.drawRight();
@@ -549,7 +553,7 @@ Luke.prototype.drawRight = function () {
             this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
         }
         if (this.dying) {
-            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
         }
         if (this.movingRight && !this.jumping && !this.attacking) {
             this.runRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
@@ -570,7 +574,7 @@ Luke.prototype.drawRight = function () {
             this.gunJumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
         }
         if (this.dying) {
-            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
         }
         if (this.movingRight && !this.jumping && !this.attacking) {
             this.gunRunRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
@@ -606,7 +610,7 @@ Luke.prototype.drawLeft = function () {
             this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
         }
         if (this.dying) {
-            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
         }
         if (this.movingLeft && !this.jumping && !this.attacking) {
             this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
@@ -627,7 +631,7 @@ Luke.prototype.drawLeft = function () {
             this.gunJumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
         }
         if (this.dying) {
-            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
         }
         if (this.movingLeft && !this.jumping && !this.attacking) {
             this.gunRunLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
