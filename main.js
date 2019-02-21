@@ -582,24 +582,40 @@ function inGame() {
     // longPlat / shortPlat / darkWall / electronics / smallCrate / bigCrate
     // longPlat - collision width:  514, collision height 30
     // shortPlat - 130, 30
-    // darkWall -  281, 186
+    // darkWall -  382, 192
     // electronics - 64, 64
     // smallCrate - 64, 64
     // bigCrate - 96, 96
 
     // function Platform(x, y, type, collisionWidth, collisionHeight) {
     gameEngine.addEntity(new Platform(0, 389, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(382, 389, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(764, 389, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(1146, 389, 'darkWall', 0, 0));
+
+    gameEngine.addEntity(new Platform(0, 197, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(382, 197, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(764, 197, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(1146, 197, 'darkWall', 0, 0));
+
+    gameEngine.addEntity(new Platform(0, 5, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(382, 5, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(764, 5, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(1146, 5, 'darkWall', 0, 0));
+    
     gameEngine.addEntity(new Platform(0, 570, 'longPlat', 514, 30));
     gameEngine.addEntity(new Platform(512, 570, 'longPlat', 514, 30));
     gameEngine.addEntity(new Platform(1024, 570, 'longPlat', 514, 30));
+
     gameEngine.addEntity(new Platform(120, 460, 'shortPlat', 130, 30));
     gameEngine.addEntity(new Platform(300, 320, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(600, 250, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(900, 320, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(550, 250, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(850, 320, 'shortPlat', 130, 30));
     gameEngine.addEntity(new Platform(950, 460, 'shortPlat', 130, 30));
+
     gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
-    gameEngine.addEntity(new Platform(1000, 480, 'bigCrate', 96, 96));
-    gameEngine.addEntity(new Platform(600, 220, 'electronics', 64, 64));
+    gameEngine.addEntity(new Platform(1000, 478, 'bigCrate', 96, 96));
+    gameEngine.addEntity(new Platform(600, 190, 'electronics', 0, 0));
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
@@ -639,3 +655,16 @@ function inGameFrame() {
     }
 }
 
+function gameEnds() {
+    ctx.save();
+    ctx.font = "20px monospace";
+    ctx.fillStyle = "WHITE";
+    ctx.textAlign = "center";
+    for (var i = 0; i < gameEngine.entities[i]; i++) {
+        if (gameEngine.entities[i].tag === 'player' && gameEngine.entities[i].dead === true) {
+            ctx.fillText("You Failed. Refresh Page to Start a New Match", canvas.width/2, canvas.height/2 + 150);        
+        } 
+        // else if (gameEngine.entities[i].tag === 'enemy' )
+    }
+    ctx.restore();
+}

@@ -397,7 +397,7 @@ function Platform(x, y, type, collisionWidth, collisionHeight) {
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     this.longPlatFrame = new Animation(this.mapAsset, 0, 700, 514, 30, 1, 1, true, false);
     this.shortPlatFrame = new Animation(this.mapAsset, 0, 700, 130, 30, 1, 1, true, false);
-    this.darkWallFrame = new Animation(this.mapAsset, 0, 512, 281, 186, 1, 1, true, false);
+    this.darkWallFrame = new Animation(this.mapAsset, 0, 512, 382, 192, 1, 1, true, false);
     this.electronicsFrame = new Animation(this.mapAsset, 64, 126, 64, 64, 1, 1, true, false);
     this.smallCrateFrame = new Animation(this.mapAsset, 160, 125, 64, 64, 1, 1, true, false);
     this.bigCrateFrame = new Animation(this.mapAsset, 576, 254, 96, 96, 1, 1, true, false);
@@ -433,7 +433,7 @@ function Platform(x, y, type, collisionWidth, collisionHeight) {
             break;
     }
     
-    this.collisionWidth = collisionWidth;
+    this.collisionWidth = collisionWidth + 25;
     this.collisionHeight = collisionHeight;
 }
 

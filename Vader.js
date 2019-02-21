@@ -1,6 +1,7 @@
 function Vader() {
     canvas.addEventListener("click", vaderClick);
-    this.spritesheet = AM.getAsset("./img/vader_sprites_left - Copy.png");
+    this.vaderLeft = AM.getAsset("./img/vader_sprites_left - Copy.png");
+    this.vaderRight = AM.getAsset('./img/vader_sprites_right')
     this.x = 600;
     this.y = 300;
     this.width = 50;
@@ -9,12 +10,12 @@ function Vader() {
     this.yAcceleration = 0;
 
 // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
-    this.attack1Anim = new Animation(this.spritesheet, 0, 320, 120, 80, 0.05, 13, false, false);
-    this.attack2Anim = new Animation(this.spritesheet, 0, 480, 120, 80, 0.05, 11, false, false);
-    // this.idleAnim = new Animation(this.spritesheet, 720, 160, 120, 80, 1, 2, true, false);
-    this.idleAnim = new Animation(this.spritesheet, 720, 160, 120, 80, 1, 2, true, false);
-    this.jumpAnim = new Animation(this.spritesheet, 0, 720, 120, 169, 0.2, 5, true, false);
-    this.walkLeftAnim = new Animation(this.spritesheet, 0, 940, 80, 80, 0.15, 8, true, false);
+    this.attack1Anim = new Animation(this.vaderLeft, 0, 320, 120, 80, 0.05, 13, false, false);
+    this.attack2Anim = new Animation(this.vaderLeft, 0, 480, 120, 80, 0.05, 11, false, false);
+    // this.idleAnim = new Animation(this.vaderLeft, 720, 160, 120, 80, 1, 2, true, false);
+    this.idleAnim = new Animation(this.vaderLeft, 720, 160, 120, 80, 1, 2, true, false);
+    this.jumpAnim = new Animation(this.vaderLeft, 0, 720, 120, 169, 0.2, 5, true, false);
+    this.walkLeftAnim = new Animation(this.vaderLeft, 0, 940, 80, 80, 0.15, 8, true, false);
     this.attacking = false;
     this.switchAttack = true;
     this.jumping = false;
