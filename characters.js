@@ -123,6 +123,21 @@ Vader.prototype.update = function() {
         this.switchAttack = !this.switchAttack;
     }
 
+    // if (this.jumpAnim.isDone()) {
+    //     this.jumpAnim.elapsedTime = 0;
+    //     this.jumping = false;
+    // }
+
+    // if (this.jumping) {
+    //     var totalHeight = 200;
+    //     var jumpDistance = this.jumpAnim.elapsedTime / this.jumpAnim.totalTime;
+    //     if (jumpDistance > 0.5) {
+    //         jumpDistance = 1 - jumpDistance;
+    //     }
+    //     var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
+    //     this.y = 500 - height;
+    // }
+
     if (this.movingLeft) {
         if (this.attacking) {
             this.xAcceleration -= 1;

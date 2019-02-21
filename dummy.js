@@ -19,7 +19,7 @@ function Dummy(game) {
    this.attackLeftAnim = new Animation(leftWinduSprite, 20, 1790, 90, 75, 0.15, 8, true, false);
    this.blockLeftAnim = new Animation(leftWinduSprite, 215, 775, 55, 65, 1, 1, true, false);
    this.hurtLeftAnim = new Animation(leftWinduSprite, 0 , 1885, 40, 70, 0.2, 1, true, false);
-   this.jumpingRightAnim = new Animation(leftWinduSprite, 0, 1285, 30, 70, 1, 1, true, false);
+   this.jumpingLeftAnim = new Animation(leftWinduSprite, 0, 1285, 30, 70, 1, 1, true, false);
 
 
 
@@ -39,7 +39,11 @@ function Dummy(game) {
    this.game = game;
    this.chanceToBlock = 0;
    this.lives = 3;
-   this.hitbox = 30;
+   this.width = 20;
+   this.platformCollisions = [];
+   this.xAcceleration = 0;
+   this.yAcceleration = 0;
+   this.platformCollisions = [];
 
    this.ctx = game.ctx;
    for (let i = 0; i < this.game.entities.length; i++) {
@@ -50,61 +54,61 @@ function Dummy(game) {
    }
 
 
-   Entity.call(this, game, 770, 490);
+   Entity.call(this, game, 1000, 500);
 }
 
 Dummy.prototype = new Entity();
 Dummy.prototype.constructor = Dummy;
 
 Dummy.prototype.update = function () {
-   this.distance = this.player.x + 50 - this.x;
-   // this.attack = false;
-   // this.standing = false;
+  this.distance = this.player.x + 50 - this.x;
+  // this.attack = false;
+  // this.standing = false;
 
-   if (this.distance > 70) {
-      this.x += this.game.clockTick * this.speed;
-      // this.chanceToBlock = Math.round(Math.random());
-      this.block =false;
-      this.attack = false;
-      this.standing = false;
-      this.hurting = false;
-      this.dead = false;
-   } else if (this.distance < -70) {
-      this.x -= this.game.clockTick * this.speed;
-      // this.chanceToBlock = Math.round(Math.random());
-      this.block =false;
-      this.attack = false;
-      this.standing = false;
-      this.hurting = false;
-      this.dead = false;
-   } else if (!this.block && !this.attack && Math.abs(this.player.y - this.y) < 40) {
-      this.chanceToBlock = Math.round(Math.random()*5);
-      // this.chanceToBlock = 1;
-      if (this.chanceToBlock == 1){
-       this.block = true;
-      } else if (this.chanceToBlock === 0){
-       this.attack = true;
-      } else {
-       this.standing = true;
-      }
-
-      // if (this.player.attacking && this.standing) {
-      if (this.player.attacking) {
-       this.chanceToBlock = -1;
-       this.blocking =false;
-       this.attack = false;
-       this.standing = false;
-       this.hurting = true;
-       this.lives--;
-       if (this.lives ===0){
-         this.dead = true;
-       }
-       // console.log("Luke attacking: " + this.player.attacking + ", hurting: "+this.hurting + ", lives: " + this.lives);
-      }
-   } else if (Math.abs(this.player.y - this.y) > 40) {
+  if (this.distance > 70) {
+     this.x += this.game.clockTick * this.speed;
+     // this.chanceToBlock = Math.round(Math.random());
+     this.block =false;
+     this.attack = false;
+     this.standing = false;
+     this.hurting = false;
+     this.dead = false;
+  } else if (this.distance < -70) {
+     this.x -= this.game.clockTick * this.speed;
+     // this.chanceToBlock = Math.round(Math.random());
+     this.block =false;
+     this.attack = false;
+     this.standing = false;
+     this.hurting = false;
+     this.dead = false;
+  } else if (!this.block && !this.attack && Math.abs(this.player.y - this.y) < 40) {
+     this.chanceToBlock = Math.round(Math.random()*5);
+     // this.chanceToBlock = 1;
+     if (this.chanceToBlock == 1){
+      this.block = true;
+     } else if (this.chanceToBlock === 0){
+      this.attack = true;
+     } else {
       this.standing = true;
-   } 
-   Entity.prototype.update.call(this);
+     }
+
+     // if (this.player.attacking && this.standing) {
+     if (this.player.attacking) {
+      this.chanceToBlock = -1;
+      this.blocking =false;
+      this.attack = false;
+      this.standing = false;
+      this.hurting = true;
+      this.lives--;
+      if (this.lives ===0){
+        this.dead = true;
+      }
+      // console.log("Luke attacking: " + this.player.attacking + ", hurting: "+this.hurting + ", lives: " + this.lives);
+     }
+  } else if (Math.abs(this.player.y - this.y) > 40) {
+     this.standing = true;
+  } 
+  Entity.prototype.update.call(this);
 };
 
 Dummy.prototype.draw = function() {
@@ -114,18 +118,20 @@ Dummy.prototype.draw = function() {
       this.drawLeft();
    }
 }
-
 Dummy.prototype.drawRight = function() {
+      
     if(this.block){
-      this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 20, this.y - 5, scale);
+      this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 20, this.y  - 5, scale);
+    } else if (this.jumping) {
+      this.jumpingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
     } else if (this.attack) {
-      this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 60, this.y - 15, scale);
+      this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 20, this.y , scale);
     } else if (this.standing){
-      this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 20, this.y + 10, scale);
+      this.hurtRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
     } else if (this.hurting){
-      this.hurtRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
+      this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
     } else if (this.dead){
-      this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
+      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y - 5, scale);
     } else {
       this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y + 5, scale);
     }
@@ -134,19 +140,21 @@ Dummy.prototype.drawRight = function() {
 
 Dummy.prototype.drawLeft = function() {
   if(this.block){
-    this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x -5 , this.y - 5, scale);
+    this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x -5 , this.y - 15, scale);
+  } else if (this.jumping) {
+    this.jumpingLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
   } else if (this.attack) {
-    this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 50, this.y - 15, scale);
+    this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y , scale);
   } else if (this.standing){
-    this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y  + 10, scale);
+    this.hurtLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
   } else if (this.hurting){
-    this.hurtLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
+    this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
   } else if (this.dead){
-    this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 20, scale);
+    this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y - 5, scale);
   } else {
     this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y + 5, scale);
   }
-   Entity.prototype.draw.call(this);
+
 }
 /*
 Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
@@ -180,6 +188,6 @@ Dummy.prototype.getCollision = function(direction) {
         if (this.platformCollisions[i].direction == direction) {
             return this.platformCollisions[i];
         }
-    }
+}
     return null;
 }*/
