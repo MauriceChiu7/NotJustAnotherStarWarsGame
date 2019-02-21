@@ -73,7 +73,6 @@ Dummy.prototype.update = function () {
   } else if (this.getCollision("bottom") != null) {
       this.y = this.getCollision("bottom").entity.collisionY + 1;
       this.yAcceleration = 0;
-      console.log("bottom :" + this.getCollision("bottom").entity.collisionY);
   } else {
       this.yAcceleration += 0.4;
   }
@@ -132,25 +131,27 @@ Dummy.prototype.update = function () {
     this.hurting = false;
     this.dead = false;
   } else if (!this.block && !this.attack && Math.abs(this.player.y - this.y) < 50) {
+
     this.chanceToBlock = Math.round(Math.random()*5);
     // this.chanceToBlock = 1;
     if (this.chanceToBlock === 1){
-     this.block = true;
+      this.block = true;
     } else if (this.chanceToBlock === 0){
      this.attack = true;
     } 
-    if (this.player.attacking || this.blocking) {
-     // this.blocking =false;
-     this.chanceToBlock = -1;
-     this.blocking =false;
-     this.attack = false;
-     this.jumping = false;
-     this.hurting = true;
-     this.lives--;
-     if (this.lives ===0){
-       this.dead = true;
-     }
-  } else if (Math.abs(this.player.y - this.y) > 50) {
+    if (this.player.attacking) {
+      // this.blocking =false;
+      this.chanceToBlock = -1;
+      this.blocking =false;
+      this.attack = false;
+      this.jumping = false;
+      this.hurting = true;
+      this.lives--;
+      if (this.lives ===0){
+        this.dead = true;
+      }
+    } 
+  }else if (Math.abs(this.player.y - this.y) > 50) {
     this.block =false;
     this.attack = false;
     this.hurting = false;
@@ -161,11 +162,11 @@ Dummy.prototype.update = function () {
        this.x -= this.game.clockTick*this.speed;
     } else {
        this.jumping = true;
+       console.log(this.jumping);
        if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
            this.jumpingRightAnim.elapsedTime = 0;
            this.jumpingLeftAnim.elapsedTime = 0;
            this.jumping = false;
-           this.walking = true;
        }
        if (this.distance > 0) {
           var totalHeight = 200;
@@ -202,10 +203,9 @@ Dummy.prototype.update = function () {
   } else if (this.yAcceleration < -15) {
       this.yAcceleration = -15;
   }
-  console.log("yAcceleration: "+ this.yAcceleration);
+  //console.log("yAcceleration: "+ this.yAcceleration);
   this.y += this.yAcceleration;
-  this.x += this.xAcceleration;
-  } 
+  this.x += this.xAcceleration; 
   Entity.prototype.update.call(this);
 };
 
@@ -254,7 +254,7 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
     var collisions = [];
     for (var i = 0; i < gameEngine.entities.length; i++) {
         var current = gameEngine.entities[i];
-        if (current.tag == tag) {
+        if (current.tag === tag) {
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
                 this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
                 var direction = "bottom";
