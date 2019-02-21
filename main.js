@@ -612,13 +612,13 @@ function inGame() {
 
             gameEngine.addEntity(new Trooper(gameEngine));
             let trooper2 = new Trooper(gameEngine);            
-            trooper2.x = 300;
+            trooper2.x = 900;
             trooper2.y = 300-80;
             gameEngine.addEntity(trooper2);
-            // let trooper3 = new Trooper(gameEngine);            
-            // trooper3.x -= 300;
-            // trooper3.y += 70;
-            // gameEngine.addEntity(trooper3);
+            let trooper3 = new Trooper(gameEngine);            
+            trooper3.x += 200;
+            trooper3.y += 70;
+            gameEngine.addEntity(trooper3);
             // gameEngine.addEntity(new Dummy(gameEngine));
         } else if (testingLukeWithPhys) {
             gameEngine.addEntity(new Luke());
