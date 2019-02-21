@@ -29,6 +29,9 @@ AM.queueDownload("./img/laserbeams_angle.png");
 AM.queueDownload("./img/laserbeams_angle_left.png");
 AM.queueDownload("./img/macewindu_left.png");
 AM.queueDownload("./img/macewindu_right.png");
+AM.queueDownload("./img/trooper_right.png");
+AM.queueDownload("./img/trooper_left.png");
+
 AM.queueSound("./sounds/VaderVsLukeTheme.wav");
 AM.queueSound("./sounds/Swing2.WAV");
 AM.queueSound("./sounds/MenuSelect.wav");
@@ -606,6 +609,16 @@ function inGame() {
         // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
         if (testingLuke) {
             gameEngine.addEntity(new Character(gameEngine));
+
+            gameEngine.addEntity(new Trooper(gameEngine));
+            let trooper2 = new Trooper(gameEngine);            
+            trooper2.x = 300;
+            trooper2.y = 300-80;
+            gameEngine.addEntity(trooper2);
+            // let trooper3 = new Trooper(gameEngine);            
+            // trooper3.x -= 300;
+            // trooper3.y += 70;
+            // gameEngine.addEntity(trooper3);
             // gameEngine.addEntity(new Dummy(gameEngine));
         } else if (testingLukeWithPhys) {
             gameEngine.addEntity(new Luke());
@@ -624,3 +637,4 @@ function inGameFrame() {
         screenTransition(inGame);
     }
 }
+
