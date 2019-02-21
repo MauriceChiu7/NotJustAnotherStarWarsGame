@@ -433,7 +433,7 @@ function Platform(x, y, type, collisionWidth, collisionHeight) {
             break;
     }
     
-    this.collisionWidth = collisionWidth;
+    this.collisionWidth = collisionWidth + 25;
     this.collisionHeight = collisionHeight;
 }
 

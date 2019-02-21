@@ -5,9 +5,6 @@ const rightToLeftOffset = 92;//144
 const cursorOffset = -48; // -20 // Question
 var canvas = document.getElementById("gameWorld");
 
-/* Set to true when debugging */
-var debug = false;
-
 /*
 Use this height difference whenever you are using luke_sprites_right.png and that when the height of
 the frame is 2-high. This value is intentionally set to negative. When you apply it to y coordinates, just "+" them.
@@ -41,6 +38,8 @@ function Luke() {
     this.platformCollisions = [];
     this.tag = "player";
     // ^^^^^ JAKE's STUFF ^^^^^
+
+    this.health = 100;
 
     canvas.addEventListener("keyup", lightsaberThrow);
     canvas.addEventListener("mousemove", aimDirection);
@@ -402,6 +401,11 @@ Luke.prototype.update = function() {
         rightClickIsDown = false;
         if (e.button == 2 && primaryWeapon) {
             blocking = false;
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                if (gameEngine.entities[i].tag === 'player') {
+                    gameEngine.entities[i].standing = true;
+                };
+            }
         }
     });
     // Jumping
@@ -561,7 +565,7 @@ Luke.prototype.drawRight = function () {
             }
         }
         if (this.jumping) {
-            this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
         }
         if (this.dying) {
             this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
@@ -618,7 +622,7 @@ Luke.prototype.drawLeft = function () {
             }
         }
         if (this.jumping) {
-            this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
         }
         if (this.dying) {
             this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
@@ -657,21 +661,21 @@ var absDegree;
 Luke.prototype.drawGunStanding = function () {
     absDegree = Math.abs(degree);
     if (absDegree >= 0 && absDegree < 11) {
-        (degree > 0) ? this.gunStanding0RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding0LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding0RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding0LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
     } else if (absDegree >= 11 && absDegree < 33) {
-        (degree > 0) ? this.gunStanding22RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding22LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding22RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding22LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
     } else if (absDegree >= 33 && absDegree < 56) {
-        (degree > 0) ? this.gunStanding45RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding45LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding45RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding45LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
     } else if (absDegree >= 56 && absDegree < 78) {
-        (degree > 0) ? this.gunStanding67RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding67LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding67RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding67LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
     } else if (absDegree >= 78 && absDegree < 112) {
-        (degree > 0) ? this.gunStanding90RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding90LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding90RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding90LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
     } else if (absDegree >= 112 && absDegree < 146) {
-        (degree > 0) ? this.gunStanding135RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding135LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding135RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding135LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
     } else if (absDegree >= 146 && absDegree <= 180) {
-        (degree > 0) ? this.gunStanding157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
     } else {
-        (degree > 0) ? this.gunStanding157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 20, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
     }
     return degree;
 }

@@ -599,7 +599,7 @@ function inGame() {
     gameEngine.addEntity(new Platform(950, 460, 'shortPlat', 130, 30));
     gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
     gameEngine.addEntity(new Platform(1000, 480, 'bigCrate', 96, 96));
-    gameEngine.addEntity(new Platform(600, 220, 'electronics', 64, 64));
+    gameEngine.addEntity(new Platform(600, 190, 'electronics', 0, 0));
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
@@ -608,8 +608,6 @@ function inGame() {
         // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
         // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
         if (testingLuke) {
-            gameEngine.addEntity(new Character(gameEngine));
-
             gameEngine.addEntity(new Trooper(gameEngine));
             let trooper2 = new Trooper(gameEngine);            
             trooper2.x = 300;
