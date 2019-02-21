@@ -161,7 +161,6 @@ GameEngine.prototype.update = function () {
 
     for (var i = 0; i < entitiesCount; i++) {
         var entity = this.entities[i];
-
         entity.update();
     }
 }
