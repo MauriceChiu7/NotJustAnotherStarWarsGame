@@ -624,6 +624,7 @@ function inGame() {
             gameEngine.addEntity(new Vader());
             gameEngine.addEntity(new Dummy(gameEngine));
         }
+        gameEngine.addEntity(new Dummy(gameEngine));
     }
 
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";

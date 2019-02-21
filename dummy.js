@@ -37,10 +37,10 @@ function Dummy(game) {
    this.chanceToBlock = 0;
    this.lives = 3;
    this.width = 20;
-   this.platformCollisions = [];
    this.xAcceleration = 0;
    this.yAcceleration = 0;
    this.platformCollisions = [];
+   this.tag = "enemy";
 
    this.ctx = game.ctx;
    for (let i = 0; i < this.game.entities.length; i++) {
@@ -51,7 +51,7 @@ function Dummy(game) {
    }
 
 
-   Entity.call(this, game, 1000, 490);
+   Entity.call(this, game, 900, 400);
 }
 
 Dummy.prototype = new Entity();
@@ -59,7 +59,7 @@ Dummy.prototype.constructor = Dummy;
 
 Dummy.prototype.update = function () {
   this.distance = this.player.x + 50 - this.x;
-  this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "platform");
+  this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
 
   if (this.getCollision("right") != null) {
       this.x = this.getCollision("right").entity.collisionX + this.getCollision("right").entity.collisionWidth + 2;
@@ -73,11 +73,35 @@ Dummy.prototype.update = function () {
   } else if (this.getCollision("bottom") != null) {
       this.y = this.getCollision("bottom").entity.collisionY + 1;
       this.yAcceleration = 0;
+      console.log("bottom :" + this.getCollision("bottom").entity.collisionY);
   } else {
       this.yAcceleration += 0.4;
   }
 
-      // friction
+  if (gameEngine.click) {
+  console.log("x :" + this.x + " y :" + this.y);
+  console.log("distance: " + this.distance);
+
+  if (this.getCollision("right")) 
+    console.log("right x :" + this.getCollision("right").entity.collisionX + "right y:" + this.getCollision("right").entity.collisionY);
+  else
+    console.log("right :" + this.getCollision("right"));
+  if (this.getCollision("left")) 
+    console.log("left x :" + this.getCollision("left").entity.collisionX + "left y:" + this.getCollision("left").entity.collisionY);
+  else
+    console.log("left :" + this.getCollision("left"));
+  if (this.getCollision("top")) 
+    console.log("top x :" + this.getCollision("top").entity.collisionX + "top y:" + this.getCollision("top").entity.collisionY);
+  else
+    console.log("top :" + this.getCollision("top"));
+  if (this.getCollision("bottom")) 
+    console.log("bottom x :" + this.getCollision("bottom").entity.collisionX + "bottom y:" + this.getCollision("bottom").entity.collisionY);
+  else
+    console.log("bottom :" + this.getCollision("bottom"));
+
+}
+
+  // friction
   if (this.xAcceleration > 0) {
       this.xAcceleration -= 0.5;
       if (this.xAcceleration < 0) {
@@ -167,6 +191,7 @@ Dummy.prototype.update = function () {
     this.yAcceleration -= 13;
   }
 
+  //speed limits
   if (this.xAcceleration > 7) {
       this.xAcceleration = 7;
   } else if (this.xAcceleration < -7) {
@@ -176,11 +201,9 @@ Dummy.prototype.update = function () {
       this.yAcceleration = 15;
   } else if (this.yAcceleration < -15) {
       this.yAcceleration = -15;
-  } else if (Math.abs(this.player.y - this.y) > 40) {
-
   }
   console.log("yAcceleration: "+ this.yAcceleration);
-  //this.y += this.yAcceleration;
+  this.y += this.yAcceleration;
   this.x += this.xAcceleration;
   } 
   Entity.prototype.update.call(this);
@@ -204,9 +227,9 @@ Dummy.prototype.drawRight = function() {
     } else if (this.hurting){
       this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
     } else if (this.dead){
-      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y - 5, scale);
+      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y, scale);
     } else {
-      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y , scale);
+      this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y + 12, scale);
     }
    Entity.prototype.draw.call(this);
 }
@@ -223,7 +246,7 @@ Dummy.prototype.drawLeft = function() {
   } else if (this.dead){
     this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y - 5, scale);
   } else {
-    this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y, scale);
+    this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x , this.y + 12, scale);
   }
 
 }
@@ -234,7 +257,7 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
         if (current.tag == tag) {
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
                 this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-                var direction = [];
+                var direction = "bottom";
                 if (this.y > current.collisionY + current.collisionHeight) {
                     direction = "top";
                 } else if (this.y + this.height > current.collisionY) {
@@ -254,10 +277,10 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
 }
 
 Dummy.prototype.getCollision = function(direction) {
-    for(var i = 0; i < this.platformCollisions.length; i++) {
-        if (this.platformCollisions[i].direction == direction) {
-            return this.platformCollisions[i];
-        }
-}
-    return null;
+  for(var i = 0; i < this.platformCollisions.length; i++) {
+      if (this.platformCollisions[i].direction == direction) {
+          return this.platformCollisions[i];
+      }
+  }
+  return null;
 }
