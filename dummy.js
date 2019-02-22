@@ -11,7 +11,6 @@ function Dummy(game) {
    this.hurtRightAnim = new Animation(rightWinduSprite, 875 ,1945, 40, 70, 0.2, 1, true, false);
    this.deadRightAnim = new Animation(rightWinduSprite, 355 ,1912, 70, 40, 0.2, 1, true, false);
    this.jumpingRightAnim = new Animation(rightWinduSprite, 897, 1285, -27, 70, 1, 1, true, false);
-
    //left
    let leftWinduSprite = AM.getAsset("./img/macewindu_left.png");
    this.walkLeftAnim = new Animation(leftWinduSprite, 7, 632, 37, 60, 0.2, 11, true, false);
@@ -19,8 +18,6 @@ function Dummy(game) {
    this.blockLeftAnim = new Animation(leftWinduSprite, 215, 775, 55, 65, 1, 1, true, false);
    this.hurtLeftAnim = new Animation(leftWinduSprite, 0 , 1885, 40, 70, 0.2, 1, true, false);
    this.jumpingLeftAnim = new Animation(leftWinduSprite, 0, 1285, 30, 70, 1, 1, true, false);
-
-
 
    this.begin = true;
    this.speed = 150;
@@ -31,18 +28,27 @@ function Dummy(game) {
    this.dead = false;
 
    this.jumping = null;
+
    this.updateCount = 0;
    this.attackCount = 0;
+
    this.distance = null;
+
    this.game = game;
+
    this.chanceToBlock = 0;
+
    this.lives = 3;
+
    this.x = 900;
    this.y = 400;
+
    //this.width = 20;
    //this.height = 50;
+
    this.xAcceleration = 0;
    this.yAcceleration = 0;
+
    this.platformCollisions = [];
    this.tag = "enemy";
 
@@ -170,13 +176,12 @@ Dummy.prototype.update = function () {
     } 
     this.jumping = true;
   // console.log(this.jumping);
-    if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
-        this.jumpingRightAnim.elapsedTime = 0;
-        this.jumpingLeftAnim.elapsedTime = 0;
-        this.jumping = false;
-    }
-  
-  } /*else if (Math.abs(this.distance) > 50){
+      if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
+            this.jumpingRightAnim.elapsedTime = 0;
+            this.jumpingLeftAnim.elapsedTime = 0;
+            this.jumping = false;
+      }
+   } /*else if (Math.abs(this.distance) > 50){
     if (this.attackLeftAnim.isDone() || this.attackRightAnim.isDone() ||
     this.blockLeftAnim.isDone || this.blockLeftAnim.isDone()) {
       this.block =false;
