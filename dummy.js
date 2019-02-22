@@ -263,7 +263,7 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
               this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
               var direction = "";
-              console.log(current);
+              // console.log(current);
               if (gameEngine.click)
                 console.log("this.y: " + this.y + " current.collisionY " + current.collisionY + " current.collisionHeight: " + current.collisionHeight);
               if (this.y > current.collisionY + current.collisionHeight) {

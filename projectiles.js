@@ -39,14 +39,14 @@ function LaserBeam(start, end, game) {
   this.velocityX = 20;
   this.velocityY = 20;
 
-  this.width = 50;
+  this.width = 70;
   this.height = 50;
 
   this.laserID = null;
   this.enemyTag = null;
 
   this.hitbox = 30;
-  Entity.call(this, game, this.x, this.y);
+  Entity.call(this, game, this.x, this.y, this.width, this.height);
 }
 
 LaserBeam.prototype = new Entity();
@@ -76,7 +76,6 @@ LaserBeam.prototype.update = function () {
     this.x += x * this.velocityX;
     this.y += y * this.velocityY;
   }
-
 
 
   for (let i = 0; i < this.game.entities.length; i++) {
@@ -138,7 +137,7 @@ LaserBeam.prototype.deleteLaserbeam = function () {
     // if (gameEngine.entities[i] instanceof LaserBeam 
     //   && gameEngine.entities[i].laserID == this.laserID) {  
     if (gameEngine.entities[i] == this) {
-      console.log("Laserbeam delthis.shoot();eted with tag" + this.laserID);
+      // console.log("Laserbeam delthis.shoot();eted with tag" + this.laserID);
       // console.log(gameEngine.entities[i].laserID == this.laserID);
       gameEngine.entities.splice(i, 1);
     }

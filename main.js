@@ -632,7 +632,7 @@ function inGame() {
             trooper2.y = 300-80;
             gameEngine.addEntity(trooper2);
             let trooper3 = new Trooper(gameEngine);            
-            trooper3.x += 200;
+            trooper3.x += 125;
             trooper3.y += 70;
             gameEngine.addEntity(trooper3);
             // gameEngine.addEntity(new Dummy(gameEngine));
@@ -642,7 +642,7 @@ function inGame() {
             gameEngine.addEntity(new Vader());
             gameEngine.addEntity(new Dummy(gameEngine));
         }
-        gameEngine.addEntity(new Dummy(gameEngine));
+        // gameEngine.addEntity(new Dummy(gameEngine));
     }
 
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
