@@ -136,7 +136,7 @@ Dummy.prototype.update = function () {
     this.hurting = false;
     this.dead = false;
   } else if (!this.block && !this.attack && Math.abs(this.player.y - this.y) < 100
-    && this.getCollision("bottom") != null) {
+    && Math.abs(this.distance) < 60 && this.getCollision("bottom") != null) {
 
     this.chanceToBlock = Math.round(Math.random()*5);
     this.blocking =false;
@@ -227,7 +227,7 @@ Dummy.prototype.drawRight = function() {
     } else if (this.jumping) {
       this.jumpingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
     } else if (this.attack) {
-      this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 85, this.y , scale);
+      this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 80, this.y , scale);
     } else if (this.hurting){
       this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
     } else if (this.dead){
@@ -244,7 +244,7 @@ Dummy.prototype.drawLeft = function() {
   } else if (this.jumping) {
     this.jumpingLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, scale);
   } else if (this.attack) {
-    this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y , scale);
+    this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 50, this.y , scale);
   } else if (this.hurting){
     this.deadRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y - 30, scale);
   } else if (this.dead){
@@ -281,8 +281,7 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
                   direction = "left";
               }
               collisions.push({entity: current, direction: direction});
-            }
-            
+            }  
         }
     }
     // console.log(collisions);
