@@ -1,11 +1,14 @@
+var canvas = document.getElementById("gameWorld");
 const SCALE_LUKE = 1;
 /* This is used to toggle between attacking poses. 1 is default if the character only has 1 attack pose. */
-var attkNumLuke = 1;
 const rightToLeftOffset = 92;//144
 const cursorOffset = -48; // -20 // Question
 const DAMAGE_LUKE = 2;
-var canvas = document.getElementById("gameWorld");
-
+const LUKE_HITBOX_X_OFFSET = 35;
+const LUKE_HITBOX_Y_OFFSET = 20;
+const LUKE_COLLISION_WIDTH = 25;
+const LUKE_COLLISION_HEIGHT = 50;
+var attkNumLuke = 1;
 /*
 Use this height difference whenever you are using luke_sprites_right.png and that when the height of
 the frame is 2-high. This value is intentionally set to negative. When you apply it to y coordinates, just "+" them.
@@ -28,11 +31,12 @@ var playerCoor = { x: 0, y: 0 };
 
 var blocking = false;
 var rightClickIsDown = false;
+var LUKE_THIS;
 
 function Luke() {
     this.x = 600;
     //this.y = 300;
-    this.width = 50;
+    this.width = 30;
     this.height = 50;
     this.xAcceleration = 0;
     this.yAcceleration = 0;
@@ -42,6 +46,7 @@ function Luke() {
 
     this.health = 100;
 
+    LUKE_THIS = this;
     canvas.addEventListener("keyup", lightsaberThrow);
     canvas.addEventListener("mousemove", aimDirection);
 
@@ -65,7 +70,7 @@ function Luke() {
     this.saberOnRightAnim = new Animation(rightLukeSpriteSheet, 0, 1750, 96, 70, 0.1, 3, false, false);
     this.saberOffRightAnim = new Animation(rightLukeSpriteSheet, 0, 1750, 96, 70, 0.1, 3, false, true);
     this.dyingRightAnim = new Animation(rightLukeSpriteSheet, 0, 630, 96, 70, 0.2, 6, false, false);
-    this.deadAnim = new Animation(rightLukeSpriteSheet, 5*96, 630, 96, 70, 1, 1, true, false);
+    this.deadAnim = new Animation(rightLukeSpriteSheet, 5 * 96, 630, 96, 70, 1, 1, true, false);
 
     /** Edit by Steven **/
     // Secondary weapon animations
@@ -162,23 +167,23 @@ function Luke() {
     this.speed = 500;
 
     this.ctx = gameEngine.ctx;
-    Entity.call(this, gameEngine, 300, 500);
+    Entity.call(this, gameEngine, 300, 500, this.width, this.height);
 }
 
 Luke.prototype = new Entity();
 Luke.prototype.constructor = Luke;
 
-Luke.prototype.collide = function(xDisplacement, yDisplacement, tag) {
+Luke.prototype.collide = function (xDisplacement, yDisplacement, tag) {
     var collisions = [];
     for (var i = 0; i < gameEngine.entities.length; i++) {
         let theTag = gameEngine.entities[i].tag;
         let current = gameEngine.entities[i];
-        if (tag === 'Platform'){
+        if (tag === 'Platform') {
             if (theTag == tag) {
                 if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
                     this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
                     var direction = 'bottom';
-                //console.log(current);
+                    // console.log(current);
                     if (this.y > current.collisionY + current.collisionHeight) {
                         direction = "top";
                     } else if (this.y + this.height > current.collisionY) {
@@ -189,31 +194,32 @@ Luke.prototype.collide = function(xDisplacement, yDisplacement, tag) {
                     } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
                         direction = "left";
                     }
-                    collisions.push({entity: current, direction: direction});
+                    collisions.push({ entity: current, direction: direction });
                 }
             }
-        // } else if (tag === 'enemy') {
-        //     console.log('Luke Health (enemy): ' + this.health);
-        //     if (theTag == tag) {
-        //         if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-        //             this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-        //             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-        //                 // direction = "right";
-        //                 if (gameEngine.entities[i].attacking){
-        //                     this.health -= DAMAGE_LUKE;
-        //                 }
-        //             } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-        //                 // direction = "left";
-        //                 if (gameEngine.entities[i].attacking){
-        //                     this.health -= DAMAGE_LUKE;
-        //                 }
-        //             }
-        //             // collisions.push({entity: current, direction: direction});
-        //         }
-        //     }
-        } else if (tag === 'laser') {
+            // } else if (tag === 'enemy') {
+            //     console.log('Luke Health (enemy): ' + this.health);
+            //     if (theTag == tag) {
+            //         if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
+            //             this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
+            //             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+            //                 // direction = "right";
+            //                 if (gameEngine.entities[i].attacking) {
+            //                     this.health -= DAMAGE_LUKE;
+            //                 }
+            //             } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+            //                 // direction = "left";
+            //                 if (gameEngine.entities[i].attacking) {
+            //                     this.health -= DAMAGE_LUKE;
+            //                 }
+            //             }
+            //             // collisions.push({entity: current, direction: direction});
+            //         }
+            //     }
+        } else if (current instanceof LaserBeam) {
             // console.log('Luke Health (laser): ' + this.health);
             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+                // if (this.getDistance(current) < this.width + current.width){
                 // direction = "right";
                 statusBars.update(-DAMAGE_LUKE, 0);
                 this.health -= DAMAGE_LUKE;
@@ -224,20 +230,40 @@ Luke.prototype.collide = function(xDisplacement, yDisplacement, tag) {
             }
         }
     }
-    // console.log(collisions);
     return collisions;
 }
 
-Luke.prototype.getCollision = function(direction) {
-    for(var i = 0; i < this.platformCollisions.length; i++) {
+Luke.prototype.getCollision = function (direction) {
+    for (var i = 0; i < this.platformCollisions.length; i++) {
         if (this.platformCollisions[i].direction == direction) {
             return this.platformCollisions[i];
         }
     }
     return null;
 }
+Luke.prototype.getDistance = function (thisEnt, otherEnt) {
+    let dx = thisEnt.x - otherEnt.x;
+    let dy = thisEnt.y - otherEnt.y;
+    let theDist = Math.sqrt(dx * dx + dy * dy);
+    return theDist;
+}
+Luke.prototype.attackCollide = function (thisEnt, otherEnt) {
+    let distance = this.getDistance(thisEnt, otherEnt);
+    console.log("Distance: " + distance + ", WIDTH: " + thisEnt.width + ", " + otherEnt.width);
+    // console.log(distance < thisEnt.width + otherEnt.width);
+    return distance < thisEnt.width + otherEnt.width || distance < thisEnt.height + otherEnt.height;
+}
+Luke.prototype.collideRight = function (thisEnt, otherEnt) {
+    let distance = this.getDistance(thisEnt, otherEnt);
+    // console.log(this.x > ent.x);
+    return distance < thisEnt.width && thisEnt.x > otherEnt.x;
+}
+Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
+    let distance = this.getDistance(thisEnt, otherEnt);
+    return thisEnt.x < otherEnt.x + otherEnt.width && distance < thisEnt.width;
+}
 
-Luke.prototype.update = function() {
+Luke.prototype.update = function () {
     this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     this.enemyCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'enemy');
     this.laserCollisios = this.collide(this.xAcceleration, this.yAcceleration, 'laser');
@@ -257,6 +283,20 @@ Luke.prototype.update = function() {
         this.yAcceleration = 0;
     } else {
         this.yAcceleration += 0.4;
+    }
+    for (let i = 0; i < this.game.entities.length; i++) {
+        let curEnt = this.game.entities[i];
+        if (curEnt instanceof Trooper) {
+            if (this.collideLeft(this, curEnt)) {         //Left works :) // Well done!
+                this.x = curEnt.x + curEnt.width;
+                this.xAcceleration = 0;
+                // console.log("collide left: " + this.x + " ");
+            } else if (this.collideRight(this, curEnt)) {             // Right collide wont FUCKING work // LOL!
+                this.x = curEnt.x - this.width - 20;
+                this.xAcceleration = 0;
+                // console.log("collide right" + this.x + " ");
+            }
+        }
     }
 
     // friction
@@ -343,10 +383,12 @@ Luke.prototype.update = function() {
     }
     this.y += this.yAcceleration;
     this.x += this.xAcceleration;
-    if (this.x > 1100) {
-        this.x = 1100;
-    } else if (this.x < 40) {
-        this.x = 40;
+    
+    // World Boundary
+    if (this.x > 1140) {
+        this.x = 1140;
+    } else if (this.x + 30 < 0) {
+        this.x = -30;
     }
 
     if (this.game.r && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
@@ -406,6 +448,17 @@ Luke.prototype.update = function() {
                 let endCoor = { x: this.game.clickx, y: this.game.clicky };
                 gameEngine.addEntity(new LaserBeam(playerCoor, endCoor, gameEngine));
             }
+            for (var i = 0; i < gameEngine.entities.length; i++) {
+                let laser = this.game.entities[i];
+                if (laser.tag == "laser") {
+                    for (let i = 0; i < this.game.entities.length; i++) {
+                        let trooper = this.game.entities[i];
+                        if (trooper instanceof Trooper && this.attackCollide(laser, trooper)) {
+                            trooper.health -= 250;
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -414,22 +467,17 @@ Luke.prototype.update = function() {
         if (e.button == 2 && primaryWeapon) {
             setTimeout(function () {
                 if (rightClickIsDown) {
-                    // mouse was held down for > 2 seconds
                     blocking = true;
-                    // console.log("Right click!!!!! Hold");
                 }
             }, 50);
         }
     });
+    let that = this;
     canvas.addEventListener('mouseup', function (e) {
         rightClickIsDown = false;
         if (e.button == 2 && primaryWeapon) {
             blocking = false;
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-                if (gameEngine.entities[i].tag === 'player') {
-                    gameEngine.entities[i].standing = true;
-                };
-            }
+            that.standing = true;
         }
     });
     // Jumping
@@ -463,12 +511,8 @@ Luke.prototype.update = function() {
         for (let i = 0; i < this.game.entities.length; i++) {
             let ent = this.game.entities[i];
             // if (ent.tag == "AI" || ent.tag === "trooper") {
-            if (ent.tag === "trooper") {
-                //console.log("enter AI, object: " + ent + " " + this.hitbox);
-                if (ent !== this && this.collide(ent)) {
-                    //console.log("Attack collision!!!");
-                    ent.health -= 10; // putting this here won't work cuz it wud be instant death for the troopers.
-                }
+            if (ent instanceof Trooper && this.attackCollide(this, ent)) {
+                ent.health -= 10; // putting this here won't work cuz it wud be instant death for the troopers.
             }
         }
         this.standing = false;
@@ -515,13 +559,18 @@ Luke.prototype.update = function() {
         this.standing = false;
         this.crouching = false;
     }
-    
+
     center_x = this.x;
     center_y = this.y;
     Entity.prototype.update.call(this);
 }
 
 Luke.prototype.draw = function () {
+    if (SHOWBOX) {
+        ctx.strokeStyle = 'orange';
+        ctx.strokeRect(this.x + LUKE_HITBOX_X_OFFSET, this.y + LUKE_HITBOX_Y_OFFSET, LUKE_COLLISION_WIDTH, LUKE_COLLISION_HEIGHT);
+        ctx.fill();
+    }
     if (this.dead && this.dyingRightAnim.isDone()) {
         this.deadAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
     }
@@ -730,6 +779,14 @@ function lightsaberThrow(e) {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         if (gameEngine.entities[i].tag == "lightsaberthrow") {
             laserthrown = true;
+
+            for (let i = 0; i < LUKE_THIS.game.entities.length; i++) {
+                let trooper = LUKE_THIS.game.entities[i];
+                console.log("please fucking collide")
+                if (trooper instanceof Trooper && LUKE_THIS.attackCollide(gameEngine.entities[i], trooper)) {
+                    trooper.health -= 250;
+                }
+            }
         }
     }
     if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
@@ -738,7 +795,7 @@ function lightsaberThrow(e) {
         var rect = canvas.getBoundingClientRect();
         // var endCoor = {x: e.clientX - rect.left, y: e.clientY - rect.top};
         playerCoor = { x: center_x, y: center_y };
-        console.log("Luke.js: " + playerCoor.x + " " + playerCoor.y);
+        // console.log("Luke.js: " + playerCoor.x + " " + playerCoor.y);
         gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
     }
 }
