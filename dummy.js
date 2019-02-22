@@ -250,7 +250,7 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
         let current = gameEngine.entities[i];
         let theTag = gameEngine.entities[i].tag;
         if (theTag === tag) {
-          console.log(current);
+          //console.log(current);
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
               this.y + yDisplacement < current.collisionY + current.collisionHeight + 1 && this.y + yDisplacement > current.collisionY ) {
               var direction = "";
