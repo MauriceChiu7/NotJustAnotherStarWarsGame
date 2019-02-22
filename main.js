@@ -15,7 +15,7 @@ var searchingCounter = 0;
 var editingName = false;
 var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
 
-var testingLuke = false;
+var testingLuke = true;
 // var testingVader = false;
 var testingLukeWithPhys = true;
 
@@ -127,7 +127,8 @@ function mainMenu() {
 }
 
 function mainMenuFrame() {
-    // mainMenuMusic.play();
+    mainMenuMusic.volume = 0.5 * musicVolume;
+    mainMenuMusic.play();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
     menuItems.forEach(function (item) {
@@ -135,7 +136,6 @@ function mainMenuFrame() {
     });
     frameId = requestAnimationFrame(mainMenuFrame);
     if (transition) {
-
         if (menuSelection == "STORY MODE") {
             mainMenuMusic.pause();
             screenTransition(inGame);
@@ -583,12 +583,13 @@ function inGame() {
     // longPlat / shortPlat / darkWall / electronics / smallCrate / bigCrate
     // longPlat - collision width:  514, collision height 30
     // shortPlat - 130, 30
-    // darkWall -  281, 186
+    // darkWall -  382, 192
     // electronics - 64, 64
     // smallCrate - 64, 64
     // bigCrate - 96, 96
 
     // function Platform(x, y, type, collisionWidth, collisionHeight) {
+<<<<<<< HEAD
     // gameEngine.addEntity(new Platform(0, 389, 'darkWall', 0, 0));
     // gameEngine.addEntity(new Platform(0, 570, 'longPlat', 514, 30));
     // gameEngine.addEntity(new Platform(512, 570, 'longPlat', 514, 30));
@@ -601,6 +602,36 @@ function inGame() {
     // gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
     // gameEngine.addEntity(new Platform(1000, 480, 'bigCrate', 96, 96));
     // gameEngine.addEntity(new Platform(600, 220, 'electronics', 64, 64));
+=======
+    gameEngine.addEntity(new Platform(0, 389, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(382, 389, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(764, 389, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(1146, 389, 'darkWall', 0, 0));
+
+    gameEngine.addEntity(new Platform(0, 197, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(382, 197, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(764, 197, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(1146, 197, 'darkWall', 0, 0));
+
+    gameEngine.addEntity(new Platform(0, 5, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(382, 5, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(764, 5, 'darkWall', 0, 0));
+    gameEngine.addEntity(new Platform(1146, 5, 'darkWall', 0, 0));
+    
+    gameEngine.addEntity(new Platform(0, 570, 'longPlat', 514, 30));
+    gameEngine.addEntity(new Platform(512, 570, 'longPlat', 514, 30));
+    gameEngine.addEntity(new Platform(1024, 570, 'longPlat', 514, 30));
+
+    gameEngine.addEntity(new Platform(120, 460, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(300, 320, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(550, 250, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(850, 320, 'shortPlat', 130, 30));
+    gameEngine.addEntity(new Platform(950, 460, 'shortPlat', 130, 30));
+
+    gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
+    gameEngine.addEntity(new Platform(1000, 478, 'bigCrate', 96, 96));
+    gameEngine.addEntity(new Platform(600, 190, 'electronics', 0, 0));
+>>>>>>> master
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
@@ -609,17 +640,17 @@ function inGame() {
         // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
         // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
         if (testingLuke) {
-            gameEngine.addEntity(new Character(gameEngine));
+            gameEngine.addEntity(new Luke(gameEngine));
 
             gameEngine.addEntity(new Trooper(gameEngine));
             let trooper2 = new Trooper(gameEngine);            
-            trooper2.x = 300;
+            trooper2.x = 900;
             trooper2.y = 300-80;
             gameEngine.addEntity(trooper2);
-            // let trooper3 = new Trooper(gameEngine);            
-            // trooper3.x -= 300;
-            // trooper3.y += 70;
-            // gameEngine.addEntity(trooper3);
+            let trooper3 = new Trooper(gameEngine);            
+            trooper3.x += 200;
+            trooper3.y += 70;
+            gameEngine.addEntity(trooper3);
             // gameEngine.addEntity(new Dummy(gameEngine));
         } else if (testingLukeWithPhys) {
             gameEngine.addEntity(new Luke());
@@ -627,6 +658,7 @@ function inGame() {
             gameEngine.addEntity(new Vader());
             gameEngine.addEntity(new Dummy(gameEngine));
         }
+        gameEngine.addEntity(new Dummy(gameEngine));
     }
 
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
@@ -639,3 +671,16 @@ function inGameFrame() {
     }
 }
 
+function gameEnds() {
+    ctx.save();
+    ctx.font = "20px monospace";
+    ctx.fillStyle = "WHITE";
+    ctx.textAlign = "center";
+    for (var i = 0; i < gameEngine.entities[i]; i++) {
+        if (gameEngine.entities[i].tag === 'player' && gameEngine.entities[i].dead === true) {
+            ctx.fillText("You Failed. Refresh Page to Start a New Match", canvas.width/2, canvas.height/2 + 150);        
+        } 
+        // else if (gameEngine.entities[i].tag === 'enemy' )
+    }
+    ctx.restore();
+}
