@@ -1,11 +1,14 @@
+var canvas = document.getElementById("gameWorld");
 const SCALE_LUKE = 1;
 /* This is used to toggle between attacking poses. 1 is default if the character only has 1 attack pose. */
-var attkNumLuke = 1;
 const rightToLeftOffset = 92;//144
 const cursorOffset = -48; // -20 // Question
 const DAMAGE_LUKE = 2;
-var canvas = document.getElementById("gameWorld");
-
+const LUKE_HITBOX_X_OFFSET = 35;
+const LUKE_HITBOX_Y_OFFSET = 20;
+const LUKE_COLLISION_WIDTH = 25;
+const LUKE_COLLISION_HEIGHT = 50;
+var attkNumLuke = 1;
 /*
 Use this height difference whenever you are using luke_sprites_right.png and that when the height of
 the frame is 2-high. This value is intentionally set to negative. When you apply it to y coordinates, just "+" them.
@@ -244,7 +247,7 @@ Luke.prototype.getDistance = function (thisEnt, otherEnt) {
 }
 Luke.prototype.attackCollide = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
-    console.log("Distance: " + distance + ", WIDTH: " + thisEnt.width + ", " + otherEnt.width);
+    // console.log("Distance: " + distance + ", WIDTH: " + thisEnt.width + ", " + otherEnt.width);
     // console.log(distance < thisEnt.width + otherEnt.width);
     return distance < thisEnt.width + otherEnt.width || distance < thisEnt.height + otherEnt.height;
 }
@@ -282,14 +285,14 @@ Luke.prototype.update = function () {
     for (let i = 0; i < this.game.entities.length; i++) {
         let curEnt = this.game.entities[i];
         if (curEnt instanceof Trooper) {
-            if (this.collideLeft(this, curEnt)) {         //Left works :)
+            if (this.collideLeft(this, curEnt)) {         //Left works :) // Well done!
                 this.x = curEnt.x + curEnt.width;
                 this.xAcceleration = 0;
-                console.log("collide left: " + this.x + " ");
-            } else if (this.collideRight(this, curEnt)) {             // Right collide wont FUCKING work
+                // console.log("collide left: " + this.x + " ");
+            } else if (this.collideRight(this, curEnt)) {             // Right collide wont FUCKING work // LOL!
                 this.x = curEnt.x - this.width - 20;
                 this.xAcceleration = 0;
-                console.log("collide right" + this.x + " ");
+                // console.log("collide right" + this.x + " ");
             }
         }
     }
@@ -378,10 +381,12 @@ Luke.prototype.update = function () {
     }
     this.y += this.yAcceleration;
     this.x += this.xAcceleration;
-    if (this.x > 1100) {
-        this.x = 1100;
-    } else if (this.x < 40) {
-        this.x = 40;
+    
+    // World Boundary
+    if (this.x > 1140) {
+        this.x = 1140;
+    } else if (this.x + 30 < 0) {
+        this.x = -30;
     }
 
     if (this.game.r && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
@@ -559,6 +564,11 @@ Luke.prototype.update = function () {
 }
 
 Luke.prototype.draw = function () {
+    if (SHOWBOX) {
+        ctx.strokeStyle = 'orange';
+        ctx.strokeRect(this.x + LUKE_HITBOX_X_OFFSET, this.y + LUKE_HITBOX_Y_OFFSET, LUKE_COLLISION_WIDTH, LUKE_COLLISION_HEIGHT);
+        ctx.fill();
+    }
     if (this.dead && this.dyingRightAnim.isDone()) {
         this.deadAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
     }

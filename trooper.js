@@ -1,3 +1,5 @@
+const SCALE_TROOPER = 1;
+
 function Trooper(game) {
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     this.spriteSheetRight = AM.getAsset("./img/trooper_right.png");
@@ -227,11 +229,11 @@ Trooper.prototype.update = function () {
 Trooper.prototype.draw = function () {
     // this.drawRight();
     if (this.dead && this.dyingRightAnim.isDone()) {
-        this.deadRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y, scale);
+        this.deadRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
     }
 
     if (this.dead) {
-        this.dyingRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y, scale);
+        this.dyingRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
     }
 
 
@@ -247,15 +249,15 @@ Trooper.prototype.draw = function () {
 Trooper.prototype.drawRight = function () {
     switch (this.action) {
         case this.walking:         //walking
-            this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 5, scale);
+            this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 5, SCALE_TROOPER);
             break;
         case this.standing:         //standing
-            this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
+            this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
 
             break;
         case this.attacking:         //attacking
             console.log("attack right");
-            this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
+            this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
             break;
     }
     Entity.prototype.draw.call(this);
@@ -264,15 +266,15 @@ Trooper.prototype.drawRight = function () {
 Trooper.prototype.drawLeft = function () {
     switch (this.action) {
         case this.walking:         //walking
-            this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 5, scale);
+            this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 5, SCALE_TROOPER);
             break;
         case this.standing:         //standing
-            this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
+            this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
 
             break;
         case this.attacking:         //attacking
             console.log("attack left");
-            this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
+            this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
             break;
     }
     Entity.prototype.draw.call(this);
