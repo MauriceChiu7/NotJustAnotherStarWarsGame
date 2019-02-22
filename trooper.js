@@ -112,7 +112,7 @@ Trooper.prototype.getCollision = function (direction) {
 }
 
 Trooper.prototype.update = function () {
-    // console.log('Trooper ID'+ this.id+' health: ' + this.health);
+    console.log('Trooper ID'+ this.id+' health: ' + this.health);
     this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
 
