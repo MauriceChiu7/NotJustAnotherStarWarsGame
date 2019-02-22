@@ -94,11 +94,11 @@ Dummy.prototype.update = function () {
   else
     console.log("left :" + this.getCollision("left"));
   if (this.getCollision("top")) 
-    console.log("top x :" + this.getCollision("top").entity.collisionX + "top y:" + this.getCollision("top").entity.collisionY);
+    console.log("top x : " + this.getCollision("top").entity.collisionX + " top y:" + this.getCollision("top").entity.collisionY);
   else
     console.log("top :" + this.getCollision("top"));
   if (this.getCollision("bottom")) 
-    console.log("bottom x :" + this.getCollision("bottom").entity.collisionX + "bottom y:" + this.getCollision("bottom").entity.collisionY);
+    console.log("bottom x : " + this.getCollision("bottom").entity.collisionX + " bottom y:" + this.getCollision("bottom").entity.collisionY);
   else
     console.log("bottom :" + this.getCollision("bottom"));
 
@@ -157,44 +157,34 @@ Dummy.prototype.update = function () {
         this.dead = true;
       }
     } 
-  }else if (this.player.y - this.y < -100) {
+  }else if (this.player.y - this.y < -100 && this.getCollision("bottom") != null) {
     this.block =false;
     this.attack = false;
     this.hurting = false;
     this.dead = false;
+    this.yAcceleration -= 13;
     if (this.distance > 100) {
         this.x += this.game.clockTick * this.speed;
     } else if (this.distance < -100) {
        this.x -= this.game.clockTick*this.speed;
-    } else {
-       this.jumping = true;
-      //  console.log(this.jumping);
-       if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
-           this.jumpingRightAnim.elapsedTime = 0;
-           this.jumpingLeftAnim.elapsedTime = 0;
-           this.jumping = false;
-       }/*
-       if (this.distance > 0) {
-          var totalHeight = 200;
-          var jumpDistance = this.jumpingRightAnim.elapsedTime / this.jumpingRightAnim.totalTime;
-          if (jumpDistance > 0.5) {
-             jumpDistance = 1 - jumpDistance;
-          }
-       var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-       this.y = 500 - height;
-       } else {
-          var totalHeight = 200;
-          var jumpDistance = this.jumpingLeftAnim.elapsedTime / this.jumpingLeftAnim.totalTime;
-          if (jumpDistance > 0.5) {
-             jumpDistance = 1 - jumpDistance;
-          }    
-       } */
     } 
-  }
+    this.jumping = true;
+  // console.log(this.jumping);
+    if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
+        this.jumpingRightAnim.elapsedTime = 0;
+        this.jumpingLeftAnim.elapsedTime = 0;
+        this.jumping = false;
+    }
+  
+  } /*else if (Math.abs(this.distance) > 50){
+    if (this.attackLeftAnim.isDone() || this.attackRightAnim.isDone() ||
+    this.blockLeftAnim.isDone || this.blockLeftAnim.isDone()) {
+      this.block =false;
+      this.attack = false;
+    }
+  }*/
 
-  if (this.jumping && this.getCollision("bottom") != null) {
-    this.yAcceleration -= 13;
-  }
+
 
   //speed limits
   if (this.xAcceleration > 7) {
@@ -260,10 +250,11 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
         let current = gameEngine.entities[i];
         let theTag = gameEngine.entities[i].tag;
         if (theTag === tag) {
+          console.log(current);
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-              this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
+              this.y + yDisplacement < current.collisionY + current.collisionHeight + 1 && this.y + yDisplacement > current.collisionY ) {
               var direction = "";
-              console.log(current);
+              //console.log(current);
               if (gameEngine.click)
                 console.log("this.y: " + this.y + " current.collisionY " + current.collisionY + " current.collisionHeight: " + current.collisionHeight);
               if (this.y > current.collisionY + current.collisionHeight) {
@@ -290,7 +281,7 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
 
 Dummy.prototype.getCollision = function(direction) {
   for(var i = 0; i < this.platformCollisions.length; i++) {
-      if (this.platformCollisions[i].direction == direction) {
+      if (this.platformCollisions[i].direction === direction) {
           return this.platformCollisions[i];
       }
   }
