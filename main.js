@@ -15,9 +15,9 @@ var searchingCounter = 0;
 var editingName = false;
 var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
 
-var testingLuke = true;
+var testingLuke = false;
 // var testingVader = false;
-var testingLukeWithPhys = true;
+var testingLukeWithPhys = false;
 
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
@@ -589,49 +589,40 @@ function inGame() {
     // bigCrate - 96, 96
 
     // function Platform(x, y, type, collisionWidth, collisionHeight) {
-<<<<<<< HEAD
     // gameEngine.addEntity(new Platform(0, 389, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(382, 389, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(764, 389, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(1146, 389, 'darkWall', 0, 0));
+
+    // gameEngine.addEntity(new Platform(0, 197, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(382, 197, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(764, 197, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(1146, 197, 'darkWall', 0, 0));
+
+    // gameEngine.addEntity(new Platform(0, 5, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(382, 5, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(764, 5, 'darkWall', 0, 0));
+    // gameEngine.addEntity(new Platform(1146, 5, 'darkWall', 0, 0));
+    
     // gameEngine.addEntity(new Platform(0, 570, 'longPlat', 514, 30));
     // gameEngine.addEntity(new Platform(512, 570, 'longPlat', 514, 30));
     // gameEngine.addEntity(new Platform(1024, 570, 'longPlat', 514, 30));
+
     // gameEngine.addEntity(new Platform(120, 460, 'shortPlat', 130, 30));
     // gameEngine.addEntity(new Platform(300, 320, 'shortPlat', 130, 30));
-    // gameEngine.addEntity(new Platform(600, 250, 'shortPlat', 130, 30));
-    // gameEngine.addEntity(new Platform(900, 320, 'shortPlat', 130, 30));
+    // gameEngine.addEntity(new Platform(550, 250, 'shortPlat', 130, 30));
+    // gameEngine.addEntity(new Platform(850, 320, 'shortPlat', 130, 30));
     // gameEngine.addEntity(new Platform(950, 460, 'shortPlat', 130, 30));
+
     // gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
-    // gameEngine.addEntity(new Platform(1000, 480, 'bigCrate', 96, 96));
-    // gameEngine.addEntity(new Platform(600, 220, 'electronics', 64, 64));
-=======
-    gameEngine.addEntity(new Platform(0, 389, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(382, 389, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(764, 389, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(1146, 389, 'darkWall', 0, 0));
-
-    gameEngine.addEntity(new Platform(0, 197, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(382, 197, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(764, 197, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(1146, 197, 'darkWall', 0, 0));
-
-    gameEngine.addEntity(new Platform(0, 5, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(382, 5, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(764, 5, 'darkWall', 0, 0));
-    gameEngine.addEntity(new Platform(1146, 5, 'darkWall', 0, 0));
-    
-    gameEngine.addEntity(new Platform(0, 570, 'longPlat', 514, 30));
-    gameEngine.addEntity(new Platform(512, 570, 'longPlat', 514, 30));
-    gameEngine.addEntity(new Platform(1024, 570, 'longPlat', 514, 30));
-
-    gameEngine.addEntity(new Platform(120, 460, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(300, 320, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(550, 250, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(850, 320, 'shortPlat', 130, 30));
-    gameEngine.addEntity(new Platform(950, 460, 'shortPlat', 130, 30));
-
-    gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
-    gameEngine.addEntity(new Platform(1000, 478, 'bigCrate', 96, 96));
-    gameEngine.addEntity(new Platform(600, 190, 'electronics', 0, 0));
->>>>>>> master
+    // gameEngine.addEntity(new Platform(1000, 478, 'bigCrate', 96, 96));
+    // gameEngine.addEntity(new Platform(600, 190, 'electronics', 0, 0));
+    // new MapCollision(200, 450, 500, 150);
+    new FullCollision(-100, 400, 980, 200);
+    new FullCollision(1030, 400, 200, 200);
+    new FullCollision(250, 140, 385, 250);
+    new BottomOnlyCollision(0, 280, 210);
+    new BottomOnlyCollision(-100, 160, 290);
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());

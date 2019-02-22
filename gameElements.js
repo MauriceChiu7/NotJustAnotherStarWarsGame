@@ -11,7 +11,9 @@ var playerCharacter = 1;
 var computerCharacter1 = 0;
 var computerCharacter2 = 0;
 var computerCharacter3 = 0;
-var computerCharacter4 = -0;
+var computerCharacter4 = 0;
+var fullCollisions = [];
+var bottomOnlyCollisions = [];
 
 // --------------------- CHARACTER SELECTION STUFF ----------------------------
 function initializeCharacterData() {
@@ -381,6 +383,21 @@ function drawStars() {
     for (var i = 0; i < stars.length; i++) {
         stars[i].draw();
     }
+}
+
+function FullCollision(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    fullCollisions.push(this);
+}
+
+function BottomOnlyCollision(x, y, width) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    bottomOnlyCollisions.push(this);
 }
 
 // --------------------- ENTITIES ----------------------------
