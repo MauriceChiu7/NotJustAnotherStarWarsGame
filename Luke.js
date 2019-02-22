@@ -468,7 +468,7 @@ Luke.prototype.update = function() {
                 if (ent !== this && this.collide(ent)) {
                     //console.log("Attack collision!!!");
                     ent.health -= 10; // putting this here won't work cuz it wud be instant death for the troopers.
-                // }
+                }
             }
         }
         this.standing = false;
