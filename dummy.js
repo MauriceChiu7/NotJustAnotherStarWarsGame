@@ -91,19 +91,19 @@ Dummy.prototype.update = function () {
   console.log("x :" + this.x + " y :" + this.y);
   console.log("distance: " + this.distance);
 
-  if (this.getCollision("right")) 
+  if (this.getCollision("right"))
     console.log("right x :" + this.getCollision("right").entity.collisionX + "right y:" + this.getCollision("right").entity.collisionY);
   else
     console.log("right :" + this.getCollision("right"));
-  if (this.getCollision("left")) 
+  if (this.getCollision("left"))
     console.log("left x :" + this.getCollision("left").entity.collisionX + "left y:" + this.getCollision("left").entity.collisionY);
   else
     console.log("left :" + this.getCollision("left"));
-  if (this.getCollision("top")) 
+  if (this.getCollision("top"))
     console.log("top x : " + this.getCollision("top").entity.collisionX + " top y:" + this.getCollision("top").entity.collisionY);
   else
     console.log("top :" + this.getCollision("top"));
-  if (this.getCollision("bottom")) 
+  if (this.getCollision("bottom"))
     console.log("bottom x : " + this.getCollision("bottom").entity.collisionX + " bottom y:" + this.getCollision("bottom").entity.collisionY);
   else
     console.log("bottom :" + this.getCollision("bottom"));
@@ -153,7 +153,7 @@ Dummy.prototype.update = function () {
       this.block = true;
     } else if (this.chanceToBlock === 0){
      this.attack = true;
-    } 
+    }
     if (this.player.attacking) {
       // this.blocking =false;
       this.chanceToBlock = -1;
@@ -162,7 +162,7 @@ Dummy.prototype.update = function () {
       if (this.lives ===0){
         this.dead = true;
       }
-    } 
+    }
   }else if (this.player.y - this.y < -100 && this.getCollision("bottom") != null) {
     this.block =false;
     this.attack = false;
@@ -173,7 +173,7 @@ Dummy.prototype.update = function () {
         this.x += this.game.clockTick * this.speed;
     } else if (this.distance < -100) {
        this.x -= this.game.clockTick*this.speed;
-    } 
+    }
     this.jumping = true;
   // console.log(this.jumping);
       if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
@@ -204,7 +204,7 @@ Dummy.prototype.update = function () {
   }
   //console.log("yAcceleration: "+ this.yAcceleration);
   this.y += this.yAcceleration;
-  this.x += this.xAcceleration; 
+  this.x += this.xAcceleration;
   Entity.prototype.update.call(this);
 };
 
@@ -216,7 +216,7 @@ Dummy.prototype.draw = function() {
    }
 }
 Dummy.prototype.drawRight = function() {
-      
+
     if(this.block){
       this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 20, this.y + 5, scale);
     } else if (this.jumping) {
@@ -259,25 +259,25 @@ Dummy.prototype.collide = function(xDisplacement, yDisplacement, tag) {
             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
               this.y + yDisplacement < current.collisionY + current.collisionHeight + 1 && this.y + yDisplacement > current.collisionY ) {
               var direction = "";
-              //console.log(current);
+              // console.log(current);
               if (gameEngine.click)
                 console.log("this.y: " + this.y + " current.collisionY " + current.collisionY + " current.collisionHeight: " + current.collisionHeight);
               if (this.y > current.collisionY + current.collisionHeight) {
                   direction = "top";
-              } 
+              }
               if (this.y + height > current.collisionY) {
                   direction = "bottom";
               }
-              if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth 
+              if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth
                 && this.x + xDisplacement > current.collisionX) {
                   direction = "right";
-              } 
-              if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth 
+              }
+              if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth
                 && this.x + xDisplacement > current.collisionX) {
                   direction = "left";
               }
               collisions.push({entity: current, direction: direction});
-            }  
+            }
         }
     }
     // console.log(collisions);

@@ -1,9 +1,3 @@
-function getDistance(a, b) {
-    var dx = a.x - b.x;
-    var dy = a.y - b.y;
-    return Math.sqrt(dx * dx + dy * dy);
-}
-
 function Trooper(game) {
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     this.spriteSheetRight = AM.getAsset("./img/trooper_right.png");
@@ -12,20 +6,20 @@ function Trooper(game) {
     this.standRightAnim = new Animation(this.spriteSheetRight, 62, 74, 62, 74, frameDuration, 1, true, false);
     this.attackRightAnim = new Animation(this.spriteSheetRight, 0, 444, 62, 74, frameDuration, 9, true, false);
 
-    this.dyingRightAnim = new Animation(this.spriteSheetRight, 0, 3*74, 62, 74, frameDuration, 6, false, false);
-    this.deadRightAnim = new Animation(this.spriteSheetRight, 5*62, 3*74, 62, 74, frameDuration, 6, false, false);
+    this.dyingRightAnim = new Animation(this.spriteSheetRight, 0, 3 * 74, 62, 74, frameDuration, 6, false, false);
+    this.deadRightAnim = new Animation(this.spriteSheetRight, 5 * 62, 3 * 74, 62, 74, frameDuration, 6, false, false);
 
     this.spriteSheetLeft = AM.getAsset("./img/trooper_left.png");
     this.walkLeftAnim = new Animation(this.spriteSheetLeft, 124, 74, 62, 74, frameDuration, 9, true, true);
     this.standLeftAnim = new Animation(this.spriteSheetLeft, 558, 74, 62, 74, frameDuration, 1, true, false);
     this.attackLeftAnim = new Animation(this.spriteSheetLeft, 124, 444, 62, 74, frameDuration, 9, true, true);
 
-    this.health = 3000; // added by maurice
+    this.health = 1000; // added by maurice
 
     this.x = 600;
     this.y = 400;
-    this.width = 50;
-    this.height = 50;
+    this.width = 30;
+    this.height = 80;
     this.xAcceleration = 0;
     this.yAcceleration = 0;
     this.platformCollisions = [];
@@ -36,6 +30,7 @@ function Trooper(game) {
     this.standing = "stand";
     this.attacking = "attack";
     this.chanceToShoot = 0;
+    this.hitSuccess = true;
     this.hitbox = 30;
 
     this.game = game;
@@ -47,7 +42,7 @@ function Trooper(game) {
     }
     let trooperList = [];
     for (var i = 0; i < gameEngine.entities.length; i++) {
-        if (gameEngine.entities[i].tag == "trooper") {    // already a trooper so make new id (add 1 to existing id)
+        if (gameEngine.entities[i] instanceof Trooper) {    // already a trooper so make new id (add 1 to existing id)
             trooperList.push(gameEngine.entities[i].id);
         }
     }
@@ -59,8 +54,8 @@ function Trooper(game) {
     }
     //console.log("Trooper ID: " + this.id);
     this.ctx = game.ctx;
-    this.tag = "trooper";
-    Entity.call(this, game, this.x, this.y);
+    this.tag = "enemy";
+    Entity.call(this, game, this.x, this.y, this.width, this.height);
 }
 
 Trooper.prototype = new Entity();
@@ -93,6 +88,18 @@ Trooper.prototype.collide = function (xDisplacement, yDisplacement, tag) {
     return collisions;
 }
 
+Trooper.prototype.getDistance = function (ent) {
+    let dx = this.x - this.player.x;
+    let dy = this.y - this.player.y;
+    let theDist = Math.sqrt(dx * dx + dy * dy);
+    return theDist;
+}
+Trooper.prototype.attackCollide = function () {
+    let distance = this.getDistance();
+    // console.log("Trooper Attack: Distance: " + distance + ", WIDTH: " + this.width + ", " + this.player.width);
+    return distance < this.width + this.player.width;
+}
+
 Trooper.prototype.getCollision = function (direction) {
     for (var i = 0; i < this.platformCollisions.length; i++) {
         if (this.platformCollisions[i].direction == direction) {
@@ -103,20 +110,21 @@ Trooper.prototype.getCollision = function (direction) {
 }
 
 Trooper.prototype.update = function () {
-    //console.log('Trooper health: ' + this.health);
+    // console.log('Trooper ID'+ this.id+' health: ' + this.health);
     this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
 
-    this.distance = this.player.x - this.x;
+    this.distance = this.player.x +50- this.x;
 
     if (this.health <= 0) {
         this.dead = true;
         this.walking = false;
         this.standing = false;
         this.attacking = false;
+
     }
 
-    if (!this.dead){
+    if (!this.dead) {
         if (Math.abs(this.distance) > 50) {
             this.chanceToShoot = Math.round(Math.random() * 7);
 
@@ -125,8 +133,6 @@ Trooper.prototype.update = function () {
                 this.shotsFired = false;
                 for (var i = 0; i < gameEngine.entities.length; i++) {
                     if (gameEngine.entities[i].tag == "trooperLaser") {
-                        // && gameEngine.entities[i].laserID == this.id) {
-                        // console.log("shotsFired");
                         this.shotsFired = true;
                     }
                 }
@@ -134,26 +140,33 @@ Trooper.prototype.update = function () {
                     this.shoot();
                 }
                 this.action = this.standing;
-            } 
-            // else {
-            //     this.action = this.walking;
-            //     if (this.distance > 70) {
-            //         this.xAcceleration += 1;
-            //     } else if (this.distance < -70) {
-            //         this.xAcceleration -= 1;
-            //     }
-            // }
-        // } else if (Math.abs(this.distance) < 70) {
-        //     this.action = this.walking;
-        //     if (this.distance > 0) {
-        //         this.xAcceleration += 1;            
-        //     } else if (this.distance < 0) {
-        //         this.xAcceleration -= 1;
-        //     }    
-        } else if (Math.abs(this.player.y - this.y) < 70) {
-            this.action = this.attacking;
+            }
+        } else if (Math.abs(this.distance) < 50 && Math.abs(this.player.y - this.y) < 100) {
+            let that = this;
+            if (that.attackCollide()) {
+                that.action = that.attacking;
+                // setInterval(function(){
+                //     statusBars.update(-DAMAGE_LUKE, 0);
+                //     that.player.health -= DAMAGE_LUKE;
+                // }, 2000);
+            }
+
+            if (this.attackLeftAnim.isDone() || this.attackRightAnim.isDone()) {
+                statusBars.update(-DAMAGE_LUKE, 0);
+                this.player.health -= DAMAGE_LUKE;
+            }
+
         } else {
             this.action = this.standing;
+        }
+
+    } else {
+        if (this.deadRightAnim.isDone()){
+            for (var i = 0; i < this.game.entities.length; i++) {
+                if (this.game.entities[i] instanceof Trooper && this.game.entities[i].dead) {
+                    this.game.entities.splice(i, 1);
+                }
+            }
         }
     }
 
@@ -220,11 +233,12 @@ Trooper.prototype.draw = function () {
     if (this.dead) {
         this.dyingRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y, scale);
     }
-    
+
 
     if (this.player.x + 50 > this.x) {
         this.drawRight();
     } else if (this.player.x + 50 < this.x) {
+        // console.log(this.player.x + 70 +" < "+ this.x);
         this.drawLeft();
     }
     Entity.prototype.draw.call(this);
@@ -240,6 +254,7 @@ Trooper.prototype.drawRight = function () {
 
             break;
         case this.attacking:         //attacking
+            console.log("attack right");
             this.attackRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
             break;
     }
@@ -256,6 +271,7 @@ Trooper.prototype.drawLeft = function () {
 
             break;
         case this.attacking:         //attacking
+            console.log("attack left");
             this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, scale);
             break;
     }
@@ -266,7 +282,7 @@ Trooper.prototype.shoot = function () {
     let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
     audio.play();
     let rect = canvas.getBoundingClientRect();
-    let startCoor = { x: this.x + 20, y: this.y + 50 };
+    let startCoor = { x: (this.x + 20 + this.x) / 2, y: (this.y + this.height + this.y) / 2 };
     const xend = this.player.x;
     const yend = this.player.y;
     let endCoor = { x: xend, y: yend };
