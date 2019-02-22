@@ -31,6 +31,7 @@ var playerCoor = { x: 0, y: 0 };
 
 var blocking = false;
 var rightClickIsDown = false;
+var LUKE_THIS;
 
 function Luke() {
     this.x = 600;
@@ -45,6 +46,7 @@ function Luke() {
 
     this.health = 100;
 
+    LUKE_THIS = this;
     canvas.addEventListener("keyup", lightsaberThrow);
     canvas.addEventListener("mousemove", aimDirection);
 
@@ -247,7 +249,7 @@ Luke.prototype.getDistance = function (thisEnt, otherEnt) {
 }
 Luke.prototype.attackCollide = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
-    // console.log("Distance: " + distance + ", WIDTH: " + thisEnt.width + ", " + otherEnt.width);
+    console.log("Distance: " + distance + ", WIDTH: " + thisEnt.width + ", " + otherEnt.width);
     // console.log(distance < thisEnt.width + otherEnt.width);
     return distance < thisEnt.width + otherEnt.width || distance < thisEnt.height + otherEnt.height;
 }
@@ -778,13 +780,13 @@ function lightsaberThrow(e) {
         if (gameEngine.entities[i].tag == "lightsaberthrow") {
             laserthrown = true;
 
-            // for (let i = 0; i < this.game.entities.length; i++) {
-            //     let trooper = this.game.entities[i];
-            //     console.log("please fucking collide")
-            //     if (trooper instanceof Trooper && this.attackCollide(gameEngine.entities[i], trooper)) {
-            //         trooper.health -= 250;
-            //     }
-            // }
+            for (let i = 0; i < LUKE_THIS.game.entities.length; i++) {
+                let trooper = LUKE_THIS.game.entities[i];
+                console.log("please fucking collide")
+                if (trooper instanceof Trooper && LUKE_THIS.attackCollide(gameEngine.entities[i], trooper)) {
+                    trooper.health -= 250;
+                }
+            }
         }
     }
     if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
