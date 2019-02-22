@@ -100,7 +100,7 @@ Vader.prototype.update = function() {
         this.x = collisionRight.x + collisionRight.width + 2;
         this.xAcceleration = 0;
     } else if (collisionLeft != null) {
-        this.x = collisionLeft.x - 5;
+        this.x = collisionLeft.x - 2;
         this.xAcceleration = 0;
     }
     if (collisionTop != null) {

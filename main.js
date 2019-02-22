@@ -621,8 +621,8 @@ function inGame() {
     new FullCollision(-100, 400, 980, 200);
     new FullCollision(1030, 400, 200, 200);
     new FullCollision(250, 140, 385, 250);
-    new BottomOnlyCollision(0, 280, 210);
-    new BottomOnlyCollision(-100, 160, 290);
+    new BottomOnlyCollision(17, 280, 210);
+    new BottomOnlyCollision(-100, 160, 294);
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
