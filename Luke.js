@@ -178,6 +178,7 @@ Luke.prototype.collide = function(xDisplacement, yDisplacement, tag) {
                 if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
                     this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
                     var direction = 'bottom';
+                //console.log(current);
                     if (this.y > current.collisionY + current.collisionHeight) {
                         direction = "top";
                     } else if (this.y + this.height > current.collisionY) {
@@ -375,7 +376,7 @@ Luke.prototype.update = function() {
         for (var i = 0; i < gameEngine.entities[i]; i++) {
             if (gameEngine.entities[i].tag === 'player') {
                 gameEngine.entities.splice(i, 1);
-                console.log('luke deleted'); // Don't work
+               //console.log('luke deleted'); // Don't work
             }
         }
     }
@@ -462,9 +463,10 @@ Luke.prototype.update = function() {
         for (let i = 0; i < this.game.entities.length; i++) {
             let ent = this.game.entities[i];
             // if (ent.tag == "AI" || ent.tag === "trooper") {
-                
-            if (ent.tag === "trooper" && this.collide(ent)) {
-                // if (ent !== this && this.collide(ent)) {
+            if (ent.tag === "trooper") {
+                //console.log("enter AI, object: " + ent + " " + this.hitbox);
+                if (ent !== this && this.collide(ent)) {
+                    //console.log("Attack collision!!!");
                     ent.health -= 10; // putting this here won't work cuz it wud be instant death for the troopers.
                 // }
             }

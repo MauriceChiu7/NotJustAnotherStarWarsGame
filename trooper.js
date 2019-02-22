@@ -57,7 +57,7 @@ function Trooper(game) {
         let otherId = trooperList[trooperList.length - 1];
         this.id = 1 + otherId;
     }
-    console.log("Trooper ID: " + this.id);
+    //console.log("Trooper ID: " + this.id);
     this.ctx = game.ctx;
     this.tag = "trooper";
     Entity.call(this, game, this.x, this.y);
@@ -103,7 +103,7 @@ Trooper.prototype.getCollision = function (direction) {
 }
 
 Trooper.prototype.update = function () {
-    console.log('Trooper'+ this.id+'health: ' + this.health);
+    //console.log('Trooper health: ' + this.health);
     this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
 
