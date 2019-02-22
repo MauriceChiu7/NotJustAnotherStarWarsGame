@@ -126,6 +126,7 @@ function mainMenu() {
 }
 
 function mainMenuFrame() {
+    mainMenuMusic.volume = 0.5 * musicVolume;
     mainMenuMusic.play();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
@@ -134,7 +135,6 @@ function mainMenuFrame() {
     });
     frameId = requestAnimationFrame(mainMenuFrame);
     if (transition) {
-
         if (menuSelection == "STORY MODE") {
             mainMenuMusic.pause();
             screenTransition(inGame);
