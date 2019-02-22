@@ -462,12 +462,11 @@ Luke.prototype.update = function() {
         for (let i = 0; i < this.game.entities.length; i++) {
             let ent = this.game.entities[i];
             // if (ent.tag == "AI" || ent.tag === "trooper") {
-            if (ent.tag === "trooper") {
-                console.log("enter AI, object: " + ent + " " + this.hitbox);
-                if (ent !== this && this.collide(ent)) {
-                    console.log("Attack collision!!!");
+                
+            if (ent.tag === "trooper" && this.collide(ent)) {
+                // if (ent !== this && this.collide(ent)) {
                     ent.health -= 10; // putting this here won't work cuz it wud be instant death for the troopers.
-                }
+                // }
             }
         }
         this.standing = false;
