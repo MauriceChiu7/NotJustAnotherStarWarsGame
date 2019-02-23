@@ -574,9 +574,9 @@ function creditsClick(event) {
 function inGame() {
     canvas.removeEventListener('mousemove', menuMouseMove);
     cancelAnimationFrame(frameId);
-    // var audio = AM.getSound("./sounds/VaderVsLukeTheme.wav");
-    // audio.volume = musicVolume;
-    // audio.play();
+    var audio = AM.getSound("./sounds/VaderVsLukeTheme.wav");
+    audio.volume = musicVolume;
+    audio.play();
     frameId = requestAnimationFrame(inGameFrame);
     // var gameEngine = new GameEngine(); // Made it an instance field.
 
@@ -585,24 +585,6 @@ function inGame() {
 
     gameEngine.init(ctx);
     gameEngine.start();
-    // function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, frameWidth, frameHeight, collisionX, collisionY, collisionWidth, collisionHeight)
-    // gameEngine.addEntity(new Platform(0, 500, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Actual ground. This is what luke is standing on.
-    // gameEngine.addEntity(new Platform(0, 565, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Fake ground... the collision box is different than the pixles location.
-    // gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 235, 300, 100));
-    
-    // longPlat / shortPlat / darkWall / electronics / smallCrate / bigCrate
-    // longPlat - collision width:  514, collision height 30
-    // shortPlat - 130, 30
-    // darkWall -  382, 192
-    // electronics - 64, 64
-    // smallCrate - 64, 64
-    // bigCrate - 96, 96
-
-    // new FullCollision(-100, 400, 980, 200);
-    // new FullCollision(1030, 400, 200, 200);
-    // new FullCollision(250, 140, 385, 250);
-    // new BottomOnlyCollision(17, 280, 210);
-    // new BottomOnlyCollision(-100, 160, 294);
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());

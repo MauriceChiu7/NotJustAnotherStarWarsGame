@@ -57,9 +57,9 @@ function initializeMenuItems() {
     new MenuItem("STORY MODE", 600, 120, 25);
     new MenuItem("CUSTOM GAME", 600, 220, 25);
     new MenuItem("MULTIPLAYER", 600, 320, 25);
-    new MenuItem("SETTINGS", 600, 400, 20);
-    new MenuItem("CREDITS", 600, 460, 20);
-    new MenuItem("CONTROLS", 600, 520, 20);
+    new MenuItem("CONTROLS", 600, 400, 20);
+    new MenuItem("SETTINGS", 600, 460, 20);
+    new MenuItem("CREDITS", 600, 520, 20);
 }
 
 function initializeCustomGameItems() {
