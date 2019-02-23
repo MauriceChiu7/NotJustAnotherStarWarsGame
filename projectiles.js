@@ -53,7 +53,6 @@ LaserBeam.prototype = new Entity();
 LaserBeam.prototype.constructor = LaserBeam;
 
 LaserBeam.prototype.update = function () {
-
   this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
 
   if (this.getCollision("right") != null) {
@@ -67,7 +66,8 @@ LaserBeam.prototype.update = function () {
   } else if (this.getCollision("bottom") != null) {
     this.y = this.getCollision("bottom").entity.collisionY + 1;
     this.velocityY = -this.velocityY;
-  } else {
+  } 
+  // else {
     var x = this.end.x - this.start.x;
     var y = this.end.y - this.start.y;
     var l = Math.sqrt(x * x + y * y);
@@ -75,7 +75,7 @@ LaserBeam.prototype.update = function () {
     y = y / l;
     this.x += x * this.velocityX;
     this.y += y * this.velocityY;
-  }
+  // }
 
 
   for (let i = 0; i < this.game.entities.length; i++) {
@@ -101,8 +101,9 @@ LaserBeam.prototype.collide = function (xDisplacement, yDisplacement, tag) {
   var collisions = [];
   for (var i = 0; i < gameEngine.entities.length; i++) {
     let theTag = gameEngine.entities[i].tag;
-    let current = gameEngine.entities[i];
+    let current = gameEngine.entities[i];    
     if (theTag == tag) {
+      // console.log(theTag);
       if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
         this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
         var direction = 'bottom';
