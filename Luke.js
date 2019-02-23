@@ -160,7 +160,7 @@ function Luke() {
     this.switching = false;
     this.dying = false;
     this.dead = false;
-    this.tag = "player";
+    
     this.hitbox = 20;
 
     this.ground = 500;
