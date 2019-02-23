@@ -11,13 +11,15 @@ var playerCharacter = 1;
 var computerCharacter1 = 0;
 var computerCharacter2 = 0;
 var computerCharacter3 = 0;
-var computerCharacter4 = -0;
+var computerCharacter4 = 0;
+var fullCollisions = [];
+var bottomOnlyCollisions = [];
 
 // --------------------- CHARACTER SELECTION STUFF ----------------------------
 function initializeCharacterData() {
-    characterData.push({name: ""});
-    characterData.push({name: "Luke", alignment: 0, spritesheet: AM.getAsset("./img/luke_sprites_right.png"), sx: 0, sy: 1550, swidth: 96, sheight: 70, width: 159, height: 116, frameCount: 3, totalTime: 150, currentTime: 0, xBalance: 5, yBalance: 10});
-    characterData.push({name: "Vader", alignment: 1, spritesheet: AM.getAsset("./img/vader_sprites_left - Copy.png"), sx: 0, sy: 160, swidth: 120, sheight: 80, width: 168, height: 122.5, frameCount: 8, totalTime: 80, currentTime: 0, xBalance: 10, yBalance: -10});
+    characterData.push({ name: "" });
+    characterData.push({ name: "Luke", alignment: 0, spritesheet: AM.getAsset("./img/luke_sprites_right.png"), sx: 0, sy: 1550, swidth: 96, sheight: 70, width: 159, height: 116, frameCount: 3, totalTime: 150, currentTime: 0, xBalance: 5, yBalance: 10 });
+    characterData.push({ name: "Vader", alignment: 1, spritesheet: AM.getAsset("./img/vader_sprites_left - Copy.png"), sx: 0, sy: 160, swidth: 120, sheight: 80, width: 168, height: 122.5, frameCount: 8, totalTime: 80, currentTime: 0, xBalance: 10, yBalance: -10 });
 }
 
 function drawCharacterFromData(x, y, index, width, height, scale, xBalance, yBalance) {
@@ -35,8 +37,8 @@ function drawCharacterFromData(x, y, index, width, height, scale, xBalance, yBal
         ctx.fillRect(x + 30, y - 20, width, height);
         ctx.restore();
         ctx.drawImage(characterData[index].spritesheet, characterData[index].sx + Math.floor(characterData[index].currentTime / (characterData[index].totalTime / characterData[index].frameCount)) *
-                      characterData[index].swidth, characterData[index].sy, characterData[index].swidth, characterData[index].sheight, x + characterData[index].xBalance + xBalance, y + characterData[index].yBalance + yBalance,
-                      characterData[index].width * scale, characterData[index].height * scale);
+            characterData[index].swidth, characterData[index].sy, characterData[index].swidth, characterData[index].sheight, x + characterData[index].xBalance + xBalance, y + characterData[index].yBalance + yBalance,
+            characterData[index].width * scale, characterData[index].height * scale);
     }
 }
 
@@ -80,7 +82,7 @@ function initializeCustomGameItems() {
 
 function initializeMultiplayerItems() {
     menuItems = [];
-    new MenuItem("<", 180 ,450, 30);
+    new MenuItem("<", 180, 450, 30);
     new MenuItem(">", 340, 450, 30);
     new MenuItem("FIND MATCH", 600, 325, 25);
     new MenuItem("BACK", 600, 550, 20);
@@ -106,7 +108,7 @@ function StartScreenPrompt() {
     this.decreasing = true;
 }
 
-StartScreenPrompt.prototype.draw = function() {
+StartScreenPrompt.prototype.draw = function () {
     ctx.save();
     if (!transition) {
         ctx.globalAlpha = this.alpha;
@@ -114,7 +116,7 @@ StartScreenPrompt.prototype.draw = function() {
     ctx.font = "20px monospace";
     ctx.fillStyle = "WHITE";
     ctx.textAlign = "center";
-    ctx.fillText("CLICK ANYWHERE TO START", canvas.width/2, canvas.height/2 + 150);
+    ctx.fillText("CLICK ANYWHERE TO START", canvas.width / 2, canvas.height / 2 + 150);
     if (this.decreasing && this.alpha > 0.2) {
         this.alpha -= 0.03;
         if (this.alpha <= 0.2) {
@@ -156,7 +158,7 @@ function MenuItem(text, x, y, size, tag) {
     menuItems.push(this);
 }
 
-MenuItem.prototype.draw = function() {
+MenuItem.prototype.draw = function () {
     if (this.tag == "playername" && editingName) {
         ctx.save();
         if (!transition) {
@@ -195,12 +197,14 @@ MenuItem.prototype.draw = function() {
 }
 
 // --------------------- STATUS BARS ----------------------------
+let regenerate = false;
 function StatusBars() {
     this.health = 100;
     this.stamina = 100;
+    this.saveTime = 0;
 }
 
-StatusBars.prototype.update = function(healthMod, staminaMod) {
+StatusBars.prototype.update = function (healthMod, staminaMod) {
     var newHealth = this.health + healthMod;
     var newStamina = this.stamina + staminaMod;
     if (newHealth > 100) {
@@ -219,7 +223,7 @@ StatusBars.prototype.update = function(healthMod, staminaMod) {
     }
 };
 
-StatusBars.prototype.draw = function() {
+StatusBars.prototype.draw = function () {
     ctx.beginPath();
     ctx.lineWidth = 1;
     ctx.strokeStyle = "black";
@@ -234,7 +238,15 @@ StatusBars.prototype.draw = function() {
     ctx.fillStyle = "yellow";
     ctx.rect(11, 36, this.stamina * 3 - 2, 10);
     ctx.fill();
-    statusBars.update(0, 0.5);
+    if (this.stamina < 100) {
+        setTimeout(function () {
+            statusBars.update(0, 0.25);
+        }, 2000);
+    } else if (this.stamina < 0){
+        setTimeout(function () {
+            statusBars.update(0, 0.25);
+        }, 5000);
+    }
 }
 
 // --------------------- SPARKS ----------------------------
@@ -277,7 +289,7 @@ function Particle(x, y) {
     this.y = this.oldY = y;
 }
 
-Particle.prototype.integrate = function() {
+Particle.prototype.integrate = function () {
     var velocity = this.getVelocity();
     this.oldX = this.x;
     this.oldY = this.y;
@@ -285,19 +297,19 @@ Particle.prototype.integrate = function() {
     this.y += velocity.y * DAMPING;
 };
 
-Particle.prototype.getVelocity = function() {
+Particle.prototype.getVelocity = function () {
     return {
         x: this.x - this.oldX,
         y: this.y - this.oldY
     };
 };
 
-Particle.prototype.move = function(x, y) {
+Particle.prototype.move = function (x, y) {
     this.x += x;
     this.y += y;
 };
 
-Particle.prototype.bounce = function() {
+Particle.prototype.bounce = function () {
     if (this.y > canvas.height) {
         var velocity = this.getVelocity();
         this.oldY = canvas.height;
@@ -305,7 +317,7 @@ Particle.prototype.bounce = function() {
     }
 };
 
-Particle.prototype.draw = function() {
+Particle.prototype.draw = function () {
     ctx.beginPath();
     ctx.strokeStyle = '#ffffff';
     ctx.lineWidth = 3;
@@ -322,7 +334,7 @@ function RadialGradient(x, y, radius) {
     this.y = y;
 }
 
-RadialGradient.prototype.draw = function() {
+RadialGradient.prototype.draw = function () {
     this.alpha = this.alpha - 0.1;
     ctx.save();
     ctx.globalAlpha = this.alpha;
@@ -345,12 +357,12 @@ function Star(x, y, length, opacity) {
     this.increment = Math.random() * .05;
 }
 
-Star.prototype.draw = function() {
+Star.prototype.draw = function () {
     ctx.save();
-    if(this.opacity > 1) {
+    if (this.opacity > 1) {
         this.factor = -1;
     }
-    else if(this.opacity <= 0) {
+    else if (this.opacity <= 0) {
         this.factor = 1;
 
         this.x = Math.round(Math.random() * canvas.width);
@@ -368,7 +380,7 @@ Star.prototype.draw = function() {
 }
 
 function createStars() {
-    for(var i = 0; i < numStars; i++) {
+    for (var i = 0; i < numStars; i++) {
         var x = Math.round(Math.random() * canvas.width);
         var y = Math.round(Math.random() * canvas.height);
         var length = 0.5 + Math.random() * 2;
@@ -382,6 +394,21 @@ function drawStars() {
     for (var i = 0; i < stars.length; i++) {
         stars[i].draw();
     }
+}
+
+function FullCollision(x, y, width, height) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    fullCollisions.push(this);
+}
+
+function BottomOnlyCollision(x, y, width) {
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    bottomOnlyCollisions.push(this);
 }
 
 // --------------------- ENTITIES ----------------------------
@@ -402,7 +429,7 @@ function Platform(x, y, type, collisionWidth, collisionHeight) {
     this.electronicsFrame = new Animation(this.mapAsset, 64, 126, 64, 64, 1, 1, true, false);
     this.smallCrateFrame = new Animation(this.mapAsset, 160, 125, 64, 64, 1, 1, true, false);
     this.bigCrateFrame = new Animation(this.mapAsset, 576, 254, 96, 96, 1, 1, true, false);
-    
+
     // this.spritesheet = spritesheet;
     // this.spritesheetX = spritesheetX;
     // this.spritesheetY = spritesheetY;
@@ -434,7 +461,7 @@ function Platform(x, y, type, collisionWidth, collisionHeight) {
         default:
             break;
     }
-    
+
     // this.collisionWidth = collisionWidth + 25;
     this.collisionWidth = collisionWidth;
     this.collisionHeight = collisionHeight;
@@ -443,11 +470,11 @@ function Platform(x, y, type, collisionWidth, collisionHeight) {
 Platform.prototype = new Entity();
 Platform.prototype.constructor = Platform;
 
-Platform.prototype.update = function() {
+Platform.prototype.update = function () {
 
 }
 
-Platform.prototype.draw = function() {
+Platform.prototype.draw = function () {
     // ctx.drawImage(this.spritesheet,
     //     this.spritesheetX, this.spritesheetY,  // source from sheet
     //     this.spritesheetWidth, this.spritesheetHeight, // width and height of source
