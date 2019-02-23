@@ -18,7 +18,7 @@ var SHOWBOX = true;
 
 // var testingVader = false;
 var testingMace = false;
-var testingLuke = false;
+var testingLuke = true;
 var testingObi = false;
 
 AM.queueDownload("./img/StarWarsLogo.png");
@@ -579,6 +579,10 @@ function inGame() {
     // audio.play();
     frameId = requestAnimationFrame(inGameFrame);
     // var gameEngine = new GameEngine(); // Made it an instance field.
+
+    let levelManager = new LevelManager();
+    levelManager.makeLevel_1();
+
     gameEngine.init(ctx);
     gameEngine.start();
     // function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, frameWidth, frameHeight, collisionX, collisionY, collisionWidth, collisionHeight)
@@ -594,14 +598,11 @@ function inGame() {
     // smallCrate - 64, 64
     // bigCrate - 96, 96
 
-    new FullCollision(-100, 400, 980, 200);
-    new FullCollision(1030, 400, 200, 200);
-    new FullCollision(250, 140, 385, 250);
-    new BottomOnlyCollision(17, 280, 210);
-    new BottomOnlyCollision(-100, 160, 294);
-    
-    let levelManager = new LevelManager();
-    levelManager.makeLevel_1();
+    // new FullCollision(-100, 400, 980, 200);
+    // new FullCollision(1030, 400, 200, 200);
+    // new FullCollision(250, 140, 385, 250);
+    // new BottomOnlyCollision(17, 280, 210);
+    // new BottomOnlyCollision(-100, 160, 294);
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());

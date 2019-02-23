@@ -1,3 +1,5 @@
+var currentMap;
+
 function LevelManager() {
 
 }
@@ -32,6 +34,18 @@ LevelManager.prototype.makeLevel_1 = function () {
     gameEngine.addEntity(new Platform(1000, 478, 'bigCrate', 96, 96));
     gameEngine.addEntity(new Platform(600, 190, 'electronics', 0, 0));
 }
+
+// LevelManager.prototype.makeLevel_1 = function () {
+//     fullCollisions = [];
+//     bottomOnlyCollisions = [];
+//     currentMap = AM.getAsset("./img/background.png");
+//     new FullCollision(-100, 400, 980, 200);
+//     new FullCollision(1030, 400, 200, 200);
+//     new FullCollision(250, 140, 385, 250);
+//     new BottomOnlyCollision(17, 280, 210);
+//     new BottomOnlyCollision(-100, 160, 294);
+//     new BottomOnlyCollision(-100, 160, 294);
+// }
 
 LevelManager.prototype.setEnemiesLevel_1 = function () {
     gameEngine.addEntity(new Trooper(gameEngine));
