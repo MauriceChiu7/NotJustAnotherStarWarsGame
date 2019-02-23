@@ -239,13 +239,13 @@ StatusBars.prototype.draw = function () {
     ctx.rect(11, 36, this.stamina * 3 - 2, 10);
     ctx.fill();
     if (this.stamina < 100) {
-        setTimeout(function () {
-            statusBars.update(0, 0.25);
-        }, 2000);
+        // setTimeout(function () {
+            statusBars.update(0, 0.5);
+        // }, 2000);
     } else if (this.stamina < 0){
-        setTimeout(function () {
-            statusBars.update(0, 0.25);
-        }, 5000);
+        // setTimeout(function () {
+            statusBars.update(0, 0.5);
+        // }, 5000);
     }
 }
 
@@ -411,104 +411,12 @@ function BottomOnlyCollision(x, y, width) {
     bottomOnlyCollisions.push(this);
 }
 
-// --------------------- ENTITIES ----------------------------
-// function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, spritesheetWidth, spritesheetHeight, collisionX, collisionY, collisionWidth, collisionHeight) {
-function Platform(x, y, type, collisionWidth, collisionHeight) {
-    this.tag = "Platform";
-    this.x = x;
-    this.y = y;
-    this.type = type;
-    // this.width = width;
-    // this.height = height;
-    this.mapAsset = AM.getAsset('./img/mapAssets1.png');
-
-    // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
-    this.longPlatFrame = new Animation(this.mapAsset, 0, 700, 514, 30, 1, 1, true, false);
-    this.shortPlatFrame = new Animation(this.mapAsset, 0, 700, 130, 30, 1, 1, true, false);
-    this.darkWallFrame = new Animation(this.mapAsset, 0, 512, 382, 192, 1, 1, true, false);
-    this.electronicsFrame = new Animation(this.mapAsset, 64, 126, 64, 64, 1, 1, true, false);
-    this.smallCrateFrame = new Animation(this.mapAsset, 160, 125, 64, 64, 1, 1, true, false);
-    this.bigCrateFrame = new Animation(this.mapAsset, 576, 254, 96, 96, 1, 1, true, false);
-
-    // this.spritesheet = spritesheet;
-    // this.spritesheetX = spritesheetX;
-    // this.spritesheetY = spritesheetY;
-    // this.spritesheetWidth = spritesheetWidth;
-    // this.spritesheetHeight = spritesheetHeight;
-
-    this.collisionX = this.x - 60;
-    // this.collisionX = this.x;
-
-    switch (this.type) {
-        case 'longPlat':
-            this.collisionY = this.y - 67;
-            break;
-        case 'shortPlat':
-            this.collisionY = this.y - 67;
-            break;
-        case 'darkWall':
-            this.collisionY = this.y - 67;
-            break;
-        case 'electronics':
-            this.collisionY = this.y - 67;
-            break;
-        case 'smallCrate':
-            this.collisionY = this.y - 67;
-            break;
-        case 'bigCrate':
-            this.collisionY = this.y - 67;
-            break;
-        default:
-            break;
-    }
-
-    // this.collisionWidth = collisionWidth + 25;
-    this.collisionWidth = collisionWidth;
-    this.collisionHeight = collisionHeight;
-}
-
-Platform.prototype = new Entity();
-Platform.prototype.constructor = Platform;
-
-Platform.prototype.update = function () {
-
-}
-
-Platform.prototype.draw = function () {
-    // ctx.drawImage(this.spritesheet,
-    //     this.spritesheetX, this.spritesheetY,  // source from sheet
-    //     this.spritesheetWidth, this.spritesheetHeight, // width and height of source
-    //     this.x, this.y, // destination coordinates
-    //     this.width, this.height); // destination width and height
-    if (SHOWBOX) {
-        ctx.strokeStyle = 'blue';
-        ctx.strokeRect(this.collisionX, this.collisionY, this.collisionWidth, this.collisionHeight);
-        ctx.fill();
-    }
-    switch (this.type) {
-        case 'longPlat':
-            this.longPlatFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
-            break;
-        case 'shortPlat':
-            this.shortPlatFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
-            break;
-        case 'darkWall':
-            this.darkWallFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
-            break;
-        case 'electronics':
-            this.electronicsFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
-            break;
-        case 'smallCrate':
-            this.smallCrateFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
-            break;
-        case 'bigCrate':
-            this.bigCrateFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
-            break;
-        default:
-            break;
-    }
-}
-
+    // this.longPlatFrame = new Animation(this.mapAsset, 0, 700, 514, 30, 1, 1, true, false);
+    // this.shortPlatFrame = new Animation(this.mapAsset, 0, 700, 130, 30, 1, 1, true, false);
+    // this.darkWallFrame = new Animation(this.mapAsset, 0, 512, 382, 192, 1, 1, true, false);
+    // this.electronicsFrame = new Animation(this.mapAsset, 64, 126, 64, 64, 1, 1, true, false);
+    // this.smallCrateFrame = new Animation(this.mapAsset, 160, 125, 64, 64, 1, 1, true, false);
+    // this.bigCrateFrame = new Animation(this.mapAsset, 576, 254, 96, 96, 1, 1, true, false);
 
 function initializeControlsItems() {
     menuItems = [];

@@ -6,20 +6,20 @@ var transition = false;
 var frameId;
 var transitionCounter = 0;
 var menuSelection;
-var musicVolume = 1;
+var musicVolume = 0.7;
 var sfxVolume = 1;
 var playerName = "<PLAYER NAME>";
 var tempName = "";
 var searching = false;
 var searchingCounter = 0;
 var editingName = false;
-var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
 var SHOWBOX = true;
+var mainMenuMusic;
 
 // var testingVader = false;
-var testingMace = false;
-var testingLuke = true;
-var testingObi = false;
+// var testingMace = false;
+// var testingLuke = true;
+// var testingObi = false;
 
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
@@ -43,11 +43,15 @@ AM.queueSound("./sounds/MenuSelect.wav");
 AM.queueSound("./sounds/VolumeUp.wav");
 AM.queueSound("./sounds/VolumeDown.wav");
 AM.queueSound("./sounds/CycleMenu.wav");
+AM.queueSound("./sounds/StartSearch.mp3");
+AM.queueSound("./sounds/CancelSearch.wav");
+AM.queueSound("./sounds/EditName.wav");
 AM.queueSound("./sounds/laser_blaster_sound.wav");
 AM.queueSound("./sounds/LightsaberThrow.WAV");
 AM.queueSound("./sounds/LightsaberTurnOn.wav");
 AM.queueSound("./sounds/LightsaberTurnOff.wav");
-AM.queueSound("./sounds/StarWarsMainTheme.wav");
+AM.queueSound("./sounds/StarWarsMainTheme2.mp3");
+
 AM.downloadAll(function () {
     startScreen();
 });
@@ -86,6 +90,7 @@ function menuMouseMove(event) {
 function startScreen() {
     initializeCharacterData();
     createStars();
+    mainMenuMusic = AM.getSound("./sounds/StarWarsMainTheme2.mp3");
     canvas.addEventListener('click', startScreenClick);
     frameId = requestAnimationFrame(startScreenFrame);
 }
@@ -125,14 +130,14 @@ function startScreenClick(event) {
 function mainMenu() {
     initializeMenuItems();
     cancelAnimationFrame(frameId);
+    mainMenuMusic.volume = 0.5 * musicVolume;
+    mainMenuMusic.play();
     canvas.addEventListener('click', mainMenuClick);
     canvas.addEventListener('mousemove', menuMouseMove);
     frameId = requestAnimationFrame(mainMenuFrame);
 }
 
 function mainMenuFrame() {
-    mainMenuMusic.volume = 0.5 * musicVolume;
-    mainMenuMusic.play();
     ctx.clearRect(0, 0, canvas.width, canvas.height);
     drawStars();
     menuItems.forEach(function (item) {
@@ -141,10 +146,8 @@ function mainMenuFrame() {
     frameId = requestAnimationFrame(mainMenuFrame);
     if (transition) {
         if (menuSelection == "STORY MODE") {
-            mainMenuMusic.pause();
             screenTransition(inGame);
         } else if (menuSelection == "MULTIPLAYER") {
-            mainMenuMusic.pause();
             screenTransition(multiplayer);
         } else if (menuSelection == "CUSTOM GAME") {
             screenTransition(customGame);
@@ -243,7 +246,6 @@ function customGameFrame() {
         if (menuSelection == "BACK") {
             screenTransition(mainMenu);
         } else if (menuSelection == "START") {
-            mainMenuMusic.pause();
             screenTransition(inGame);
         } else {
             screenTransition(customGame);
@@ -376,22 +378,37 @@ function multiplayerClick(event) {
                     canvas.removeEventListener('keyup', nameEditHandler, true);
                     transition = true;
                 } else if (menuSelection == "FIND MATCH") {
+                    var audio = AM.getSound("./sounds/StartSearch.mp3").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
                     searching = true;
                     item.text = "CANCEL";
                 } else if (menuSelection == "CANCEL") {
+                    var audio = AM.getSound("./sounds/CancelSearch.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
                     searching = false;
                     item.text = "FIND MATCH";
                 } else if (menuSelection == "<") {
+                    var audio = AM.getSound("./sounds/CycleMenu.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
                     playerCharacter--;
                     if (playerCharacter == 0) {
                         playerCharacter = characterData.length - 1;
                     }
                 } else if (menuSelection == ">") {
+                    var audio = AM.getSound("./sounds/CycleMenu.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
                     playerCharacter++;
                     if (playerCharacter == characterData.length) {
                         playerCharacter = 1;
                     }
                 } else if (item.tag == "playername") {
+                    var audio = AM.getSound("./sounds/EditName.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
                     canvas.addEventListener('keyup', nameEditHandler, true);
                     editingName = true;
                     tempName = "";
@@ -425,6 +442,59 @@ function nameEditHandler(event) {
     }
 }
 
+// --------------------- CONTROLS ----------------------------
+function controls() {
+    initializeCreditsItems();
+    cancelAnimationFrame(frameId);
+    canvas.addEventListener('click', controlsClick);
+    frameId = requestAnimationFrame(controlsFrame);
+}
+
+function controlsFrame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawStars();
+    ctx.save();
+    ctx.font = "30px monospace";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("CONTROLS", 600, 100);
+    ctx.fillStyle = "#ffd700";
+    ctx.font = "20px arial";
+    ctx.fillText("Left Click = Attack", 600, 180);
+    ctx.fillText("Right Click = Block", 600, 230);
+    ctx.fillText("A / D = Left / Right", 600, 280);
+    ctx.fillText("W / S = Jump / Crouch", 600, 330);
+    ctx.fillText("E = Special Attack", 600, 380);
+    ctx.fillText("R = Switch Weapon", 600, 430);
+    ctx.fillText("Hold S + SPACE = Jump Down", 600, 480);
+    ctx.restore();
+    menuItems.forEach(function (item) {
+        item.draw();
+    });
+    frameId = requestAnimationFrame(controlsFrame);
+    if (transition) {
+        screenTransition(mainMenu);
+    }
+}
+
+function controlsClick(event) {
+    if (transitionCounter == 0) {
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        menuItems.forEach(function (item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
+                menuSelection = item.text;
+                if (menuSelection == "BACK") {
+                    var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
+                    canvas.removeEventListener('click', controlsClick);
+                    transition = true;
+                }
+            }
+        });
+    }
+}
 
 // --------------------- SETTINGS ----------------------------
 function settings() {
@@ -481,6 +551,8 @@ function settingsClick(event) {
                             var audio = AM.getSound("./sounds/VolumeUp.wav").cloneNode();
                             audio.volume = sfxVolume;
                             audio.play();
+                            mainMenuMusic.volume = 0.5 * musicVolume;
+   							mainMenuMusic.play();
                         }
                     } else if (item.tag == "music-") {
                         if (musicVolume > 0) {
@@ -491,6 +563,8 @@ function settingsClick(event) {
                             var audio = AM.getSound("./sounds/VolumeDown.wav").cloneNode();
                             audio.volume = sfxVolume;
                             audio.play();
+                            mainMenuMusic.volume = 0.5 * musicVolume;
+   							mainMenuMusic.play();
                         }
                     } else if (item.tag == "sfx+") {
                         if (sfxVolume < 1) {
@@ -574,6 +648,7 @@ function creditsClick(event) {
 function inGame() {
     canvas.removeEventListener('mousemove', menuMouseMove);
     cancelAnimationFrame(frameId);
+    mainMenuMusic.pause();
     var audio = AM.getSound("./sounds/VaderVsLukeTheme.wav");
     audio.volume = musicVolume;
     audio.play();
@@ -584,7 +659,6 @@ function inGame() {
     // levelManager.makeLevel_1();
 
     gameEngine.init(ctx);
-    
     
     // gameEngine.start();
     var promise = new Promise(function (resolve, reject) {
@@ -599,42 +673,6 @@ function inGame() {
         console.log(gameEngine.entities);
         gameEngine.start();
     });
-
-    
-    // function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, frameWidth, frameHeight, collisionX, collisionY, collisionWidth, collisionHeight)
-    // gameEngine.addEntity(new Platform(0, 500, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Actual ground. This is what luke is standing on.
-    // gameEngine.addEntity(new Platform(0, 565, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Fake ground... the collision box is different than the pixles location.
-    // gameEngine.addEntity(new Platform(300, 300, 100, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 300, 235, 300, 100));
-    
-    // longPlat / shortPlat / darkWall / electronics / smallCrate / bigCrate
-    // longPlat - collision width:  514, collision height 30
-    // shortPlat - 130, 30
-    // darkWall -  382, 192
-    // electronics - 64, 64
-    // smallCrate - 64, 64
-    // bigCrate - 96, 96
-    // new Promise(() => {
-    //     let levelManager = new LevelManager();
-    //     gameEngine.addEntity(levelManager);
-    // })
-    
-
-    // var promise = new Promise(function () {
-        
-    // });
-
-    // var promise = new Promise(function(resolve, reject) {
-    //     setTimeout(function() {
-    //       resolve('foo');
-    //     }, 300);
-    //   });
-
-    // promise.then(()=>{
-    //     let levelManager = new LevelManager();
-    //     gameEngine.addEntity(levelManager);
-    //     console.log('promise done');
-    // })
-
 
     // if (playerCharacter == 3) {
     //     // gameEngine.addEntity(new Vader());
@@ -661,59 +699,5 @@ function inGameFrame() {
     frameId = requestAnimationFrame(inGameFrame);
     if (transition) {
         screenTransition(inGame);
-    }
-}
-
-// --------------------- CONTROLS ----------------------------
-function controls() {
-    initializeCreditsItems();
-    cancelAnimationFrame(frameId);
-    canvas.addEventListener('click', controlsClick);
-    frameId = requestAnimationFrame(controlsFrame);
-}
-
-function controlsFrame() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-    drawStars();
-    ctx.save();
-    ctx.font = "30px monospace";
-    ctx.fillStyle = "#ffffff";
-    ctx.fillText("CONTROLS", 600, 100);
-    ctx.fillStyle = "#ffd700";
-    ctx.font = "20px arial";
-    ctx.fillText("Left Click = Attack", 600, 180);
-    ctx.fillText("Right Click = Block", 600, 230);
-    ctx.fillText("A / D = Left / Right", 600, 280);
-    ctx.fillText("W / S = Jump / Crouch", 600, 330);
-    ctx.fillText("E = Special Attack", 600, 380);
-    ctx.fillText("R = Switch Weapon", 600, 430);
-    ctx.fillText("Hold S + SPACE = Jump Down", 600, 480);
-    ctx.restore();
-    menuItems.forEach(function (item) {
-        item.draw();
-    });
-    frameId = requestAnimationFrame(controlsFrame);
-    if (transition) {
-        screenTransition(mainMenu);
-    }
-}
-
-function controlsClick(event) {
-    if (transitionCounter == 0) {
-        var rect = canvas.getBoundingClientRect();
-        var x = event.clientX - rect.left;
-        var y = event.clientY - rect.top;
-        menuItems.forEach(function (item) {
-            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
-                menuSelection = item.text;
-                if (menuSelection == "BACK") {
-                    var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
-                    audio.volume = sfxVolume;
-                    audio.play();
-                    canvas.removeEventListener('click', controlsClick);
-                    transition = true;
-                }
-            }
-        });
     }
 }
