@@ -103,6 +103,7 @@ function Map(mapNumber) {
             console.log('map2 built');
             break;
     }
+    // redraw map
 }
 
 // Map.prototype = new Entity();
