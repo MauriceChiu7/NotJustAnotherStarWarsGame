@@ -210,7 +210,7 @@ function LightsaberThrow(start, end, game) {
     this.right = false;
   }
 
-  console.log("Init throw: " + start.x + " " + start.y + " " + end.x + " " + end.y);
+  // console.log("Init throw: " + start.x + " " + start.y + " " + end.x + " " + end.y);
   Entity.call(this, game, this.x, this.y);
 }
 LightsaberThrow.prototype = new Entity();

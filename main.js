@@ -33,6 +33,7 @@ AM.queueDownload("./img/macewindu_left.png");
 AM.queueDownload("./img/macewindu_right.png");
 AM.queueDownload("./img/trooper_right.png");
 AM.queueDownload("./img/trooper_left.png");
+AM.queueDownload("./img/background.png");
 AM.queueDownload("./img/obiwan_right.png");
 AM.queueDownload("./img/obiwan_left.png");
 
@@ -578,6 +579,10 @@ function inGame() {
     // audio.play();
     frameId = requestAnimationFrame(inGameFrame);
     // var gameEngine = new GameEngine(); // Made it an instance field.
+
+    let levelManager = new LevelManager();
+    levelManager.makeLevel_1();
+
     gameEngine.init(ctx);
     gameEngine.start();
     // function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, frameWidth, frameHeight, collisionX, collisionY, collisionWidth, collisionHeight)
