@@ -292,7 +292,6 @@ Trooper.prototype.draw = function () {
         this.dyingRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
     }
 
-
     if (this.player.x + 50 > this.x) {
         this.drawRight();
     } else if (this.player.x + 50 < this.x) {
@@ -309,7 +308,6 @@ Trooper.prototype.drawRight = function () {
             break;
         case this.standing:         //standing
             this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
-
             break;
         case this.attacking:         //attacking
             console.log("attack right");

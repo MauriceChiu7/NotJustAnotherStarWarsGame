@@ -14,7 +14,7 @@ var searching = false;
 var searchingCounter = 0;
 var editingName = false;
 var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
-var SHOWBOX = true;
+var SHOWBOX = false;
 
 // var testingVader = false;
 var testingMace = false;

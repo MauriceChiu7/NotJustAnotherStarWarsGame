@@ -8,19 +8,21 @@ function LevelManager() {
     this.x = 0;
     this.y = 0;
     var map1 = new Map(1);
+    var map2 = new Map(2);
+    // this.levels = [map1, map2];
     this.levels = [map1];
     this.startLevel(1);
+    // setInterval(()=>{console.log(this.levels[level-1].enemies)}, 1500)
+    setInterval(()=>{console.log(gameEngine.entities)}, 1500)
 }
 
 LevelManager.prototype = new Entity();
 LevelManager.prototype.constructor = LevelManager;
 
 LevelManager.prototype.startLevel = function (levelNum) {
-    if (gameEngine.entities.length != 0) {
-        for (var i = 0; i < gameEngine.entities.length; i++) {
-            gameEngine.entities.pop();
-        }
-    }
+    console.log('bp startLevel');
+    pause();
+    gameEngine.entities = gameEngine.entities.filter(entity => entity.tag === 'LM')
     
     for (var i = 0; i < this.levels[levelNum - 1].platforms.length; i++) {
         gameEngine.addEntity(this.levels[levelNum - 1].platforms[i]);
@@ -35,9 +37,7 @@ LevelManager.prototype.startLevel = function (levelNum) {
     ctx.font = "25px monospace";
     ctx.fillStyle = "WHITE";
     ctx.fillText('Level' + level, canvas.width - 200, 100);
-    setTimeout(()=>{
-        ctx.clearRect(0, 0, 50, 100);
-    }, 500);
+    unpause();
 }
 
 LevelManager.prototype.update = function () {
@@ -49,31 +49,34 @@ LevelManager.prototype.update = function () {
             }
         }
     }
-    if (level !== this.levels.length && gameEngine.entities.length === 1 && gameEngine.entities[0].tag === 'player') {
+    this.levels[level-1].enemies = this.levels[level-1].enemies.filter(enemy => enemy.health > 0);
+    if (level !== this.levels.length && this.levels[level-1].enemies.length === 0) {
         level++;
         console.log('Leveled up');
         this.startLevel(level);
-    } else if (level === this.levels.length && gameEngine.entities.length === 1 && gameEngine.entities[0].tag === 'player') { // Winning the last level
+    } else if (level === this.levels.length && this.levels[level-1].enemies.length === 0) { // Winning the last level
         gameover = true;
         win = true;
 
-        ctx.font = "25px monospace";
-        ctx.fillStyle = "WHITE";
-        ctx.textAlign = "center";
-        ctx.fillText("YOU WIN", canvas.width/2, canvas.height/2);
+        // gameEngine.entities = gameEngine.entities.filter(entity => entity.tag === 'LM');
+
+        // for (var i = 0; i < gameEngine.entities.length; i++) {
+        //     gameEngine.entities.pop();
+        // }
+        
         console.log('won the game');
-        canvas.addEventListener('click', reload);
+        canvas.addEventListener('contextmenu', reload);
         // canvas.removeEventListener('click', reload);
     } else if (player.health <= 0) { // Loosing the game
         gameover = true;
-        
-        ctx.font = "25px monospace";
-        ctx.fillStyle = "WHITE";
-        ctx.textAlign = "center";
-        ctx.fillText("YOU LOOSE", canvas.width/2, canvas.height/2);
-        ctx.fillText("(CLICK ANY WHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
 
-        canvas.addEventListener('click', reload);
+        // gameEngine.entities = gameEngine.entities.filter(entity => entity.tag === 'LM');
+
+        // for (var i = 0; i < gameEngine.entities.length; i++) {
+        //     gameEngine.entities.pop();
+        // }
+
+        canvas.addEventListener('contextmenu', reload);
         // canvas.removeEventListener('click', reload);
     }
 }
