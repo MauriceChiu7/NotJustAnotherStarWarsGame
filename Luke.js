@@ -6,8 +6,8 @@ const cursorOffset = -48; // -20 // Question
 const DAMAGE_LUKE = 2;
 const LUKE_HITBOX_X_OFFSET = 35;
 const LUKE_HITBOX_Y_OFFSET = 20;
-const LUKE_COLLISION_WIDTH = 25;
-const LUKE_COLLISION_HEIGHT = 50;
+var LUKE_COLLISION_WIDTH = 25;
+var LUKE_COLLISION_HEIGHT = 50;
 var attkNumLuke = 1;
 /*
 Use this height difference whenever you are using luke_sprites_right.png and that when the height of
@@ -35,8 +35,8 @@ var LUKE_THIS;
 var LUKE_WAS_HIT = false;
 
 function Luke() {
-    this.x = 600;
-    //this.y = 300;
+    this.x = 300;
+    this.y = 100;
     this.width = 30;
     this.height = 50;
     this.xAcceleration = 0;
@@ -157,22 +157,101 @@ function Luke() {
     this.inAir = false;
     // this.running = false;
     this.crouching = false;
+    this.dropping = false;
     this.attacking = false;
     this.switching = false;
     this.dying = false;
     this.dead = false;
+
     this.tag = "player";
     this.hitbox = 20;
 
     this.ground = 500;
     this.speed = 500;
 
+    this.fullMCollisions = [];
+    this.bottomMCollisions = [];
+    this.collisionRight;
+    this.collisionLeft;
+    this.collisionTop;
+    this.collisionBottom;
+    this.currentDisplacementX = LUKE_COLLISION_WIDTH + LUKE_HITBOX_X_OFFSET;
+    this.currentDisplacementY = LUKE_COLLISION_HEIGHT + LUKE_HITBOX_Y_OFFSET;
+
     this.ctx = gameEngine.ctx;
-    Entity.call(this, gameEngine, 300, 500, this.width, this.height);
+    Entity.call(this, gameEngine, this.x, this.y, this.width, this.height);
 }
 
 Luke.prototype = new Entity();
 Luke.prototype.constructor = Luke;
+
+Luke.prototype.getMapCollisions = function() {
+    this.fullMCollisions = [];
+    for (var i = 0; i < fullCollisions.length; i++) {
+        let current = fullCollisions[i];
+        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x &&
+            this.y + this.yAcceleration + this.currentDisplacementY < current.y + current.height && this.y + this.yAcceleration + this.currentDisplacementY > current.y) {
+            var direction = [];
+            if (this.y + this.currentDisplacementY > current.y + current.height) {
+                direction = "top";
+            } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
+                direction = "bottom";
+            }
+            if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
+                direction = "right";
+            } else if (this.x + this.currentDisplacementX <= current.x  + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
+                direction = "left";
+            }
+            this.fullMCollisions.push({object: current, direction: direction});
+        }
+    }
+    this.bottomMCollisions = [];
+    for (var i = 0; i < bottomOnlyCollisions.length; i++) {
+        let current = bottomOnlyCollisions[i];
+        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y && 
+            this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
+            this.bottomMCollisions.push(bottomOnlyCollisions[i]);
+        }
+    }
+}
+
+Luke.prototype.getMapCollisions2 = function(x, y) {
+    this.fullMCollisions = [];
+    var toReturn = [];
+    for (var i = 0; i < fullCollisions.length; i++) {
+        let current = fullCollisions[i];
+        if (x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && x + this.xAcceleration + this.currentDisplacementX > current.x &&
+            y + this.yAcceleration + this.currentDisplacementY < current.y + current.height && y + this.yAcceleration + this.currentDisplacementY > current.y) {
+            var direction = [];
+            if (y + this.currentDisplacementY > current.y + current.height) {
+                direction = "top";
+            } else if (y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
+                direction = "bottom";
+            }
+            if (x + 1 + this.currentDisplacementX >= current.x + current.width && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
+                direction = "right";
+            } else if (x + this.currentDisplacementX <= current.x  + 1 && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
+                direction = "left";
+            }
+            toReturn.push({object: current, direction: direction});
+        }
+    }
+    return toReturn;
+}
+
+Luke.prototype.getMapCollision = function(direction) {
+    for (var i = 0; i < this.fullMCollisions.length; i++) {
+        if (this.fullMCollisions[i].direction == direction) {
+            return this.fullMCollisions[i].object;
+        }
+    }
+    if (direction == "bottom") {
+        if (this.bottomMCollisions.length > 0) {
+            return this.bottomMCollisions[i];
+        }
+    }
+    return null;
+}
 
 Luke.prototype.collide = function (xDisplacement, yDisplacement, tag) {
     var collisions = [];
@@ -230,6 +309,7 @@ Luke.prototype.getCollision = function (direction) {
     }
     return null;
 }
+
 Luke.prototype.getDistance = function (thisEnt, otherEnt) {
     let dx, dy;
     dx = thisEnt.x - otherEnt.x;
@@ -255,27 +335,37 @@ Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
 }
 
 Luke.prototype.update = function () {
-    this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
-    this.enemyCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'enemy');
+    // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
 
+    this.enemyCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'enemy');
+    this.getMapCollisions();
+    collisionRight = this.getMapCollision("right");
+    collisionLeft = this.getMapCollision("left");
+    collisionTop = this.getMapCollision("top");
+    collisionBottom = this.getMapCollision("bottom");
     // this.laserCollisios = this.collide(this.xAcceleration, this.yAcceleration, 'laser');
 
     // stops movement if collision encountered
-    if (this.getCollision("right") != null) {
-        this.x = this.getCollision("right").entity.collisionX + this.getCollision("right").entity.collisionWidth + 2;
+    if (collisionRight != null) {
+        this.x = collisionRight.x + collisionRight.width + 1 - this.currentDisplacementX;
         this.xAcceleration = 0;
-    } else if (this.getCollision("left") != null) {
-        this.x = this.getCollision("left").entity.collisionX - 2;
+    } else if (collisionLeft != null) {
+        this.x = collisionLeft.x - 1 - this.currentDisplacementX;
         this.xAcceleration = 0;
     }
-    if (this.getCollision("top") != null) {
+    if (collisionTop != null) {
         this.yAcceleration = 0;
-    } else if (this.getCollision("bottom") != null) {
-        this.y = this.getCollision("bottom").entity.collisionY + 1;
-        this.yAcceleration = 0;
+    } else if (collisionBottom != null) {
+        if (collisionBottom instanceof BottomOnlyCollision && this.crouching && this.dropping) {
+            this.yAcceleration += 0.4;
+        } else {
+            this.y = collisionBottom.y + 1 - this.currentDisplacementY;
+            this.yAcceleration = 0;
+        }
     } else {
         this.yAcceleration += 0.4;
     }
+
     for (let i = 0; i < this.game.entities.length; i++) {
         let curEnt = this.game.entities[i];
         if (curEnt instanceof Trooper) {
@@ -327,9 +417,18 @@ Luke.prototype.update = function () {
     }
 
     // movement
-    if (gameEngine.w && this.getCollision("bottom") != null && !this.dead) {
-        this.jumping = true;
-        this.yAcceleration -= 13;
+    if (gameEngine.w && collisionBottom != null && !this.dead) {
+        var collisionCheck = this.getMapCollisions2(this.x, this.y - 13);
+        var canJump = true;
+        for (var i = 0; i < collisionCheck.length; i++) {
+            if (collisionCheck[i].direction == "bottom") {
+                canJump = false;
+            }
+        }
+        if (canJump) {
+            this.jumping = true;
+            this.yAcceleration -= 13;
+        }
         // console.log('if (gameEngine.w)');
     }
     if (gameEngine.d && !this.dead) {
@@ -351,6 +450,9 @@ Luke.prototype.update = function () {
         this.standing = false;
         blocking = false;
     }
+    if (gameEngine.spacebar) {
+        this.dropping = true;
+    }
     if (gameEngine.keyup && !this.dead) {
         if (gameEngine.keyReleased == 'd') {
             this.movingRight = false;
@@ -361,6 +463,8 @@ Luke.prototype.update = function () {
         } else if (gameEngine.keyReleased == 's') {
             this.crouching = false;
             this.standing = true;
+        } else if (gameEngine.keyReleased == ' ') {
+            this.dropping = false;
         }
     }
     if (this.movingLeft && !this.dead) {
