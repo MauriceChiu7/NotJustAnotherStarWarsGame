@@ -594,26 +594,26 @@ function inGame() {
     // bigCrate - 96, 96
 
     let levelManager = new LevelManager();
-    levelManager.makeLevel_1();
+    gameEngine.addEntity(levelManager);
 
-    if (playerCharacter == 3) {
-        // gameEngine.addEntity(new Vader());
-        // gameEngine.addEntity(new Character(gameEngine));
-    } else if (playerCharacter == 2 || playerCharacter == 1) {
-        if (testingLuke) {
-            gameEngine.addEntity(new Luke(gameEngine));
-            levelManager.setEnemiesLevel_1();
-        } else if (testingMace) {
-            gameEngine.addEntity(new Luke(gameEngine));
-            levelManager.setEnemiesLevel_1();
-        } else if (testingObi) {
-            gameEngine.addEntity(new Obi());
-        } else {
-            gameEngine.addEntity(new Vader());
-            gameEngine.addEntity(new Dummy(gameEngine));
-        }
+    // if (playerCharacter == 3) {
+    //     // gameEngine.addEntity(new Vader());
+    //     // gameEngine.addEntity(new Character(gameEngine));
+    // } else if (playerCharacter == 2 || playerCharacter == 1) {
+    //     if (testingLuke) {
+    //         gameEngine.addEntity(new Luke(gameEngine));
+    //         levelManager.setEnemiesLevel_1();
+    //     } else if (testingMace) {
+    //         gameEngine.addEntity(new Luke(gameEngine));
+    //         levelManager.setEnemiesLevel_1();
+    //     } else if (testingObi) {
+    //         gameEngine.addEntity(new Obi());
+    //     } else {
+    //         gameEngine.addEntity(new Vader());
+    //         gameEngine.addEntity(new Dummy(gameEngine));
+    //     }
         // gameEngine.addEntity(new Dummy(gameEngine));
-    }
+    // }
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
 }
 
