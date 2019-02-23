@@ -25,6 +25,8 @@ function Vader() {
     this.jumping = false;
     this.movingRight = false;
     this.movingLeft = false;
+    this.crouching = false;
+    this.dropping = false;
     this.fullMCollisions = [];
     this.bottomMCollisions = [];
     this.collisionRight;
@@ -37,7 +39,7 @@ function Vader() {
 Vader.prototype = new Entity();
 Vader.prototype.constructor = Vader;
 
-Vader.prototype.getMapCollisions = function(xDisplacement, yDisplacement) {
+Vader.prototype.getMapCollisions = function() {
     this.fullMCollisions = [];
     for (var i = 0; i < fullCollisions.length; i++) {
         let current = fullCollisions[i];
@@ -47,19 +49,12 @@ Vader.prototype.getMapCollisions = function(xDisplacement, yDisplacement) {
             if (this.y > current.y + current.height) {
                 direction = "top";
             } else if (this.y + this.height > current.y) {
-                if (this.yAcceleration != 0) {
-                    // console.log("VADER : " + this.y);
-                    // console.log("MAP : " + current.y);
-                // console.log(current);
-                }
                 direction = "bottom";
             }
-            if (this.x + 1 >= current.x + current.width && this.x + this.xAcceleration <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 >= current.x) {
+            if (this.x + 1 >= current.x + current.width && this.x + this.xAcceleration <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 >= current.x && this.yAcceleration != 0) {
                 direction = "right";
-                // console.log("RIGHT");
             } else if (this.x <= current.x  + 1 && this.x + this.xAcceleration <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 >= current.x) {
                 direction = "left";
-                // console.log("LEFT");
             }
             this.fullMCollisions.push({object: current, direction: direction});
         }
@@ -94,21 +89,24 @@ Vader.prototype.update = function() {
     collisionLeft = this.getMapCollision("left");
     collisionTop = this.getMapCollision("top");
     collisionBottom = this.getMapCollision("bottom");
-    // console.log(this.fullMCollisions);
+
     // stops movement if collision encountered
     if (collisionRight != null) {
-        this.x = collisionRight.x + collisionRight.width + 2;
+        this.x = collisionRight.x + collisionRight.width + 1;
         this.xAcceleration = 0;
     } else if (collisionLeft != null) {
-        this.x = collisionLeft.x - 2;
+        this.x = collisionLeft.x - 1;
         this.xAcceleration = 0;
     }
     if (collisionTop != null) {
         this.yAcceleration = 0;
     } else if (collisionBottom != null) {
-        // console.log("BOTTOM COLLISION");
-        this.y = collisionBottom.y + 1;
-        this.yAcceleration = 0;
+        if (collisionBottom instanceof BottomOnlyCollision && this.crouching && this.dropping) {
+            this.yAcceleration += 0.4;
+        } else {
+            this.y = collisionBottom.y + 1;
+            this.yAcceleration = 0;
+        }
     } else {
         this.yAcceleration += 0.4;
     }
@@ -138,11 +136,21 @@ Vader.prototype.update = function() {
         this.movingRight = false;
         this.movingLeft = true;
     }
+    if (gameEngine.s) {
+        this.crouching = true;
+    }
+    if (gameEngine.spacebar) {
+        this.dropping = true;
+    }
     if (gameEngine.keyup) {
         if (gameEngine.keyReleased == 'd') {
             this.movingRight = false;
         } else if (gameEngine.keyReleased == 'a') {
             this.movingLeft = false;
+        } else if (gameEngine.keyReleased == 's') {
+            this.crouching = false;
+        } else if (gameEngine.keyReleased == ' ') {
+            this.dropping = false;
         }
     }
 
@@ -152,21 +160,6 @@ Vader.prototype.update = function() {
         this.attacking = false;
         this.switchAttack = !this.switchAttack;
     }
-
-    // if (this.jumpAnim.isDone()) {
-    //     this.jumpAnim.elapsedTime = 0;
-    //     this.jumping = false;
-    // }
-
-    // if (this.jumping) {
-    //     var totalHeight = 200;
-    //     var jumpDistance = this.jumpAnim.elapsedTime / this.jumpAnim.totalTime;
-    //     if (jumpDistance > 0.5) {
-    //         jumpDistance = 1 - jumpDistance;
-    //     }
-    //     var height = totalHeight * (-4 * (jumpDistance * jumpDistance - jumpDistance));
-    //     this.y = 500 - height;
-    // }
 
     if (this.movingLeft) {
         if (this.attacking) {

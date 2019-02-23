@@ -146,11 +146,11 @@ GameEngine.prototype.addEntity = function (entity) {
 GameEngine.prototype.draw = function () {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
-    // this.ctx.drawImage(currentMap,
-    //     0, 0,  // source from sheet
-    //     1200, 600, // width and height of source
-    //     0, 0, // destination coordinates
-    //     1200, 600); // destination width and height
+    this.ctx.drawImage(currentMap,
+        0, 0,  // source from sheet
+        1200, 600, // width and height of source
+        0, 0, // destination coordinates
+        1200, 600); // destination width and height
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].checkCollisions();
         this.entities[i].draw(this.ctx);

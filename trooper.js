@@ -24,7 +24,15 @@ function Trooper(game) {
     this.height = 80;
     this.xAcceleration = 0;
     this.yAcceleration = 0;
-    this.platformCollisions = [];
+
+    this.fullMCollisions = [];
+    this.bottomMCollisions = [];
+    this.collisionRight;
+    this.collisionLeft;
+    this.collisionTop;
+    this.collisionBottom;
+    this.currentDisplacementX = 30;
+    this.currentDisplacementY = 75;
 
     this.speed = 100;
     this.dead = false; // added by maurice
@@ -62,6 +70,50 @@ function Trooper(game) {
 
 Trooper.prototype = new Entity();
 Trooper.prototype.constructor = Trooper;
+
+Trooper.prototype.getMapCollisions = function() {
+    this.fullMCollisions = [];
+    for (var i = 0; i < fullCollisions.length; i++) {
+        let current = fullCollisions[i];
+        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x &&
+            this.y + this.yAcceleration + this.currentDisplacementY < current.y + current.height && this.y + this.yAcceleration + this.currentDisplacementY > current.y) {
+            var direction = [];
+            if (this.y + this.currentDisplacementY > current.y + current.height) {
+                direction = "top";
+            } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
+                direction = "bottom";
+            }
+            if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
+                direction = "right";
+            } else if (this.x + this.currentDisplacementX <= current.x  + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
+                direction = "left";
+            }
+            this.fullMCollisions.push({object: current, direction: direction});
+        }
+    }
+    this.bottomMCollisions = [];
+    for (var i = 0; i < bottomOnlyCollisions.length; i++) {
+        let current = bottomOnlyCollisions[i];
+        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y && 
+            this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
+            this.bottomMCollisions.push(bottomOnlyCollisions[i]);
+        }
+    }
+}
+
+Trooper.prototype.getMapCollision = function(direction) {
+    for (var i = 0; i < this.fullMCollisions.length; i++) {
+        if (this.fullMCollisions[i].direction == direction) {
+            return this.fullMCollisions[i].object;
+        }
+    }
+    if (direction == "bottom") {
+        if (this.bottomMCollisions.length > 0) {
+            return this.bottomMCollisions[i];
+        }
+    }
+    return null;
+}
 
 Trooper.prototype.collide = function (xDisplacement, yDisplacement, tag) {
     var collisions = [];
@@ -102,18 +154,9 @@ Trooper.prototype.attackCollide = function () {
     return distance < this.width + this.player.width;
 }
 
-Trooper.prototype.getCollision = function (direction) {
-    for (var i = 0; i < this.platformCollisions.length; i++) {
-        if (this.platformCollisions[i].direction == direction) {
-            return this.platformCollisions[i];
-        }
-    }
-    return null;
-}
-
 Trooper.prototype.update = function () {
-    console.log('Trooper ID'+ this.id+' health: ' + this.health);
-    this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+    // console.log('Trooper ID'+ this.id+' health: ' + this.health);
+    // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
 
     this.distance = this.player.x +50- this.x;
@@ -172,19 +215,29 @@ Trooper.prototype.update = function () {
         }
     }
 
+    this.getMapCollisions();
+    collisionRight = this.getMapCollision("right");
+    collisionLeft = this.getMapCollision("left");
+    collisionTop = this.getMapCollision("top");
+    collisionBottom = this.getMapCollision("bottom");
+
     // stops movement if collision encountered
-    if (this.getCollision("right") != null) {
-        this.x = this.getCollision("right").entity.collisionX + this.getCollision("right").entity.collisionWidth + 2;
+    if (collisionRight != null) {
+        this.x = collisionRight.x + collisionRight.width + 1 - this.currentDisplacementX;
         this.xAcceleration = 0;
-    } else if (this.getCollision("left") != null) {
-        this.x = this.getCollision("left").entity.collisionX - 2;
+    } else if (collisionLeft != null) {
+        this.x = collisionLeft.x - 1 - this.currentDisplacementX;
         this.xAcceleration = 0;
     }
-    if (this.getCollision("top") != null) {
+    if (collisionTop != null) {
         this.yAcceleration = 0;
-    } else if (this.getCollision("bottom") != null) {
-        this.y = this.getCollision("bottom").entity.collisionY + 1;
-        this.yAcceleration = 0;
+    } else if (collisionBottom != null) {
+        if (collisionBottom instanceof BottomOnlyCollision && this.crouching && this.dropping) {
+            this.yAcceleration += 0.4;
+        } else {
+            this.y = collisionBottom.y + 1 - this.currentDisplacementY;
+            this.yAcceleration = 0;
+        }
     } else {
         this.yAcceleration += 0.4;
     }
@@ -282,7 +335,8 @@ Trooper.prototype.drawLeft = function () {
 
 Trooper.prototype.shoot = function () {
     let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
-    audio.play();
+    audio.volume = 0.05;
+    // audio.play();
     let rect = canvas.getBoundingClientRect();
     let startCoor = { x: (this.x + 20 + this.x) / 2, y: (this.y + this.height + this.y) / 2 };
     const xend = this.player.x;
