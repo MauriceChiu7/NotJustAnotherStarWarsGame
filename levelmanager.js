@@ -4,6 +4,8 @@ var win = false;
 
 function LevelManager() {
     this.tag = 'LM';
+    this.x = 0;
+    this.y = 0;
     var map1 = new Map(1);
     this.levels = [map1];
     this.startLevel(1);
@@ -16,25 +18,33 @@ LevelManager.prototype.startLevel = function (levelNum) {
     if (gameEngine.entities.length != 0) {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             gameEngine.entities.pop();
+            // console.log('Here!!! LM');
         }
     }
-    console.log(this.levels[level - 1]);
+    
     for (var i = 0; i < this.levels[levelNum - 1].platforms.length; i++) {
         gameEngine.addEntity(this.levels[levelNum - 1].platforms[i]);
-        gameEngine.addEntity(this.levels[levelNum - 1].enemies[i]);
+    }
+    for (var i = 0; i < this.levels[levelNum - 1].players.length; i++) {
         gameEngine.addEntity(this.levels[levelNum - 1].players[i]);
     }
+    for (var i = 0; i < this.levels[levelNum - 1].enemies.length; i++) {
+        gameEngine.addEntity(this.levels[levelNum - 1].enemies[i]);
+    }
+    // console.log('LM: ');
+    // console.log(gameEngine.entities);
     ctx.font = "25px monospace";
     ctx.fillStyle = "WHITE";
-    ctx.fillText('Level' + level, canvas.width/2, canvas.height/2);
+    ctx.fillText('Level' + level, canvas.width - 200, 100);
     setTimeout(()=>{
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        ctx.clearRect(0, 0, 50, 100);
     }, 500);
 }
 
 LevelManager.prototype.update = function () {
     var player;
-    console.log(gameEngine.entities);
+    // console.log('LM update');
+    // console.log(gameEngine.entities);
     if (gameEngine.entities.length != 0) {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             if (gameEngine.entities[i].tag === 'player') {
@@ -70,6 +80,10 @@ LevelManager.prototype.update = function () {
     }
 }
 
+LevelManager.prototype.draw = function () {
+
+}
+
 // LevelManager.prototype.draw = function () {
 //     if (gameover) {
 
@@ -84,17 +98,16 @@ function Map(mapNumber) {
     switch(mapNumber) {
         case 1: 
             this.makeLevel_1();
-            console.log('map1 made');
-            console.log('enemies: ' + this.enemies);
+            console.log('map1 built');
             break;
     }
 }
 
-Map.prototype = new Entity();
-Map.prototype.constructor = Map;
+// Map.prototype = new Entity();
+// Map.prototype.constructor = Map;
 
 Map.prototype.addEnemy = function (enemy) {
-    console.log('enemy' + enemy);
+    // console.log('enemy' + enemy);
     this.enemies.push(enemy);
 }
 
@@ -136,7 +149,7 @@ Map.prototype.makeLevel_1 = function () {
     this.addPlatform(new Platform(1000, 478, 'bigCrate', 96, 96));
     this.addPlatform(new Platform(600, 190, 'electronics', 0, 0));
 
-
+    this.addPlayer(new Luke());
     this.addEnemy(new Trooper(gameEngine));
     let trooper2 = new Trooper(gameEngine);
     trooper2.x = 900;
@@ -147,7 +160,7 @@ Map.prototype.makeLevel_1 = function () {
     trooper3.y += 70;
     this.addEnemy(trooper3);
 
-    this.addPlayer(new Luke());
+    
 }
 // function setEnemiesLevel_1() {
 // }

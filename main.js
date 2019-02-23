@@ -579,7 +579,23 @@ function inGame() {
     frameId = requestAnimationFrame(inGameFrame);
     // var gameEngine = new GameEngine(); // Made it an instance field.
     gameEngine.init(ctx);
-    gameEngine.start();
+    
+    
+    // gameEngine.start();
+    var promise = new Promise(function (resolve, reject) {
+        let levelManager = new LevelManager();
+        gameEngine.addEntity(levelManager);
+        resolve('done loading');
+        // setTimeout(()=>{resolve('done loading')}, 500);
+    });
+    
+    promise.then(function(value) {
+        console.log(value);
+        console.log(gameEngine.entities);
+        gameEngine.start();
+    });
+
+    
     // function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, frameWidth, frameHeight, collisionX, collisionY, collisionWidth, collisionHeight)
     // gameEngine.addEntity(new Platform(0, 500, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Actual ground. This is what luke is standing on.
     // gameEngine.addEntity(new Platform(0, 565, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Fake ground... the collision box is different than the pixles location.
@@ -592,9 +608,28 @@ function inGame() {
     // electronics - 64, 64
     // smallCrate - 64, 64
     // bigCrate - 96, 96
+    // new Promise(() => {
+    //     let levelManager = new LevelManager();
+    //     gameEngine.addEntity(levelManager);
+    // })
+    
 
-    let levelManager = new LevelManager();
-    gameEngine.addEntity(levelManager);
+    // var promise = new Promise(function () {
+        
+    // });
+
+    // var promise = new Promise(function(resolve, reject) {
+    //     setTimeout(function() {
+    //       resolve('foo');
+    //     }, 300);
+    //   });
+
+    // promise.then(()=>{
+    //     let levelManager = new LevelManager();
+    //     gameEngine.addEntity(levelManager);
+    //     console.log('promise done');
+    // })
+
 
     // if (playerCharacter == 3) {
     //     // gameEngine.addEntity(new Vader());

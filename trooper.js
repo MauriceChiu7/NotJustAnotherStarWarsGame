@@ -36,12 +36,20 @@ function Trooper(game) {
     this.hitbox = 30;
 
     this.game = game;
-    for (let i = 0; i < this.game.entities.length; i++) {
-        let object = this.game.entities[i];
-        if (object.tag == "player") {
-            this.player = object;
+    console.log('trooper entities: ');
+    console.log(gameEngine.entities);
+    // console.log(gameEngine.entities.length);
+    // setTimeout(()=>{
+        for (let i = 0; i < gameEngine.entities.length; i++) {
+            let object = this.game.entities[i];
+            // console.log('object' + object);
+            if (object.tag === 'player') {
+                this.player = object;
+                // console.log('this.player' + this.player);
+            }
         }
-    }
+    // }, 5000)
+    
     let trooperList = [];
     for (var i = 0; i < gameEngine.entities.length; i++) {
         if (gameEngine.entities[i] instanceof Trooper) {    // already a trooper so make new id (add 1 to existing id)
@@ -112,11 +120,12 @@ Trooper.prototype.getCollision = function (direction) {
 }
 
 Trooper.prototype.update = function () {
-    console.log('Trooper ID'+ this.id+' health: ' + this.health);
+    // console.log('Trooper ID'+ this.id+' health: ' + this.health);
     this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
-
-    this.distance = this.player.x +50- this.x;
+    console.log('this.player: ' + this.player);
+    // console.log('this.player.x' + this.player.x);
+    this.distance = this.player.x + 50 - this.x;
 
     if (this.health <= 0) {
         this.dead = true;
