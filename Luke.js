@@ -394,6 +394,7 @@ Luke.prototype.update = function () {
                 curEnt.deleteLaserbeam();
             } else if (this.getDistance(this, curEnt) < this.width + curEnt.width && blocking) {
                 let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
+                audio.volume = sfxVolume * 0.2;
                 audio.play();
                 curEnt.velocityX = -(curEnt.velocityX);
                 curEnt.velocityY = -(curEnt.velocityY);
@@ -472,8 +473,10 @@ Luke.prototype.update = function () {
         }
     }
     if (this.movingLeft && !this.dead) {
-        if (this.attacking) {
-            this.xAcceleration -= 1;
+        if (blocking) {
+            this.xAcceleration -= 0.4;
+        } else if (this.attacking) {
+            this.xAcceleration -= 0.3;
         } else {
             if (this.yAcceleration == 0) {
                 this.xAcceleration -= 1.5;
@@ -482,8 +485,10 @@ Luke.prototype.update = function () {
             }
         }
     } else if (this.movingRight && !this.dead) {
-        if (this.attacking) {
-            this.xAcceleration += 1;
+        if (blocking) {
+            this.xAcceleration += 0.4;
+        } else if (this.attacking) {
+            this.xAcceleration += 0.3;
         } else {
             if (this.yAcceleration == 0) {
                 this.xAcceleration += 1.5;
@@ -492,6 +497,7 @@ Luke.prototype.update = function () {
             }
         }
     }
+
     // speed limits
     if (this.xAcceleration > 7) {
         this.xAcceleration = 7;
@@ -520,9 +526,11 @@ Luke.prototype.update = function () {
         // this.aiming = true;
         if (!primaryWeapon) {
             var audio = AM.getSound('./sounds/LightsaberTurnOn.wav').cloneNode();
+            audio.volume = sfxVolume;
             audio.play();
         } else {
             var audio = AM.getSound('./sounds/LightsaberTurnOff.wav').cloneNode();
+            audio.volume = sfxVolume;
             audio.play();
         }
         primaryWeapon = !primaryWeapon;
@@ -565,6 +573,7 @@ Luke.prototype.update = function () {
             }
             if (!laserShot) {
                 let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
+                audio.volume = sfxVolume;
                 audio.play();
                 let playerCoor = { x: center_x, y: center_y + 30 };
                 let endCoor = { x: this.game.clickx, y: this.game.clicky };
@@ -713,33 +722,34 @@ Luke.prototype.drawRight = function () {
     if (primaryWeapon) { // If the character is using their primaryWeapon
         if (blocking) {
             this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 10, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.switching) {
-            this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.standing) {
-            this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.crouching) {
-            this.crouchRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.attacking) {
-            if (attkNumLuke === 1) {
-                this.attk1RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
-            } else {
-                this.attk2RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+        } else {
+            if (this.switching) {
+                this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
             }
-        }
-        if (this.jumping) {
-            this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.dying) {
-            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
-        }
-        if (this.movingRight && !this.jumping && !this.attacking) {
-            this.runRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
-        } else if (this.movingLeft && !this.jumping && !this.attacking) {
-            this.runRightBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            if (this.standing) {
+                this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            }
+            if (this.crouching) {
+                this.crouchRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            }
+            if (this.attacking) {
+                if (attkNumLuke === 1) {
+                    this.attk1RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+                } else {
+                    this.attk2RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+                }
+            }
+            if (this.jumping) {
+                this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
+            }
+            if (this.dying) {
+                this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
+            }
+            if (this.movingRight && !this.jumping && !this.attacking) {
+                this.runRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            } else if (this.movingLeft && !this.jumping && !this.attacking) {
+                this.runRightBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            }
         }
     } else { // If the character is using their secondary weapon
         if (this.switching) {
@@ -770,33 +780,34 @@ Luke.prototype.drawLeft = function () {
     if (primaryWeapon) { // If the character is using their primaryWeapon
         if (blocking) {
             this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.switching) {
-            this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.standing) {
-            this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.crouching) {
-            this.crouchLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.attacking) {
-            if (attkNumLuke === 1) {
-                this.attk1LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
-            } else {
-                this.attk2LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+        } else {
+            if (this.switching) {
+                this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
             }
-        }
-        if (this.jumping) {
-            this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
-        }
-        if (this.dying) {
-            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
-        }
-        if (this.movingLeft && !this.jumping && !this.attacking) {
-            this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
-        } else if (this.movingRight && !this.jumping && !this.attacking) {
-            this.runLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
+            if (this.standing) {
+                this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
+            }
+            if (this.crouching) {
+                this.crouchLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            }
+            if (this.attacking) {
+                if (attkNumLuke === 1) {
+                    this.attk1LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+                } else {
+                    this.attk2LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+                }
+            }
+            if (this.jumping) {
+                this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
+            }
+            if (this.dying) {
+                this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
+            }
+            if (this.movingLeft && !this.jumping && !this.attacking) {
+                this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
+            } else if (this.movingRight && !this.jumping && !this.attacking) {
+                this.runLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
+            }
         }
     } else { // If the character is using their secondary weapon
         if (this.switching) {
@@ -915,6 +926,7 @@ function lightsaberThrow(e) {
     }
     if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
         var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
+        audio.volume = sfxVolume;
         audio.play();
         var rect = canvas.getBoundingClientRect();
         // var endCoor = {x: e.clientX - rect.left, y: e.clientY - rect.top};

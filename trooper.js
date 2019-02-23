@@ -338,8 +338,8 @@ Trooper.prototype.drawLeft = function () {
 
 Trooper.prototype.shoot = function () {
     let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
-    audio.volume = 0.05;
-    // audio.play();
+    audio.volume = 0.2 * sfxVolume;
+    audio.play();
     let rect = canvas.getBoundingClientRect();
     let startCoor = { x: (this.x + 20 + this.x) / 2, y: (this.y + this.height + this.y) / 2 };
     const xend = this.player.x;
