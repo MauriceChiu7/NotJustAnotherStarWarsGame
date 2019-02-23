@@ -11,7 +11,7 @@ function Dummy(game) {
    this.game = game;
    
    this.x = 900;
-   this.y = 400;
+   this.y = 450;
 
    // Collisions Stuff
    this.platformCollisions = [];
@@ -63,7 +63,7 @@ function Dummy(game) {
          this.player = object;
       }
    }
-   Entity.call(this, game, 900, 400);
+   Entity.call(this, game, this.x, this.y);
    // setInterval(() => { console.log('delta_x: ' + this.delta_x_from_player + 'delta_y: ' + this.delta_y_from_player) }, 500);
 }
 
@@ -93,45 +93,56 @@ Dummy.prototype.update = function () {
    // ^^^^^^ Collision Stuff ^^^^^^^
 
    // this.distance = this.player.x - this.x + 45;
-   this.distance = this.player.x - this.x;
+   this.distance = this.player.x + 50 - this.x;
 
    // this.delta_x_from_player = this.player.x - this.x + 45;
    // this.delta_y_from_player = this.player.y - this.y;
 
-   // if (gameEngine.click) {
-   //    console.log("x :" + this.x + " y :" + this.y);
-   //    console.log("distance: " + this.distance);
-   //    if (this.getCollision("right"))
-   //       console.log("right x :" + this.getCollision("right").entity.collisionX + "right y:" + this.getCollision("right").entity.collisionY);
-   //    else
-   //       console.log("right :" + this.getCollision("right"));
-   //    if (this.getCollision("left"))
-   //       console.log("left x :" + this.getCollision("left").entity.collisionX + "left y:" + this.getCollision("left").entity.collisionY);
-   //    else
-   //       console.log("left :" + this.getCollision("left"));
-   //    if (this.getCollision("top"))
-   //       console.log("top x : " + this.getCollision("top").entity.collisionX + " top y:" + this.getCollision("top").entity.collisionY);
-   //    else
-   //       console.log("top :" + this.getCollision("top"));
-   //    if (this.getCollision("bottom"))
-   //       console.log("bottom x : " + this.getCollision("bottom").entity.collisionX + " bottom y:" + this.getCollision("bottom").entity.collisionY);
-   //    else
-   //       console.log("bottom :" + this.getCollision("bottom"));
-   // }
+   if (gameEngine.click) {
+      console.log("x :" + this.x + " y :" + this.y);
+      console.log("distance: " + this.distance);
+      if (this.getCollision("right"))
+         console.log("right x :" + this.getCollision("right").entity.collisionX + "right y:" + this.getCollision("right").entity.collisionY);
+      else
+         console.log("right :" + this.getCollision("right"));
+      if (this.getCollision("left"))
+         console.log("left x :" + this.getCollision("left").entity.collisionX + "left y:" + this.getCollision("left").entity.collisionY);
+      else
+         console.log("left :" + this.getCollision("left"));
+      if (this.getCollision("top"))
+         console.log("top x : " + this.getCollision("top").entity.collisionX + " top y:" + this.getCollision("top").entity.collisionY);
+      else
+         console.log("top :" + this.getCollision("top"));
+      if (this.getCollision("bottom"))
+         console.log("bottom x : " + this.getCollision("bottom").entity.collisionX + " bottom y:" + this.getCollision("bottom").entity.collisionY);
+      else
+         console.log("bottom :" + this.getCollision("bottom"));
+   }
+
+   // friction
+   if (this.xAcceleration > 0) {
+      this.xAcceleration -= 0.5;
+      if (this.xAcceleration < 0) {
+         this.xAcceleration = 0;
+      }
+   } else if (this.xAcceleration < 0) {
+      this.xAcceleration += 0.5;
+      if (this.xAcceleration > 0) {
+         this.xAcceleration = 0;
+      }
+   }
 
    if (this.distance > 60) {
-      // this.x += this.game.clockTick * this.speed;
       this.xAcceleration +=1;
-      this.chanceToBlock = Math.round(Math.random());
+      // this.chanceToBlock = Math.round(Math.random());
       this.block = false;
       this.attack = false;
       this.jumping = false;
       this.hurting = false;
       this.dead = false;
    } else if (this.distance < -60) {
-      // this.x -= this.game.clockTick * this.speed;
       this.xAcceleration -=1;
-      this.chanceToBlock = Math.round(Math.random());
+      // this.chanceToBlock = Math.round(Math.random());
       this.block = false;
       this.attack = false;
       this.jumping = false;
@@ -166,9 +177,9 @@ Dummy.prototype.update = function () {
       this.dead = false;
       this.yAcceleration -= 13;
       if (this.distance > 100) {
-         // this.x += this.game.clockTick * this.speed;
+         this.xAcceleration +=1;
       } else if (this.distance < -100) {
-         // this.x -= this.game.clockTick * this.speed;
+         this.xAcceleration -=1;
       }
       this.jumping = true;
       // console.log(this.jumping);
@@ -189,18 +200,7 @@ Dummy.prototype.update = function () {
   }*/
 
   // More Physics Stuff
-  // friction
-   if (this.xAcceleration > 0) {
-      this.xAcceleration -= 0.5;
-      if (this.xAcceleration < 0) {
-         this.xAcceleration = 0;
-      }
-   } else if (this.xAcceleration < 0) {
-      this.xAcceleration += 0.5;
-      if (this.xAcceleration > 0) {
-         this.xAcceleration = 0;
-      }
-   }
+  
 
    //speed limits
    if (this.xAcceleration > 7) {
@@ -218,11 +218,11 @@ Dummy.prototype.update = function () {
    this.x += this.xAcceleration;
 
    // World Boundary
-   if (this.x > 1140) {
+  /* if (this.x > 1140) {
       this.x = 1140;
   } else if (this.x + 25 < 0) {
       this.x = -25;
-  }
+  }*/
    Entity.prototype.update.call(this);
 };
 
@@ -272,7 +272,7 @@ Dummy.prototype.drawLeft = function () {
    }
 
 }
-
+/*
 Dummy.prototype.collide = function (xDisplacement, yDisplacement, tag) {
    var collisions = [];
    for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -309,56 +309,56 @@ Dummy.prototype.getCollision = function (direction) {
       }
    }
    return null;
+}*/
+
+
+
+Dummy.prototype.collide = function (xDisplacement, yDisplacement, tag) {
+   var collisions = [];
+   for (var i = 0; i < gameEngine.entities.length; i++) {
+      let current = gameEngine.entities[i];
+      let theTag = gameEngine.entities[i].tag;
+      if (theTag === tag) {
+         // console.log(current);
+         if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX /*&&
+            this.y + yDisplacement < current.collisionY + current.collisionHeight + 1 && this.y + yDisplacement > current.collisionY*/) {
+            var direction = "";
+            // console.log(current);
+            if (gameEngine.click)
+               console.log("this.y: " + this.y + " current.collisionY " + current.collisionY + " current.collisionHeight: " + current.collisionHeight);
+            if (this.y < current.collisionY + current.collisionHeight && this.y > current.collisionY) {
+               direction = "top";
+            }
+            if (this.y + height > current.collisionY) {
+               direction = "bottom";
+            }
+            if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth
+               && this.x + xDisplacement > current.collisionX) {
+               direction = "right";
+            }
+            if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth
+               && this.x + xDisplacement > current.collisionX) {
+               direction = "left";
+            }
+            collisions.push({ entity: current, 'direction': direction });
+         }
+      }
+   }
+   // var obj = JSON.parse(collisions);
+   for (var i = 0; i < collisions.length; i++) {
+      // var obj = JSON.parse(collisions[i]);
+      // console.log(obj.direction);
+      console.log(collisions[i].direction)
+   }
+
+   return collisions;
 }
 
-
-
-// Dummy.prototype.collide = function (xDisplacement, yDisplacement, tag) {
-//    var collisions = [];
-//    for (var i = 0; i < gameEngine.entities.length; i++) {
-//       let current = gameEngine.entities[i];
-//       let theTag = gameEngine.entities[i].tag;
-//       if (theTag === tag) {
-//          // console.log(current);
-//          if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-//             this.y + yDisplacement < current.collisionY + current.collisionHeight + 1 && this.y + yDisplacement > current.collisionY) {
-//             var direction = "";
-//             // console.log(current);
-//             if (gameEngine.click)
-//                console.log("this.y: " + this.y + " current.collisionY " + current.collisionY + " current.collisionHeight: " + current.collisionHeight);
-//             if (this.y > current.collisionY + current.collisionHeight) {
-//                direction = "top";
-//             }
-//             if (this.y + height > current.collisionY) {
-//                direction = "bottom";
-//             }
-//             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth
-//                && this.x + xDisplacement > current.collisionX) {
-//                direction = "right";
-//             }
-//             if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth
-//                && this.x + xDisplacement > current.collisionX) {
-//                direction = "left";
-//             }
-//             collisions.push({ entity: current, 'direction': direction });
-//          }
-//       }
-//    }
-//    // var obj = JSON.parse(collisions);
-//    for (var i = 0; i < collisions.length; i++) {
-//       // var obj = JSON.parse(collisions[i]);
-//       // console.log(obj.direction);
-//       console.log(collisions[i].direction)
-//    }
-
-//    return collisions;
-// }
-
-// Dummy.prototype.getCollision = function (direction) {
-//    for (var i = 0; i < this.platformCollisions.length; i++) {
-//       if (this.platformCollisions[i].direction === direction) {
-//          return this.platformCollisions[i];
-//       }
-//    }
-//    return null;
-// }
+Dummy.prototype.getCollision = function (direction) {
+   for (var i = 0; i < this.platformCollisions.length; i++) {
+      if (this.platformCollisions[i].direction === direction) {
+         return this.platformCollisions[i];
+      }
+   }
+   return null;
+}
