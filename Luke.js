@@ -48,7 +48,7 @@ function Luke() {
 
     this.health = 100;
 
-    LUKE_THIS = this;   
+    LUKE_THIS = this;
 
 
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
@@ -162,7 +162,7 @@ function Luke() {
     this.switching = false;
     this.dying = false;
     this.dead = false;
-    
+
     this.hitbox = 20;
 
     this.ground = 500;
@@ -184,7 +184,7 @@ function Luke() {
 Luke.prototype = new Entity();
 Luke.prototype.constructor = Luke;
 
-Luke.prototype.getMapCollisions = function() {
+Luke.prototype.getMapCollisions = function () {
     this.fullMCollisions = [];
     for (var i = 0; i < fullCollisions.length; i++) {
         let current = fullCollisions[i];
@@ -198,23 +198,23 @@ Luke.prototype.getMapCollisions = function() {
             }
             if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
                 direction = "right";
-            } else if (this.x + this.currentDisplacementX <= current.x  + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
+            } else if (this.x + this.currentDisplacementX <= current.x + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
                 direction = "left";
             }
-            this.fullMCollisions.push({object: current, direction: direction});
+            this.fullMCollisions.push({ object: current, direction: direction });
         }
     }
     this.bottomMCollisions = [];
     for (var i = 0; i < bottomOnlyCollisions.length; i++) {
         let current = bottomOnlyCollisions[i];
-        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y && 
+        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y &&
             this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
             this.bottomMCollisions.push(bottomOnlyCollisions[i]);
         }
     }
 }
 
-Luke.prototype.getMapCollisions2 = function(x, y) {
+Luke.prototype.getMapCollisions2 = function (x, y) {
     this.fullMCollisions = [];
     var toReturn = [];
     for (var i = 0; i < fullCollisions.length; i++) {
@@ -229,16 +229,16 @@ Luke.prototype.getMapCollisions2 = function(x, y) {
             }
             if (x + 1 + this.currentDisplacementX >= current.x + current.width && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
                 direction = "right";
-            } else if (x + this.currentDisplacementX <= current.x  + 1 && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
+            } else if (x + this.currentDisplacementX <= current.x + 1 && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
                 direction = "left";
             }
-            toReturn.push({object: current, direction: direction});
+            toReturn.push({ object: current, direction: direction });
         }
     }
     return toReturn;
 }
 
-Luke.prototype.getMapCollision = function(direction) {
+Luke.prototype.getMapCollision = function (direction) {
     for (var i = 0; i < this.fullMCollisions.length; i++) {
         if (this.fullMCollisions[i].direction == direction) {
             return this.fullMCollisions[i].object;
@@ -393,10 +393,8 @@ Luke.prototype.update = function () {
                 this.health -= laserDamage;
                 curEnt.deleteLaserbeam();
             } else if (this.getDistance(this, curEnt) < this.width + curEnt.width && blocking) {
-                // let newEndx = curEnt.start.x, newEndy = curEnt.start.y;                
-                // curEnt.start = {x: this.x, y: this.y};
-                // curEnt.end = {x: newEndx, y: newEndy};
-                // console.log("deflecting");
+                let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
+                audio.play();
                 curEnt.velocityX = -(curEnt.velocityX);
                 curEnt.velocityY = -(curEnt.velocityY);
                 for (let i = 0; i < this.game.entities.length; i++) {

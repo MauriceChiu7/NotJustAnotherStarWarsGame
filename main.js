@@ -48,6 +48,7 @@ AM.queueSound("./sounds/LightsaberThrow.WAV");
 AM.queueSound("./sounds/LightsaberTurnOn.wav");
 AM.queueSound("./sounds/LightsaberTurnOff.wav");
 AM.queueSound("./sounds/StarWarsMainTheme.wav");
+AM.queueSound("./sounds/lasrhit2.WAV");
 AM.downloadAll(function () {
     startScreen();
 });
