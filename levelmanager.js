@@ -82,13 +82,6 @@ LevelManager.prototype.draw = function () {
 
 }
 
-// LevelManager.prototype.draw = function () {
-//     if (gameover) {
-
-//     }
-// }
-
-
 function Map(mapNumber) {
     this.enemies = [];
     this.platforms = [];
