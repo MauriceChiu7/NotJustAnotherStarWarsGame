@@ -22,8 +22,42 @@ GameEngine.prototype.init = function (ctx) {
     this.surfaceHeight = this.ctx.canvas.height;
     this.timer = new Timer();
     this.startInput();
+    // let levelManager = new LevelManager();
+    // gameEngine.addEntity(levelManager);
     console.log('game initialized');
 }
+
+
+// if (!executed) {
+//     var promise = new Promise(function (resolve, reject) {
+//         // if (!executed) {
+//             // let levelManager = new LevelManager();
+//             // gameEngine.addEntity(levelManager);
+//             // executed = true;
+//         // }
+        
+//         // console.log('var promise');
+//         // // screenTransition(inGame);
+//         screenTransition(inGame);
+//         // // frameId = requestAnimationFrame(inGameFrame);
+//         setTimeout(function () {
+//             resolve('foo');
+//         }, 1000);
+//     });
+//     promise.then(function (value) {
+//         console.log(value);
+//         console.log('promise.then');
+//         gameEngine.init(ctx);
+//         gameEngine.start();
+//         let levelManager = new LevelManager();
+//         gameEngine.addEntity(levelManager);
+//         document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
+//         console.log('promise done');
+//     });
+//     executed = true;
+// }
+
+
 
 GameEngine.prototype.start = function () {
     console.log("starting game");

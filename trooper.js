@@ -44,24 +44,7 @@ function Trooper(game) {
     this.hitbox = 30;
 
     this.game = game;
-    for (let i = 0; i < this.game.entities.length; i++) {
-        let object = this.game.entities[i];
-        if (object.tag == "player") {
-            this.player = object;
-        }
-    }
-    let trooperList = [];
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        if (gameEngine.entities[i] instanceof Trooper) {    // already a trooper so make new id (add 1 to existing id)
-            trooperList.push(gameEngine.entities[i].id);
-        }
-    }
-    if (trooperList.length == 0) {
-        this.id = 1;
-    } else {
-        let otherId = trooperList[trooperList.length - 1];
-        this.id = 1 + otherId;
-    }
+    
     //console.log("Trooper ID: " + this.id);
     this.ctx = game.ctx;
     this.tag = "enemy";
@@ -155,11 +138,31 @@ Trooper.prototype.attackCollide = function () {
 }
 
 Trooper.prototype.update = function () {
+    for (let i = 0; i < gameEngine.entities.length; i++) {
+        let object = this.game.entities[i];
+        if (object.tag === 'player') {
+            this.player = object;
+        }
+    }
+    
+    let trooperList = [];
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        if (gameEngine.entities[i] instanceof Trooper) {    // already a trooper so make new id (add 1 to existing id)
+            trooperList.push(gameEngine.entities[i].id);
+        }
+    }
+    if (trooperList.length == 0) {
+        this.id = 1;
+    } else {
+        let otherId = trooperList[trooperList.length - 1];
+        this.id = 1 + otherId;
+    }
+
     // console.log('Trooper ID'+ this.id+' health: ' + this.health);
     // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
-
-    this.distance = this.player.x +50- this.x;
+    
+    this.distance = this.player.x + 50 - this.x;
 
     if (this.health <= 0) {
         this.dead = true;
