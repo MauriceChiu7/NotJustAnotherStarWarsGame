@@ -9,6 +9,7 @@ const OBI_COLLISION_WIDTH = 36;
 const OBI_COLLISION_HEIGHT = 66;
 
 function Obi() {
+    this.tag = 'player';
     this.obiwan_sprites_right = AM.getAsset("./img/obiwan_right.png");
     this.obiwan_sprites_left = AM.getAsset("./img/obiwan_left.png");
     this.x = 10;

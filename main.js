@@ -48,6 +48,7 @@ AM.queueSound("./sounds/LightsaberThrow.WAV");
 AM.queueSound("./sounds/LightsaberTurnOn.wav");
 AM.queueSound("./sounds/LightsaberTurnOff.wav");
 AM.queueSound("./sounds/StarWarsMainTheme.wav");
+AM.queueSound("./sounds/lasrhit2.WAV");
 AM.downloadAll(function () {
     startScreen();
 });
@@ -580,11 +581,27 @@ function inGame() {
     frameId = requestAnimationFrame(inGameFrame);
     // var gameEngine = new GameEngine(); // Made it an instance field.
 
-    let levelManager = new LevelManager();
-    levelManager.makeLevel_1();
+    // let levelManager = new LevelManager();
+    // levelManager.makeLevel_1();
 
     gameEngine.init(ctx);
-    gameEngine.start();
+    
+    
+    // gameEngine.start();
+    var promise = new Promise(function (resolve, reject) {
+        let levelManager = new LevelManager();
+        gameEngine.addEntity(levelManager);
+        resolve('done loading');
+        // setTimeout(()=>{resolve('done loading')}, 500);
+    });
+    
+    promise.then(function(value) {
+        console.log(value);
+        console.log(gameEngine.entities);
+        gameEngine.start();
+    });
+
+    
     // function Platform(x, y, width, height, spritesheet, spritesheetX, spritesheetY, frameWidth, frameHeight, collisionX, collisionY, collisionWidth, collisionHeight)
     // gameEngine.addEntity(new Platform(0, 500, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Actual ground. This is what luke is standing on.
     // gameEngine.addEntity(new Platform(0, 565, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100)); // Fake ground... the collision box is different than the pixles location.
@@ -597,31 +614,47 @@ function inGame() {
     // electronics - 64, 64
     // smallCrate - 64, 64
     // bigCrate - 96, 96
+    // new Promise(() => {
+    //     let levelManager = new LevelManager();
+    //     gameEngine.addEntity(levelManager);
+    // })
+    
 
-    // new FullCollision(-100, 400, 980, 200);
-    // new FullCollision(1030, 400, 200, 200);
-    // new FullCollision(250, 140, 385, 250);
-    // new BottomOnlyCollision(17, 280, 210);
-    // new BottomOnlyCollision(-100, 160, 294);
+    // var promise = new Promise(function () {
+        
+    // });
 
-    if (playerCharacter == 3) {
-        // gameEngine.addEntity(new Vader());
-        // gameEngine.addEntity(new Character(gameEngine));
-    } else if (playerCharacter == 2 || playerCharacter == 1) {
-        if (testingLuke) {
-            gameEngine.addEntity(new Luke(gameEngine));
-            levelManager.setEnemiesLevel_1();
-        } else if (testingMace) {
-            gameEngine.addEntity(new Luke(gameEngine));
-            levelManager.setEnemiesLevel_1();
-        } else if (testingObi) {
-            gameEngine.addEntity(new Obi());
-        } else {
-            gameEngine.addEntity(new Vader());
-            gameEngine.addEntity(new Dummy(gameEngine));
-        }
-         gameEngine.addEntity(new Dummy(gameEngine));
-    }
+    // var promise = new Promise(function(resolve, reject) {
+    //     setTimeout(function() {
+    //       resolve('foo');
+    //     }, 300);
+    //   });
+
+    // promise.then(()=>{
+    //     let levelManager = new LevelManager();
+    //     gameEngine.addEntity(levelManager);
+    //     console.log('promise done');
+    // })
+
+
+    // if (playerCharacter == 3) {
+    //     // gameEngine.addEntity(new Vader());
+    //     // gameEngine.addEntity(new Character(gameEngine));
+    // } else if (playerCharacter == 2 || playerCharacter == 1) {
+    //     if (testingLuke) {
+    //         gameEngine.addEntity(new Luke(gameEngine));
+    //         levelManager.setEnemiesLevel_1();
+    //     } else if (testingMace) {
+    //         gameEngine.addEntity(new Luke(gameEngine));
+    //         levelManager.setEnemiesLevel_1();
+    //     } else if (testingObi) {
+    //         gameEngine.addEntity(new Obi());
+    //     } else {
+    //         gameEngine.addEntity(new Vader());
+    //         gameEngine.addEntity(new Dummy(gameEngine));
+    //     }
+        // gameEngine.addEntity(new Dummy(gameEngine));
+    // }
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
 }
 
@@ -630,20 +663,6 @@ function inGameFrame() {
     if (transition) {
         screenTransition(inGame);
     }
-}
-
-function gameEnds() {
-    ctx.save();
-    ctx.font = "20px monospace";
-    ctx.fillStyle = "WHITE";
-    ctx.textAlign = "center";
-    for (var i = 0; i < gameEngine.entities[i]; i++) {
-        if (gameEngine.entities[i].tag === 'player' && gameEngine.entities[i].dead === true) {
-            ctx.fillText("You Failed. Refresh Page to Start a New Match", canvas.width/2, canvas.height/2 + 150);        
-        } 
-        // else if (gameEngine.entities[i].tag === 'enemy' )
-    }
-    ctx.restore();
 }
 
 // --------------------- CONTROLS ----------------------------
@@ -663,12 +682,13 @@ function controlsFrame() {
     ctx.fillText("CONTROLS", 600, 100);
     ctx.fillStyle = "#ffd700";
     ctx.font = "20px arial";
-    ctx.fillText("Left Click = Attack", 600, 200);
-    ctx.fillText("Right Click = Block", 600, 250);
-    ctx.fillText("A / D = Left / Right", 600, 300);
-    ctx.fillText("W / S = Jump / Crouch (for jumping down)", 600, 350);
-    ctx.fillText("E = Special Attack", 600, 400);
-    ctx.fillText("R = Switch Between Primary and Secondary Weapon", 600, 450);
+    ctx.fillText("Left Click = Attack", 600, 180);
+    ctx.fillText("Right Click = Block", 600, 230);
+    ctx.fillText("A / D = Left / Right", 600, 280);
+    ctx.fillText("W / S = Jump / Crouch", 600, 330);
+    ctx.fillText("E = Special Attack", 600, 380);
+    ctx.fillText("R = Switch Weapon", 600, 430);
+    ctx.fillText("Hold S + SPACE = Jump Down", 600, 480);
     ctx.restore();
     menuItems.forEach(function (item) {
         item.draw();
