@@ -32,6 +32,7 @@ var playerCoor = { x: 0, y: 0 };
 var blocking = false;
 var rightClickIsDown = false;
 var LUKE_THIS;
+var LUKE_WAS_HIT = false;
 
 function Luke() {
     this.x = 600;
@@ -216,19 +217,7 @@ Luke.prototype.collide = function (xDisplacement, yDisplacement, tag) {
             //             // collisions.push({entity: current, direction: direction});
             //         }
             //     }
-        } else if (current instanceof LaserBeam) {
-            // console.log('Luke Health (laser): ' + this.health);
-            if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                // if (this.getDistance(current) < this.width + current.width){
-                // direction = "right";
-                statusBars.update(-DAMAGE_LUKE, 0);
-                this.health -= DAMAGE_LUKE;
-            } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                // direction = "left";
-                statusBars.update(-DAMAGE_LUKE, 0);
-                this.health -= DAMAGE_LUKE;
-            }
-        }
+        }  
     }
     return collisions;
 }
@@ -242,9 +231,11 @@ Luke.prototype.getCollision = function (direction) {
     return null;
 }
 Luke.prototype.getDistance = function (thisEnt, otherEnt) {
-    let dx = thisEnt.x - otherEnt.x;
-    let dy = thisEnt.y - otherEnt.y;
+    let dx, dy;
+    dx = thisEnt.x - otherEnt.x;
+    dy = thisEnt.y - otherEnt.y;
     let theDist = Math.sqrt(dx * dx + dy * dy);
+    // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
     return theDist;
 }
 Luke.prototype.attackCollide = function (thisEnt, otherEnt) {
@@ -266,7 +257,8 @@ Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
 Luke.prototype.update = function () {
     this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     this.enemyCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'enemy');
-    this.laserCollisios = this.collide(this.xAcceleration, this.yAcceleration, 'laser');
+
+    // this.laserCollisios = this.collide(this.xAcceleration, this.yAcceleration, 'laser');
 
     // stops movement if collision encountered
     if (this.getCollision("right") != null) {
@@ -287,7 +279,7 @@ Luke.prototype.update = function () {
     for (let i = 0; i < this.game.entities.length; i++) {
         let curEnt = this.game.entities[i];
         if (curEnt instanceof Trooper) {
-            if (this.collideLeft(this, curEnt)) {         //Left works :) // Well done!
+            if (this.collideLeft(this, curEnt)) {         //Left works :) // Well done!  //Luke is goin to be
                 this.x = curEnt.x + curEnt.width;
                 this.xAcceleration = 0;
                 // console.log("collide left: " + this.x + " ");
@@ -297,6 +289,28 @@ Luke.prototype.update = function () {
                 // console.log("collide right" + this.x + " ");
             }
         }
+        if (curEnt instanceof LaserBeam) {
+            // console.log('Luke Health (laser): ' + this.health);
+            if (this.getDistance(this, curEnt) < this.width + curEnt.width && !blocking) {
+                let laserDamage = 5;
+                statusBars.update(-laserDamage, 0);
+                this.health -= laserDamage;
+                curEnt.deleteLaserbeam();
+            } else if (this.getDistance(this, curEnt) < this.width + curEnt.width && blocking){
+                // let newEndx = curEnt.start.x, newEndy = curEnt.start.y;                
+                // curEnt.start = {x: this.x, y: this.y};
+                // curEnt.end = {x: newEndx, y: newEndy};
+                console.log("deflecting");
+                curEnt.velocityX = -(curEnt.velocityX);
+                curEnt.velocityY = -(curEnt.velocityY);
+                for (let i = 0; i < this.game.entities.length; i++) {
+                    let trooper = this.game.entities[i];
+                    if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
+                        trooper.health -= 250;
+                    }
+                }                
+            }
+        } 
     }
 
     // friction
@@ -383,7 +397,7 @@ Luke.prototype.update = function () {
     }
     this.y += this.yAcceleration;
     this.x += this.xAcceleration;
-    
+
     // World Boundary
     if (this.x > 1140) {
         this.x = 1140;
@@ -415,10 +429,10 @@ Luke.prototype.update = function () {
         this.crouching = false;
         this.switching = false;
         this.dead = true;
+        blocking = false;
         for (var i = 0; i < gameEngine.entities[i]; i++) {
             if (gameEngine.entities[i].tag === 'player') {
                 gameEngine.entities.splice(i, 1);
-               //console.log('luke deleted'); // Don't work
             }
         }
     }
@@ -771,7 +785,6 @@ function aimDirection(event) {
             degree = -180 - degree;
         }
     }
-
 }
 
 function lightsaberThrow(e) {
