@@ -54,11 +54,12 @@ function updateCharacterData() {
 // --------------------- MENU THINGS ----------------------------
 function initializeMenuItems() {
     menuItems = [];
-    new MenuItem("STORY MODE", 600, 150, 25);
-    new MenuItem("CUSTOM GAME", 600, 250, 25);
-    new MenuItem("MULTIPLAYER", 600, 350, 25);
-    new MenuItem("SETTINGS", 600, 435, 20);
-    new MenuItem("CREDITS", 600, 500, 20);
+    new MenuItem("STORY MODE", 600, 120, 25);
+    new MenuItem("CUSTOM GAME", 600, 220, 25);
+    new MenuItem("MULTIPLAYER", 600, 320, 25);
+    new MenuItem("SETTINGS", 600, 400, 20);
+    new MenuItem("CREDITS", 600, 460, 20);
+    new MenuItem("CONTROLS", 600, 520, 20);
 }
 
 function initializeCustomGameItems() {
@@ -426,6 +427,7 @@ function Platform(x, y, type, collisionWidth, collisionHeight) {
     // this.spritesheetHeight = spritesheetHeight;
 
     this.collisionX = this.x - 60;
+    // this.collisionX = this.x;
 
     switch (this.type) {
         case 'longPlat':
@@ -450,7 +452,8 @@ function Platform(x, y, type, collisionWidth, collisionHeight) {
             break;
     }
     
-    this.collisionWidth = collisionWidth + 25;
+    // this.collisionWidth = collisionWidth + 25;
+    this.collisionWidth = collisionWidth;
     this.collisionHeight = collisionHeight;
 }
 
@@ -467,6 +470,11 @@ Platform.prototype.draw = function() {
     //     this.spritesheetWidth, this.spritesheetHeight, // width and height of source
     //     this.x, this.y, // destination coordinates
     //     this.width, this.height); // destination width and height
+    if (SHOWBOX) {
+        ctx.strokeStyle = 'blue';
+        ctx.strokeRect(this.collisionX, this.collisionY, this.collisionWidth, this.collisionHeight);
+        ctx.fill();
+    }
     switch (this.type) {
         case 'longPlat':
             this.longPlatFrame.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, 1);
@@ -489,4 +497,10 @@ Platform.prototype.draw = function() {
         default:
             break;
     }
+}
+
+
+function initializeControlsItems() {
+    menuItems = [];
+    menuItemBack = new MenuItem("BACK", 600, 550, 20);
 }

@@ -14,10 +14,12 @@ var searching = false;
 var searchingCounter = 0;
 var editingName = false;
 var mainMenuMusic = new Audio('./sounds/StarWarsMainTheme.wav');
+var SHOWBOX = true;
 
-var testingLuke = false;
 // var testingVader = false;
-var testingLukeWithPhys = false;
+var testingMace = false;
+var testingLuke = true;
+var testingObi = false;
 
 AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
@@ -32,6 +34,8 @@ AM.queueDownload("./img/macewindu_right.png");
 AM.queueDownload("./img/trooper_right.png");
 AM.queueDownload("./img/trooper_left.png");
 AM.queueDownload("./img/background.png");
+AM.queueDownload("./img/obiwan_right.png");
+AM.queueDownload("./img/obiwan_left.png");
 
 AM.queueSound("./sounds/VaderVsLukeTheme.wav");
 AM.queueSound("./sounds/Swing2.WAV");
@@ -148,6 +152,8 @@ function mainMenuFrame() {
             screenTransition(settings);
         } else if (menuSelection == "CREDITS") {
             screenTransition(credits);
+        } else if (menuSelection == "CONTROLS") {
+            screenTransition(controls);
         } else {
             screenTransition(mainMenu);
         }
@@ -163,7 +169,7 @@ function mainMenuClick(event) {
             if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
                 menuSelection = item.text;
                 if (menuSelection == "STORY MODE" || menuSelection == "CUSTOM GAME" || menuSelection == "MULTIPLAYER" ||
-                    menuSelection == "SETTINGS" || menuSelection == "CREDITS") {
+                    menuSelection == "SETTINGS" || menuSelection == "CREDITS" || menuSelection == "CONTROLS") {
                     var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
                     audio.volume = sfxVolume;
                     audio.play();
@@ -588,70 +594,33 @@ function inGame() {
     // smallCrate - 64, 64
     // bigCrate - 96, 96
 
-    // function Platform(x, y, type, collisionWidth, collisionHeight) {
-    // gameEngine.addEntity(new Platform(0, 389, 'darkWall', 0, 0));
-    // gameEngine.addEntity(new Platform(382, 389, 'darkWall', 0, 0));
-    // gameEngine.addEntity(new Platform(764, 389, 'darkWall', 0, 0));
-    // gameEngine.addEntity(new Platform(1146, 389, 'darkWall', 0, 0));
-
-    // gameEngine.addEntity(new Platform(0, 197, 'darkWall', 0, 0));
-    // gameEngine.addEntity(new Platform(382, 197, 'darkWall', 0, 0));
-    // gameEngine.addEntity(new Platform(764, 197, 'darkWall', 0, 0));
-    // gameEngine.addEntity(new Platform(1146, 197, 'darkWall', 0, 0));
-
-    // gameEngine.addEntity(new Platform(0, 5, 'darkWall', 0, 0));
-    // gameEngine.addEntity(new Platform(382, 5, 'darkWall', 0, 0));
-    // gameEngine.addEntity(new Platform(764, 5, 'darkWall', 0, 0));
-    // gameEngine.addEntity(new Platform(1146, 5, 'darkWall', 0, 0));
-    
-    // gameEngine.addEntity(new Platform(0, 570, 'longPlat', 514, 30));
-    // gameEngine.addEntity(new Platform(512, 570, 'longPlat', 514, 30));
-    // gameEngine.addEntity(new Platform(1024, 570, 'longPlat', 514, 30));
-
-    // gameEngine.addEntity(new Platform(120, 460, 'shortPlat', 130, 30));
-    // gameEngine.addEntity(new Platform(300, 320, 'shortPlat', 130, 30));
-    // gameEngine.addEntity(new Platform(550, 250, 'shortPlat', 130, 30));
-    // gameEngine.addEntity(new Platform(850, 320, 'shortPlat', 130, 30));
-    // gameEngine.addEntity(new Platform(950, 460, 'shortPlat', 130, 30));
-
-    // gameEngine.addEntity(new Platform(500, 510, 'smallCrate', 64, 64));
-    // gameEngine.addEntity(new Platform(1000, 478, 'bigCrate', 96, 96));
-    // gameEngine.addEntity(new Platform(600, 190, 'electronics', 0, 0));
-    // new MapCollision(200, 450, 500, 150);
     new FullCollision(-100, 400, 980, 200);
     new FullCollision(1030, 400, 200, 200);
     new FullCollision(250, 140, 385, 250);
     new BottomOnlyCollision(17, 280, 210);
     new BottomOnlyCollision(-100, 160, 294);
+    
+    let levelManager = new LevelManager();
+    levelManager.makeLevel_1();
 
     if (playerCharacter == 3) {
         // gameEngine.addEntity(new Vader());
         // gameEngine.addEntity(new Character(gameEngine));
     } else if (playerCharacter == 2 || playerCharacter == 1) {
-        // gameEngine.addEntity(new Platform(0, 550, 1200, 100, AM.getAsset("./img/mapAssets1.png"), 0, 700, 400, 100, 0, 500, 1200, 100));
-        // gameEngine.addEntity(new Platform(900, 400, 400, 400, AM.getAsset("./img/mapAssets1.png"), 0, 0, 948, 520));
         if (testingLuke) {
             gameEngine.addEntity(new Luke(gameEngine));
-
-            gameEngine.addEntity(new Trooper(gameEngine));
-            let trooper2 = new Trooper(gameEngine);            
-            trooper2.x = 900;
-            trooper2.y = 300-80;
-            gameEngine.addEntity(trooper2);
-            let trooper3 = new Trooper(gameEngine);            
-            trooper3.x += 200;
-            trooper3.y += 70;
-            gameEngine.addEntity(trooper3);
-            // gameEngine.addEntity(new Dummy(gameEngine));
-        } else if (testingLukeWithPhys) {
-            gameEngine.addEntity(new Luke());
+            levelManager.setEnemiesLevel_1();
+        } else if (testingMace) {
+            gameEngine.addEntity(new Luke(gameEngine));
+            levelManager.setEnemiesLevel_1();
+        } else if (testingObi) {
+            gameEngine.addEntity(new Obi());
         } else {
             gameEngine.addEntity(new Vader());
             gameEngine.addEntity(new Dummy(gameEngine));
         }
-        gameEngine.addEntity(new Dummy(gameEngine));
+        // gameEngine.addEntity(new Dummy(gameEngine));
     }
-
     document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
 }
 
@@ -674,4 +643,57 @@ function gameEnds() {
         // else if (gameEngine.entities[i].tag === 'enemy' )
     }
     ctx.restore();
+}
+
+// --------------------- CONTROLS ----------------------------
+function controls() {
+    initializeCreditsItems();
+    cancelAnimationFrame(frameId);
+    canvas.addEventListener('click', controlsClick);
+    frameId = requestAnimationFrame(controlsFrame);
+}
+
+function controlsFrame() {
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    drawStars();
+    ctx.save();
+    ctx.font = "30px monospace";
+    ctx.fillStyle = "#ffffff";
+    ctx.fillText("CONTROLS", 600, 100);
+    ctx.fillStyle = "#ffd700";
+    ctx.font = "20px arial";
+    ctx.fillText("Left Click = Attack", 600, 200);
+    ctx.fillText("Right Click = Block", 600, 250);
+    ctx.fillText("A / D = Left / Right", 600, 300);
+    ctx.fillText("W / S = Jump / Crouch (for jumping down)", 600, 350);
+    ctx.fillText("E = Special Attack", 600, 400);
+    ctx.fillText("R = Switch Between Primary and Secondary Weapon", 600, 450);
+    ctx.restore();
+    menuItems.forEach(function (item) {
+        item.draw();
+    });
+    frameId = requestAnimationFrame(controlsFrame);
+    if (transition) {
+        screenTransition(mainMenu);
+    }
+}
+
+function controlsClick(event) {
+    if (transitionCounter == 0) {
+        var rect = canvas.getBoundingClientRect();
+        var x = event.clientX - rect.left;
+        var y = event.clientY - rect.top;
+        menuItems.forEach(function (item) {
+            if (y <= item.y + 5 && y >= item.y - item.h - 5 && x >= item.x - item.w / 2 - 5 && x <= item.w / 2 + item.x + 5) {
+                menuSelection = item.text;
+                if (menuSelection == "BACK") {
+                    var audio = AM.getSound("./sounds/MenuSelect.wav").cloneNode();
+                    audio.volume = sfxVolume;
+                    audio.play();
+                    canvas.removeEventListener('click', controlsClick);
+                    transition = true;
+                }
+            }
+        });
+    }
 }
