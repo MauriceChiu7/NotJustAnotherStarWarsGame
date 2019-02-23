@@ -132,6 +132,7 @@ Map.prototype.makeLevel_1 = function () {
     new BottomOnlyCollision(734, 344, 133);
 
     this.addPlayer(new Luke());
+    this.addEnemy(new Dummy(gameEngine));
 
     this.addEnemy(new Trooper(gameEngine));
     // let trooper2 = new Trooper(gameEngine);

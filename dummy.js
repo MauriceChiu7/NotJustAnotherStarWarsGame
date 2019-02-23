@@ -63,12 +63,7 @@ function Dummy(game) {
    this.lives = 3;
 
    this.ctx = game.ctx;
-   for (let i = 0; i < this.game.entities.length; i++) {
-      let object = this.game.entities[i];
-      if (object.tag == "player") {
-         this.player = object;
-      }
-   }
+   
    Entity.call(this, game, this.x, this.y);
    // setInterval(() => { console.log('delta_x: ' + this.delta_x_from_player + 'delta_y: ' + this.delta_y_from_player) }, 500);
 }
@@ -84,6 +79,12 @@ Dummy.prototype.update = function () {
    collisionLeft = this.getMapCollision("left");
    collisionTop = this.getMapCollision("top");
    collisionBottom = this.getMapCollision("bottom");
+   for (let i = 0; i < this.game.entities.length; i++) {
+      let object = this.game.entities[i];
+      if (object.tag == "player") {
+         this.player = object;
+      }
+   }
 
    // Stops movement if collision encountered
    if (collisionRight != null) {
