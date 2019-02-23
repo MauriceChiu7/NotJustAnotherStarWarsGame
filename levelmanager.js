@@ -19,7 +19,6 @@ LevelManager.prototype.startLevel = function (levelNum) {
     if (gameEngine.entities.length != 0) {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             gameEngine.entities.pop();
-            // console.log('Here!!! LM');
         }
     }
     
@@ -32,8 +31,7 @@ LevelManager.prototype.startLevel = function (levelNum) {
     for (var i = 0; i < this.levels[levelNum - 1].enemies.length; i++) {
         gameEngine.addEntity(this.levels[levelNum - 1].enemies[i]);
     }
-    // console.log('LM: ');
-    // console.log(gameEngine.entities);
+    
     ctx.font = "25px monospace";
     ctx.fillStyle = "WHITE";
     ctx.fillText('Level' + level, canvas.width - 200, 100);
@@ -44,8 +42,6 @@ LevelManager.prototype.startLevel = function (levelNum) {
 
 LevelManager.prototype.update = function () {
     var player;
-    // console.log('LM update');
-    // console.log(gameEngine.entities);
     if (gameEngine.entities.length != 0) {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             if (gameEngine.entities[i].tag === 'player') {
@@ -55,6 +51,7 @@ LevelManager.prototype.update = function () {
     }
     if (level !== this.levels.length && gameEngine.entities.length === 1 && gameEngine.entities[0].tag === 'player') {
         level++;
+        console.log('Leveled up');
         this.startLevel(level);
     } else if (level === this.levels.length && gameEngine.entities.length === 1 && gameEngine.entities[0].tag === 'player') { // Winning the last level
         gameover = true;
@@ -64,7 +61,7 @@ LevelManager.prototype.update = function () {
         ctx.fillStyle = "WHITE";
         ctx.textAlign = "center";
         ctx.fillText("YOU WIN", canvas.width/2, canvas.height/2);
-        
+        console.log('won the game');
         canvas.addEventListener('click', reload);
         // canvas.removeEventListener('click', reload);
     } else if (player.health <= 0) { // Loosing the game
@@ -101,14 +98,17 @@ function Map(mapNumber) {
             this.makeLevel_1();
             console.log('map1 built');
             break;
+        case 2: 
+            this.makeLevel_2();
+            console.log('map2 built');
+            break;
     }
 }
 
 // Map.prototype = new Entity();
-// Map.prototype.constructor = Map;
+Map.prototype.constructor = Map;
 
 Map.prototype.addEnemy = function (enemy) {
-    // console.log('enemy' + enemy);
     this.enemies.push(enemy);
 }
 
@@ -119,21 +119,6 @@ Map.prototype.addPlatform = function (platform) {
 Map.prototype.addPlayer = function (player) {
     this.players.push(player);
 }
-
-// LevelManager.prototype.makeLevel_1 = function () {
-//     fullCollisions = [];
-//     bottomOnlyCollisions = [];
-//     currentMap = AM.getAsset("./img/background.png");
-//     new FullCollision(-100, 480, 980, 200);
-//     new FullCollision(1030, 480, 200, 200);
-//     new FullCollision(300, 219, 385, 250);
-//     new FullCollision(420, -100, 265, 200);
-
-//     new BottomOnlyCollision(53, 361, 213);
-//     new BottomOnlyCollision(-100, 241, 345);
-//     new BottomOnlyCollision(500, 219, 750);
-//     new BottomOnlyCollision(734, 344, 133);
-// }
 
 Map.prototype.makeLevel_1 = function () {
     fullCollisions = [];
@@ -148,6 +133,61 @@ Map.prototype.makeLevel_1 = function () {
     new BottomOnlyCollision(-100, 241, 345);
     new BottomOnlyCollision(500, 219, 750);
     new BottomOnlyCollision(734, 344, 133);
+
+    this.addPlayer(new Luke());
+
+    this.addEnemy(new Trooper(gameEngine));
+    // let trooper2 = new Trooper(gameEngine);
+    // trooper2.x = 900;
+    // trooper2.y = 300 - 80;
+    // this.addEnemy(trooper2);
+    let trooper3 = new Trooper(gameEngine);
+    trooper3.x = 1000;
+    trooper3.y = 70;
+    this.addEnemy(trooper3);
+}
+
+Map.prototype.makeLevel_2 = function () {
+    fullCollisions = [];
+    bottomOnlyCollisions = [];
+    currentMap = AM.getAsset("./img/background.png");
+    new FullCollision(-100, 480, 980, 200);
+    new FullCollision(1030, 480, 200, 200);
+    new FullCollision(300, 219, 385, 250);
+    new FullCollision(420, -100, 265, 200);
+
+    new BottomOnlyCollision(53, 361, 213);
+    new BottomOnlyCollision(-100, 241, 345);
+    new BottomOnlyCollision(500, 219, 750);
+    new BottomOnlyCollision(734, 344, 133);
+
+    this.addPlayer(new Luke());
+    this.addEnemy(new Trooper(gameEngine));
+    let trooper2 = new Trooper(gameEngine);
+    trooper2.x = 700;
+    trooper2.y = 300 - 80;
+    this.addEnemy(trooper2);
+    let trooper3 = new Trooper(gameEngine);
+    trooper3.x = 1000;
+    trooper3.y = 70;
+    this.addEnemy(trooper3);
+}
+
+
+
+function reload () {
+    location.reload(true);
+}
+
+
+
+// LevelManager.prototype.deleteEntity(type) = function () {
+//     for (var i = 0; i < gameEngine.entities.length; i++) {
+//         if (gameEngine.entities[i] instanceof type) {
+//             gameEngine.entities.splice(i, 1);
+//         }
+//     }
+// }
 
     // this.addPlatform(new Platform(0, 389, 'darkWall', 0, 0));
     // this.addPlatform(new Platform(382, 389, 'darkWall', 0, 0));
@@ -177,32 +217,3 @@ Map.prototype.makeLevel_1 = function () {
     // this.addPlatform(new Platform(500, 510, 'smallCrate', 64, 64));
     // this.addPlatform(new Platform(1000, 478, 'bigCrate', 96, 96));
     // this.addPlatform(new Platform(600, 190, 'electronics', 0, 0));
-
-    this.addPlayer(new Luke());
-    this.addEnemy(new Trooper(gameEngine));
-    let trooper2 = new Trooper(gameEngine);
-    trooper2.x = 900;
-    trooper2.y = 300 - 80;
-    this.addEnemy(trooper2);
-    let trooper3 = new Trooper(gameEngine);
-    trooper3.x = 1000;
-    trooper3.y = 70;
-    this.addEnemy(trooper3);
-
-    
-}
-// function setEnemiesLevel_1() {
-// }
-
-
-// LevelManager.prototype.deleteEntity(type) = function () {
-//     for (var i = 0; i < gameEngine.entities.length; i++) {
-//         if (gameEngine.entities[i] instanceof type) {
-//             gameEngine.entities.splice(i, 1);
-//         }
-//     }
-// }
-
-function reload () {
-    location.reload(true);
-}

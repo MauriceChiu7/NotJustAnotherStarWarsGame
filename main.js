@@ -681,12 +681,13 @@ function controlsFrame() {
     ctx.fillText("CONTROLS", 600, 100);
     ctx.fillStyle = "#ffd700";
     ctx.font = "20px arial";
-    ctx.fillText("Left Click = Attack", 600, 200);
-    ctx.fillText("Right Click = Block", 600, 250);
-    ctx.fillText("A / D = Left / Right", 600, 300);
-    ctx.fillText("W / S = Jump / Crouch (for jumping down)", 600, 350);
-    ctx.fillText("E = Special Attack", 600, 400);
-    ctx.fillText("R = Switch Between Primary and Secondary Weapon", 600, 450);
+    ctx.fillText("Left Click = Attack", 600, 180);
+    ctx.fillText("Right Click = Block", 600, 230);
+    ctx.fillText("A / D = Left / Right", 600, 280);
+    ctx.fillText("W / S = Jump / Crouch", 600, 330);
+    ctx.fillText("E = Special Attack", 600, 380);
+    ctx.fillText("R = Switch Weapon", 600, 430);
+    ctx.fillText("Hold S + SPACE = Jump Down", 600, 480);
     ctx.restore();
     menuItems.forEach(function (item) {
         item.draw();

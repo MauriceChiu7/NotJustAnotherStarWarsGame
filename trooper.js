@@ -44,8 +44,6 @@ function Trooper(game) {
     this.hitbox = 30;
 
     this.game = game;
-    console.log('trooper entities: ');
-    console.log(gameEngine.entities);
     
     //console.log("Trooper ID: " + this.id);
     this.ctx = game.ctx;
@@ -140,18 +138,12 @@ Trooper.prototype.attackCollide = function () {
 }
 
 Trooper.prototype.update = function () {
-
-    // console.log(gameEngine.entities.length);
-    // setTimeout(()=>{
-        for (let i = 0; i < gameEngine.entities.length; i++) {
-            let object = this.game.entities[i];
-            // console.log('object' + object);
-            if (object.tag === 'player') {
-                this.player = object;
-                // console.log('this.player' + this.player);
-            }
+    for (let i = 0; i < gameEngine.entities.length; i++) {
+        let object = this.game.entities[i];
+        if (object.tag === 'player') {
+            this.player = object;
         }
-    // }, 5000)
+    }
     
     let trooperList = [];
     for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -169,8 +161,7 @@ Trooper.prototype.update = function () {
     // console.log('Trooper ID'+ this.id+' health: ' + this.health);
     // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
-    console.log('this.player: ' + this.player);
-    // console.log('this.player.x' + this.player.x);
+    
     this.distance = this.player.x + 50 - this.x;
 
     if (this.health <= 0) {
