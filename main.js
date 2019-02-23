@@ -18,7 +18,7 @@ var SHOWBOX = true;
 
 // var testingVader = false;
 var testingMace = false;
-var testingLuke = true;
+var testingLuke = false;
 var testingObi = false;
 
 AM.queueDownload("./img/StarWarsLogo.png");
