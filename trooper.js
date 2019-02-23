@@ -46,30 +46,7 @@ function Trooper(game) {
     this.game = game;
     console.log('trooper entities: ');
     console.log(gameEngine.entities);
-    // console.log(gameEngine.entities.length);
-    // setTimeout(()=>{
-        for (let i = 0; i < gameEngine.entities.length; i++) {
-            let object = this.game.entities[i];
-            // console.log('object' + object);
-            if (object.tag === 'player') {
-                this.player = object;
-                // console.log('this.player' + this.player);
-            }
-        }
-    // }, 5000)
     
-    let trooperList = [];
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        if (gameEngine.entities[i] instanceof Trooper) {    // already a trooper so make new id (add 1 to existing id)
-            trooperList.push(gameEngine.entities[i].id);
-        }
-    }
-    if (trooperList.length == 0) {
-        this.id = 1;
-    } else {
-        let otherId = trooperList[trooperList.length - 1];
-        this.id = 1 + otherId;
-    }
     //console.log("Trooper ID: " + this.id);
     this.ctx = game.ctx;
     this.tag = "enemy";
@@ -163,6 +140,32 @@ Trooper.prototype.attackCollide = function () {
 }
 
 Trooper.prototype.update = function () {
+
+    // console.log(gameEngine.entities.length);
+    // setTimeout(()=>{
+        for (let i = 0; i < gameEngine.entities.length; i++) {
+            let object = this.game.entities[i];
+            // console.log('object' + object);
+            if (object.tag === 'player') {
+                this.player = object;
+                // console.log('this.player' + this.player);
+            }
+        }
+    // }, 5000)
+    
+    let trooperList = [];
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        if (gameEngine.entities[i] instanceof Trooper) {    // already a trooper so make new id (add 1 to existing id)
+            trooperList.push(gameEngine.entities[i].id);
+        }
+    }
+    if (trooperList.length == 0) {
+        this.id = 1;
+    } else {
+        let otherId = trooperList[trooperList.length - 1];
+        this.id = 1 + otherId;
+    }
+
     // console.log('Trooper ID'+ this.id+' health: ' + this.health);
     // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
     // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');

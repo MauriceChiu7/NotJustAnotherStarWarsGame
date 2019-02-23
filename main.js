@@ -580,8 +580,8 @@ function inGame() {
     frameId = requestAnimationFrame(inGameFrame);
     // var gameEngine = new GameEngine(); // Made it an instance field.
 
-    let levelManager = new LevelManager();
-    levelManager.makeLevel_1();
+    // let levelManager = new LevelManager();
+    // levelManager.makeLevel_1();
 
     gameEngine.init(ctx);
     
