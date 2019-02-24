@@ -1,3 +1,5 @@
+var paused = false;
+
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
             window.webkitRequestAnimationFrame ||
@@ -27,45 +29,16 @@ GameEngine.prototype.init = function (ctx) {
     console.log('game initialized');
 }
 
-
-// if (!executed) {
-//     var promise = new Promise(function (resolve, reject) {
-//         // if (!executed) {
-//             // let levelManager = new LevelManager();
-//             // gameEngine.addEntity(levelManager);
-//             // executed = true;
-//         // }
-        
-//         // console.log('var promise');
-//         // // screenTransition(inGame);
-//         screenTransition(inGame);
-//         // // frameId = requestAnimationFrame(inGameFrame);
-//         setTimeout(function () {
-//             resolve('foo');
-//         }, 1000);
-//     });
-//     promise.then(function (value) {
-//         console.log(value);
-//         console.log('promise.then');
-//         gameEngine.init(ctx);
-//         gameEngine.start();
-//         let levelManager = new LevelManager();
-//         gameEngine.addEntity(levelManager);
-//         document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
-//         console.log('promise done');
-//     });
-//     executed = true;
-// }
-
-
-
 GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
-    (function gameLoop() {
-        that.loop();
-        requestAnimFrame(gameLoop, that.ctx.canvas);
-    })();
+    if (!paused) {
+        (function gameLoop() {
+            // console.log('loopping');
+            that.loop();
+            requestAnimFrame(gameLoop, that.ctx.canvas);
+        })();
+    }
 }
 
 GameEngine.prototype.startInput = function () {
@@ -189,6 +162,21 @@ GameEngine.prototype.draw = function () {
         this.entities[i].checkCollisions();
         this.entities[i].draw(this.ctx);
     }
+
+    if (gameover && win) {
+        ctx.font = "25px monospace";
+        ctx.fillStyle = "WHITE";
+        ctx.textAlign = "center";
+        ctx.fillText("YOU WIN", canvas.width/2, canvas.height/2);
+        ctx.fillText("(RIGHT CLICK ANY WHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
+    } else if (gameover) {
+        ctx.font = "25px monospace";
+        ctx.fillStyle = "WHITE";
+        ctx.textAlign = "center";
+        ctx.fillText("YOU LOOSE", canvas.width/2, canvas.height/2);
+        ctx.fillText("(RIGHT CLICK ANY WHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
+    }
+
     statusBars.draw();
     this.ctx.restore();
 }
@@ -208,8 +196,10 @@ GameEngine.prototype.update = function () {
 
 GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
-    this.update();
-    this.draw();
+    
+        this.update();
+        this.draw();
+    
     this.mouseMoveX = this.saveX;
     this.mouseMoveY = this.saveY;
     this.d = null;
@@ -351,4 +341,13 @@ Animation.prototype.currentFrame = function () {
 
 Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
+}
+
+
+function pause () {
+    paused = true;
+}
+
+function unpause () {
+    paused = false;
 }

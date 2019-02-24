@@ -13,8 +13,8 @@ var tempName = "";
 var searching = false;
 var searchingCounter = 0;
 var editingName = false;
-var SHOWBOX = true;
 var mainMenuMusic;
+var SHOWBOX = false;
 
 // var testingVader = false;
 // var testingMace = false;
