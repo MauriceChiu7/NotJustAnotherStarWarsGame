@@ -35,12 +35,12 @@ function LaserBeam(start, end, game) {
   this.y = start.y;
   this.game = game;
   this.tag = "laser";
-  // this.speed = 20;
-  this.velocityX = 20;
-  this.velocityY = 20;
 
-  this.width = 70;
-  this.height = 50;
+  this.xVelocity = 20;
+  this.yVelocity = 20;
+
+  this.width = 30;
+  this.height = 30;
 
   this.laserID = null;
   this.enemyTag = null;
@@ -53,45 +53,34 @@ LaserBeam.prototype = new Entity();
 LaserBeam.prototype.constructor = LaserBeam;
 
 LaserBeam.prototype.update = function () {
-  this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+  // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+  this.platformCollisions = [];
 
-  if (this.getCollision("right") != null) {
-    this.x = this.getCollision("right").entity.collisionX + this.getCollision("right").entity.collisionWidth + 2;
-    this.velocityX = -this.velocityX;
-  } else if (this.getCollision("left") != null) {
-    this.x = this.getCollision("left").entity.collisionX - 2;
-    this.velocityX = -this.velocityX;
-  } else  if (this.getCollision("top") != null) {
-    this.velocityY = -this.velocityY;
-  } else if (this.getCollision("bottom") != null) {
-    this.y = this.getCollision("bottom").entity.collisionY + 1;
-    this.velocityY = -this.velocityY;
-  } 
-  // else {
+  var fullMCollisions = [];
+  for (var i = 0; i < fullCollisions.length; i++) {
+      let current = fullCollisions[i];
+      if (this.x + this.xVelocity + this.width < current.x + current.width && this.x + this.xVelocity + this.width > current.x &&
+          this.y + this.yVelocity + this.height < current.y + current.height && this.y + this.yVelocity - this.height > current.y) {
+          fullMCollisions.push(current);
+      }
+  }
+
+  if (fullMCollisions.length > 0) {
+    // console.log("HERE");
+    this.deleteLaserbeam();
+  } else {
     var x = this.end.x - this.start.x;
     var y = this.end.y - this.start.y;
     var l = Math.sqrt(x * x + y * y);
     x = x / l;
     y = y / l;
-    this.x += x * this.velocityX;
-    this.y += y * this.velocityY;
-  // }
+    this.x += x * this.xVelocity;
+    this.y += y * this.yVelocity;
 
-
-  for (let i = 0; i < this.game.entities.length; i++) {
-    let ent = this.game.entities[i];
-    if (ent.tag == this.enemyTag) {
-      if (ent.object !== this && this.collide(ent.object)) {
-        console.log("Laserbeam collision!!!");
-        this.deleteLaserbeam();
-      }
+    // laser goes out of bounds
+    if (this.x > 1500 || this.x < 0 || this.y > 700 || this.y < 0) {
+      this.deleteLaserbeam();
     }
-  }
-
-
-  // laser goes out of bounds
-  if (this.x > 1500 || this.x < 0 || this.y > 700 || this.y < 0) {
-    this.deleteLaserbeam();
   }
 
   Entity.prototype.update.call(this);

@@ -163,18 +163,17 @@ GameEngine.prototype.draw = function () {
         this.entities[i].draw(this.ctx);
     }
 
-    if (gameover && win) {
+    if (gameover) {
         ctx.font = "25px monospace";
         ctx.fillStyle = "WHITE";
         ctx.textAlign = "center";
-        ctx.fillText("YOU WIN", canvas.width/2, canvas.height/2);
-        ctx.fillText("(RIGHT CLICK ANY WHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
-    } else if (gameover) {
-        ctx.font = "25px monospace";
-        ctx.fillStyle = "WHITE";
-        ctx.textAlign = "center";
-        ctx.fillText("YOU LOOSE", canvas.width/2, canvas.height/2);
-        ctx.fillText("(RIGHT CLICK ANY WHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
+        if (win) {
+            ctx.fillText("YOU WIN", canvas.width/2, canvas.height/2);
+            ctx.fillText("(RIGHT CLICK ANYWHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
+        } else {
+            ctx.fillText("YOU LOSE", canvas.width/2, canvas.height/2);
+            ctx.fillText("(RIGHT CLICK ANYWHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
+        }
     }
 
     statusBars.draw();

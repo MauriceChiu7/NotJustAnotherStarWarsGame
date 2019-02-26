@@ -517,6 +517,10 @@ Luke.prototype.update = function () {
         this.x = 1140;
     } else if (this.x + 30 < 0) {
         this.x = -30;
+    } 
+    if (this.y > 600) {
+        statusBars.update(-100, 0);
+        this.health = 0;
     }
 
     if (this.game.r && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
@@ -559,7 +563,6 @@ Luke.prototype.update = function () {
                 let audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
                 audio.volume = sfxVolume * 0.2;
                 audio.play();
-                statusBars.saveTime = this.game.clockTick;
                 statusBars.update(0, -20);
                 this.attacking = true;
                 this.switching = false;
@@ -689,7 +692,6 @@ Luke.prototype.update = function () {
     }
     // Blocking
     if (blocking) {
-        statusBars.saveTime = this.game.clockTick;
         statusBars.update(0, -1);
         this.standing = false;
         this.crouching = false;
@@ -933,6 +935,6 @@ function lightsaberThrow(e) {
         playerCoor = { x: center_x, y: center_y };
         // console.log("Luke.js: " + playerCoor.x + " " + playerCoor.y);
         gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
-        statusBars.update(0, -15);
+        statusBars.update(0, -50);
     }
 }
