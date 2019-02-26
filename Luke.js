@@ -401,7 +401,7 @@ Luke.prototype.update = function () {
                 for (let i = 0; i < this.game.entities.length; i++) {
                     let trooper = this.game.entities[i];
                     if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
-                        trooper.health -= 250;
+                        trooper.health -= 500;
                     }
                 }
             }
@@ -578,7 +578,18 @@ Luke.prototype.update = function () {
                 let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
                 audio.volume = sfxVolume;
                 audio.play();
-                let playerCoor = { x: center_x, y: center_y + 30 };
+                let x, y;
+                if (center_x > gameEngine.clickx) {
+                    x = center_x;
+                } else {
+                    x = center_x + 40;
+                }
+                if (center_y > gameEngine.clicky) {
+                    y = center_y;
+                } else {
+                    y = center_y + 30;
+                }
+                let playerCoor = {x: x, y: y};
                 let endCoor = { x: this.game.clickx, y: this.game.clicky };
                 let luke_beam = new LaserBeam(playerCoor, endCoor, gameEngine);
                 luke_beam.tag = "luke_laser";
@@ -590,7 +601,9 @@ Luke.prototype.update = function () {
                     for (let i = 0; i < this.game.entities.length; i++) {
                         let trooper = this.game.entities[i];
                         if (trooper instanceof Trooper && this.attackCollide(laser, trooper)) {
-                            trooper.health -= 250;
+                            trooper.health -= 500;
+                            console.log("AGSSAGSA");
+                            laser.deleteLaserbeam();
                         }
                     }
                 }
@@ -926,6 +939,7 @@ function lightsaberThrow(e) {
             }
         }
     }
+    
     if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
         var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
         audio.volume = sfxVolume;
