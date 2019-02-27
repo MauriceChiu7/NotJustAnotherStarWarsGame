@@ -83,7 +83,7 @@ LaserBeam.prototype.update = function () {
     }
   }
   
-  Entity.prototype.update.call(this);
+  // Entity.prototype.update.call(this);
 }
 
 LaserBeam.prototype.collide = function (xDisplacement, yDisplacement, tag) {

@@ -337,8 +337,8 @@ Trooper.prototype.shoot = function () {
     audio.play();
     let rect = canvas.getBoundingClientRect();
     let startCoor = { x: (this.x + 20 + this.x) / 2, y: (this.y + this.height + this.y) / 2 };
-    const xend = this.player.x;
-    const yend = this.player.y;
+    const xend = center_x;
+    const yend = center_y + 20;
     let endCoor = { x: xend, y: yend };
     let trooperLaser = new LaserBeam(startCoor, endCoor, gameEngine);
     trooperLaser.tag = "trooperLaser";

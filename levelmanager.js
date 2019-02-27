@@ -148,8 +148,8 @@ Map.prototype.makeLevel_2 = function () {
     fullCollisions = [];
     bottomOnlyCollisions = [];
     currentMap = AM.getAsset("./img/background.png");
-    new FullCollision(-100, 480, 980, 200);
-    new FullCollision(1030, 480, 200, 200);
+    new FullCollision(-55, 480, 980, 200);
+    new FullCollision(1085, 480, 200, 200);
     new FullCollision(300, 219, 385, 250);
     new FullCollision(420, -100, 265, 200);
 
