@@ -9,11 +9,11 @@ function LevelManager() {
     this.y = 0;
     var map1 = new Map(1);
     var map2 = new Map(2);
-    // this.levels = [map1, map2];
-    this.levels = [map1];
+    this.levels = [map1, map2];
+    // this.levels = [map1];
     this.startLevel(1);
     // setInterval(()=>{console.log(this.levels[level-1].enemies)}, 1500)
-    setInterval(()=>{console.log(gameEngine.entities)}, 1500)
+    // setInterval(()=>{console.log(gameEngine.entities)}, 1500)
 }
 
 LevelManager.prototype = new Entity();
