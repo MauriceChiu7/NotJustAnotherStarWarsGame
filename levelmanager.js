@@ -171,8 +171,6 @@ Map.prototype.makeLevel_2 = function () {
     this.addEnemy(trooper3);
 }
 
-
-
 function reload () {
     location.reload(true);
 }
@@ -186,32 +184,3 @@ function reload () {
 //         }
 //     }
 // }
-
-    // this.addPlatform(new Platform(0, 389, 'darkWall', 0, 0));
-    // this.addPlatform(new Platform(382, 389, 'darkWall', 0, 0));
-    // this.addPlatform(new Platform(764, 389, 'darkWall', 0, 0));
-    // this.addPlatform(new Platform(1146, 389, 'darkWall', 0, 0));
-
-    // this.addPlatform(new Platform(0, 197, 'darkWall', 0, 0));
-    // this.addPlatform(new Platform(382, 197, 'darkWall', 0, 0));
-    // this.addPlatform(new Platform(764, 197, 'darkWall', 0, 0));
-    // this.addPlatform(new Platform(1146, 197, 'darkWall', 0, 0));
-
-    // this.addPlatform(new Platform(0, 5, 'darkWall', 0, 0));
-    // this.addPlatform(new Platform(382, 5, 'darkWall', 0, 0));
-    // this.addPlatform(new Platform(764, 5, 'darkWall', 0, 0));
-    // this.addPlatform(new Platform(1146, 5, 'darkWall', 0, 0));
-
-    // this.addPlatform(new Platform(0, 570, 'longPlat', 514, 30));
-    // this.addPlatform(new Platform(512, 570, 'longPlat', 514, 30));
-    // this.addPlatform(new Platform(1024, 570, 'longPlat', 514, 30));
-
-    // this.addPlatform(new Platform(120, 460, 'shortPlat', 130, 30));
-    // this.addPlatform(new Platform(300, 320, 'shortPlat', 130, 30));
-    // this.addPlatform(new Platform(550, 250, 'shortPlat', 130, 30));
-    // this.addPlatform(new Platform(800, 320, 'shortPlat', 130, 30));
-    // this.addPlatform(new Platform(950, 460, 'shortPlat', 130, 30));
-
-    // this.addPlatform(new Platform(500, 510, 'smallCrate', 64, 64));
-    // this.addPlatform(new Platform(1000, 478, 'bigCrate', 96, 96));
-    // this.addPlatform(new Platform(600, 190, 'electronics', 0, 0));

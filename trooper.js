@@ -174,8 +174,9 @@ Trooper.prototype.update = function () {
     }
 
     if (!this.dead) {
+        this.action = this.standing;
         if (Math.abs(this.distance) > 50) {
-            this.chanceToShoot = Math.round(Math.random() * 7);
+            this.chanceToShoot = Math.round(Math.random() * 50);
 
             if (this.chanceToShoot == 0) {
                 this.action = this.standing;
@@ -185,9 +186,7 @@ Trooper.prototype.update = function () {
                         this.shotsFired = true;
                     }
                 }
-                if (!this.shotsFired) {
-                    this.shoot();
-                }
+                this.shoot();
                 this.action = this.standing;
             }
         } else if (Math.abs(this.distance) < 50 && Math.abs(this.player.y - this.y) < 100) {
@@ -205,8 +204,6 @@ Trooper.prototype.update = function () {
                 this.player.health -= DAMAGE_LUKE;
             }
 
-        } else {
-            this.action = this.standing;
         }
 
     } else {
@@ -337,8 +334,8 @@ Trooper.prototype.drawLeft = function () {
 
 Trooper.prototype.shoot = function () {
     let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
-    audio.volume = 0.05;
-    // audio.play();
+    audio.volume = 0.2 * sfxVolume;
+    audio.play();
     let rect = canvas.getBoundingClientRect();
     let startCoor = { x: (this.x + 20 + this.x) / 2, y: (this.y + this.height + this.y) / 2 };
     const xend = this.player.x;
