@@ -152,7 +152,6 @@ LaserBeam.prototype.draw = function () {
   } else {
     (theDeg > 0) ? this.shootAnim135.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim135Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
   }
-
   Entity.prototype.draw.call(this);
 }
 
