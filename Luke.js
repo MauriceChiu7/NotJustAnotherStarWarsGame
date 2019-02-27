@@ -214,6 +214,7 @@ Luke.prototype.getMapCollisions = function () {
     }
 }
 
+// Checks theoretical collision starting at given x and y
 Luke.prototype.getMapCollisions2 = function (x, y) {
     this.fullMCollisions = [];
     var toReturn = [];
