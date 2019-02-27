@@ -65,6 +65,15 @@ LaserBeam.prototype.update = function () {
       }
   }
 
+  var entityCollisions = [];
+  for (var i = 0; i < gameEngine.entities.length; i++) {
+      let current = gameEngine.entities[i];
+      if (this.x + this.xVelocity + this.width < current.x + current.width && this.x + this.xVelocity + this.width > current.x &&
+          this.y + this.yVelocity + this.height < current.y + current.height && this.y + this.yVelocity - this.height > current.y) {
+            entityCollisions.push(current);
+      }
+  }
+
   if (fullMCollisions.length > 0) {
     // console.log("HERE");
     this.deleteLaserbeam();
@@ -152,7 +161,6 @@ LaserBeam.prototype.draw = function () {
   } else {
     (theDeg > 0) ? this.shootAnim135.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize) : this.shootAnim135Left.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, lasersize2);
   }
-
   Entity.prototype.draw.call(this);
 }
 

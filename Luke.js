@@ -325,7 +325,6 @@ Luke.prototype.attackCollide = function (thisEnt, otherEnt) {
 }
 Luke.prototype.collideRight = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
-    // console.log(this.x > ent.x);
     return distance < thisEnt.width && thisEnt.x > otherEnt.x;
 }
 Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
@@ -378,7 +377,6 @@ Luke.prototype.update = function () {
             if (this.collideLeft(this, curEnt)) {         //Left works :) // Well done!  //Luke is goin to be
                 this.x = curEnt.x + curEnt.width;
                 this.xAcceleration = 0;
-                // console.log("collide left: " + this.x + " ");
             } else if (this.collideRight(this, curEnt)) {             // Right collide wont FUCKING work // LOL!
                 this.x = curEnt.x - this.width - 20;
                 this.xAcceleration = 0;
@@ -396,7 +394,6 @@ Luke.prototype.update = function () {
                 let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
                 audio.volume = sfxVolume * 0.2;
                 audio.play();
-                // console.log("HERE");
                 curEnt.xVelocity = -(curEnt.xVelocity);
                 curEnt.yVelocity = -(curEnt.yVelocity);
                 for (let i = 0; i < this.game.entities.length; i++) {
