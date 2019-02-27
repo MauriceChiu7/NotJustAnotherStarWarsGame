@@ -396,7 +396,7 @@ Luke.prototype.update = function () {
                 let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
                 audio.volume = sfxVolume * 0.2;
                 audio.play();
-                console.log("HERE");
+                // console.log("HERE");
                 curEnt.xVelocity = -(curEnt.xVelocity);
                 curEnt.yVelocity = -(curEnt.yVelocity);
                 for (let i = 0; i < this.game.entities.length; i++) {
