@@ -12,6 +12,7 @@ function Dummy(game) {
    
    this.x = 900;
    this.y = 10;
+   this.health =1000;
 
    // Collisions Stuff
    this.platformCollisions = [];
@@ -144,7 +145,6 @@ Dummy.prototype.update = function () {
       }
    }
 
-   
    if (this.distance > 105 && this.player.y - this.y == 0) { // player on the right
       this.xAcceleration +=1;
       // this.chanceToBlock = Math.round(Math.random());
@@ -161,14 +161,14 @@ Dummy.prototype.update = function () {
       this.jumping = false;
       this.hurting = false;
       this.dead = false;
-   } else if (this.distance > 0 && this.player.y - this.y > 0) {
+   } else if (this.distance > 0 && this.player.y - this.y > 0) {// player is lower && on the right
       this.xAcceleration +=1;
       // this.chanceToBlock = Math.round(Math.random());
       this.block = false;
       this.attack = false;
       this.jumping = false;
       //this.hurting = false;
-   } else if (this.distance < -0 && this.player.y - this.y > 0) {
+   } else if (this.distance < -0 && this.player.y - this.y > 0) {// player is lower && on the left
       this.xAcceleration -=1;
       this.block = false;
       this.attack = false;
@@ -195,25 +195,34 @@ Dummy.prototype.update = function () {
             this.dead = true;
          }
       }
-   } else if (this.player.y - this.y < -100 && collisionBottom != null) {
+   } else if (this.player.y - this.y < -100 && collisionBottom != null) { // player is higher
+      var collisionCheck = this.getMapCollisions2(this.x, this.y - 13);
+      var canJump = true;
+      for (var i = 0; i < collisionCheck.length; i++) {
+         if (collisionCheck[i].direction == "bottom") {
+               canJump = false;
+         }
+      }
+      if (canJump) {
+         this.jumping = true;
+         this.yAcceleration -= 13;
+         if (this.distance > 0) {
+            this.xAcceleration ++;
+         } else if (this.distance < 0) {
+            this.xAcceleration --;
+         }
+      }
       this.block = false;
       this.attack = false;
       this.hurting = false;
-      this.dead = false;
-      this.yAcceleration -= 13;
-      if (this.distance > 100) {
-         this.xAcceleration +=1;
-      } else if (this.distance < -100) {
-         this.xAcceleration -=1;
-      }
-      this.jumping = true;
+      this.dead = false;    
       // console.log(this.jumping);
       if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
          this.jumpingRightAnim.elapsedTime = 0;
          this.jumpingLeftAnim.elapsedTime = 0;
          this.jumping = false;
       }
-   } else if (Math.abs(this.player.y - this.y) < 50 && Math.abs(this.distance) < 80) {
+   } else if (Math.abs(this.player.y - this.y) < 50 && Math.abs(this.distance) < 80) { // avoiding the player getting too close
       if (this.distance > 0) {
          this.xAcceleration --;
       } else {
