@@ -82,7 +82,7 @@ LaserBeam.prototype.update = function () {
       this.deleteLaserbeam();
     }
   }
-
+  
   Entity.prototype.update.call(this);
 }
 

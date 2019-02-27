@@ -319,7 +319,7 @@ Luke.prototype.getDistance = function (thisEnt, otherEnt) {
 }
 Luke.prototype.attackCollide = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
-    console.log("Distance: " + distance + ", WIDTH: " + thisEnt.width + ", " + otherEnt.width);
+    // console.log("Distance: " + distance + ", WIDTH: " + thisEnt.width + ", " + otherEnt.width);
     // console.log(distance < thisEnt.width + otherEnt.width);
     return distance < thisEnt.width + otherEnt.width || distance < thisEnt.height + otherEnt.height;
 }
@@ -396,11 +396,13 @@ Luke.prototype.update = function () {
                 let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
                 audio.volume = sfxVolume * 0.2;
                 audio.play();
-                curEnt.velocityX = -(curEnt.velocityX);
-                curEnt.velocityY = -(curEnt.velocityY);
+                console.log("HERE");
+                curEnt.xVelocity = -(curEnt.xVelocity);
+                curEnt.yVelocity = -(curEnt.yVelocity);
                 for (let i = 0; i < this.game.entities.length; i++) {
                     let trooper = this.game.entities[i];
                     if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
+                        console.log("HIT");
                         trooper.health -= 500;
                     }
                 }
@@ -661,7 +663,7 @@ Luke.prototype.update = function () {
             let ent = this.game.entities[i];
             // if (ent.tag == "AI" || ent.tag === "trooper") {
             if (ent instanceof Trooper && this.attackCollide(this, ent)) {
-                ent.health -= 10; // putting this here won't work cuz it wud be instant death for the troopers.
+                ent.health -= 30; // putting this here won't work cuz it wud be instant death for the troopers.
             }
         }
         this.standing = false;
