@@ -326,7 +326,6 @@ Luke.prototype.attackCollide = function (thisEnt, otherEnt) {
 }
 Luke.prototype.collideRight = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
-    // console.log(this.x > ent.x);
     return distance < thisEnt.width && thisEnt.x > otherEnt.x;
 }
 Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
@@ -379,7 +378,6 @@ Luke.prototype.update = function () {
             if (this.collideLeft(this, curEnt)) {         //Left works :) // Well done!  //Luke is goin to be
                 this.x = curEnt.x + curEnt.width;
                 this.xAcceleration = 0;
-                // console.log("collide left: " + this.x + " ");
             } else if (this.collideRight(this, curEnt)) {             // Right collide wont FUCKING work // LOL!
                 this.x = curEnt.x - this.width - 20;
                 this.xAcceleration = 0;
