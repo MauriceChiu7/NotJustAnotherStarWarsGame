@@ -1,9 +1,7 @@
-var canvas = document.getElementById("gameWorld");
 const SCALE_LUKE = 1;
 /* This is used to toggle between attacking poses. 1 is default if the character only has 1 attack pose. */
 const rightToLeftOffset = 92;//144
 const cursorOffset = -48; // -20 // Question
-const DAMAGE_LUKE = 2;
 const LUKE_HITBOX_X_OFFSET = 35;
 const LUKE_HITBOX_Y_OFFSET = 20;
 var LUKE_COLLISION_WIDTH = 25;
@@ -14,12 +12,6 @@ Use this height difference whenever you are using luke_sprites_right.png and tha
 the frame is 2-high. This value is intentionally set to negative. When you apply it to y coordinates, just "+" them.
 */
 const LUKE_2_HIGH_DIFF = -70; // -105
-/*
-The ground height can be changed depending on which platform the character is on. This value
-is intentionally set to negative. When you apply it to y coordinates, just "+" them.
-*/
-var groundHeight = 0;
-// var facingRight = true;
 
 /* Character's center. Used to calculate the angle at which the characters should aim their weapon at. */
 var center_x;
@@ -33,7 +25,6 @@ var blocking = false;
 var rightClickIsDown = false;
 var laserthrown = false;
 var LUKE_THIS;
-var LUKE_WAS_HIT = false;
 
 function Luke() {
     this.x = 300;
@@ -42,14 +33,9 @@ function Luke() {
     this.height = 50;
     this.xAcceleration = 0;
     this.yAcceleration = 0;
-    this.platformCollisions = [];
     this.tag = "player";
-    // ^^^^^ JAKE's STUFF ^^^^^
-
     this.health = 100;
-
     LUKE_THIS = this;
-
 
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     // *********************** //
@@ -59,10 +45,8 @@ function Luke() {
     // Primary weapon animations
     let rightLukeSpriteSheet = AM.getAsset("./img/luke_sprites_right.png");
     this.blockRightAnim = new Animation(rightLukeSpriteSheet, 300, 905, 96, 70, 0.1, 1, true, false);
-
     this.runRightAnim = new Animation(rightLukeSpriteSheet, 0, 2310, 96, 70, 0.1, 8, true, false);
     this.runRightBackwardsAnim = new Animation(rightLukeSpriteSheet, 0, 2310, 96, 70, 0.1, 8, true, true);
-
     this.jumpRightAnim = new Animation(rightLukeSpriteSheet, 0, 2100, 144, 140, 0.1, 9, false, false);
     this.standRightAnim = new Animation(rightLukeSpriteSheet, 0, 1540, 96, 70, 1, 3, true, false);
     this.crouchRightAnim = new Animation(rightLukeSpriteSheet, 0, 1610, 96, 70, 0.5, 3, true, false);
@@ -71,6 +55,7 @@ function Luke() {
     this.saberOnRightAnim = new Animation(rightLukeSpriteSheet, 0, 1750, 96, 70, 0.1, 3, false, false);
     this.saberOffRightAnim = new Animation(rightLukeSpriteSheet, 0, 1750, 96, 70, 0.1, 3, false, true);
     this.dyingRightAnim = new Animation(rightLukeSpriteSheet, 0, 630, 96, 70, 0.2, 6, false, false);
+
     this.deadAnim = new Animation(rightLukeSpriteSheet, 5 * 96, 630, 96, 70, 1, 1, true, false);
 
     /** Edit by Steven **/
@@ -154,19 +139,12 @@ function Luke() {
     // On create character states
     this.standing = true;
     this.jumping = false;
-    this.inAir = false;
-    // this.running = false;
     this.crouching = false;
     this.dropping = false;
     this.attacking = false;
     this.switching = false;
     this.dying = false;
     this.dead = false;
-
-    this.hitbox = 20;
-
-    this.ground = 500;
-    this.speed = 500;
 
     this.fullMCollisions = [];
     this.bottomMCollisions = [];
@@ -176,6 +154,25 @@ function Luke() {
     this.collisionBottom;
     this.currentDisplacementX = LUKE_COLLISION_WIDTH + LUKE_HITBOX_X_OFFSET;
     this.currentDisplacementY = LUKE_COLLISION_HEIGHT + LUKE_HITBOX_Y_OFFSET;
+
+    canvas.addEventListener('mousedown', function (e) { // FIX : block in same direction facing laser
+        rightClickIsDown = true;
+        if (e.button == 2 && primaryWeapon) {
+            setTimeout(function () {
+                if (rightClickIsDown) {
+                    blocking = true;
+                }
+            }, 50);
+        }
+    });
+    let that = this;
+    canvas.addEventListener('mouseup', function (e) {
+        rightClickIsDown = false;
+        if (e.button == 2 && primaryWeapon) {
+            blocking = false;
+            that.standing = true;
+        }
+    });
 
     this.ctx = gameEngine.ctx;
     Entity.call(this, gameEngine, this.x, this.y, this.width, this.height);
@@ -277,37 +274,9 @@ Luke.prototype.collide = function (xDisplacement, yDisplacement, tag) {
                     collisions.push({ entity: current, direction: direction });
                 }
             }
-            // } else if (tag === 'enemy') {
-            //     console.log('Luke Health (enemy): ' + this.health);
-            //     if (theTag == tag) {
-            //         if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-            //             this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-            //             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-            //                 // direction = "right";
-            //                 if (gameEngine.entities[i].attacking) {
-            //                     this.health -= DAMAGE_LUKE;
-            //                 }
-            //             } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-            //                 // direction = "left";
-            //                 if (gameEngine.entities[i].attacking) {
-            //                     this.health -= DAMAGE_LUKE;
-            //                 }
-            //             }
-            //             // collisions.push({entity: current, direction: direction});
-            //         }
-            //     }
         }
     }
     return collisions;
-}
-
-Luke.prototype.getCollision = function (direction) {
-    for (var i = 0; i < this.platformCollisions.length; i++) {
-        if (this.platformCollisions[i].direction == direction) {
-            return this.platformCollisions[i];
-        }
-    }
-    return null;
 }
 
 Luke.prototype.getDistance = function (thisEnt, otherEnt) {
@@ -318,36 +287,36 @@ Luke.prototype.getDistance = function (thisEnt, otherEnt) {
     // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
     return theDist;
 }
+
 Luke.prototype.attackCollide = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
     // console.log("Distance: " + distance + ", WIDTH: " + thisEnt.width + ", " + otherEnt.width);
     // console.log(distance < thisEnt.width + otherEnt.width);
     return distance < thisEnt.width + otherEnt.width || distance < thisEnt.height + otherEnt.height;
 }
+
 Luke.prototype.collideRight = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
     return distance < thisEnt.width && thisEnt.x > otherEnt.x;
 }
+
 Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
     return thisEnt.x < otherEnt.x + otherEnt.width && distance < thisEnt.width;
 }
 
 Luke.prototype.update = function () {
-    // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
-
-    this.enemyCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'enemy');
     this.getMapCollisions();
     collisionRight = this.getMapCollision("right");
     collisionLeft = this.getMapCollision("left");
     collisionTop = this.getMapCollision("top");
     collisionBottom = this.getMapCollision("bottom");
-    // this.laserCollisios = this.collide(this.xAcceleration, this.yAcceleration, 'laser');
+
     canvas.addEventListener("keyup", lightsaberThrow);
     if (!laserthrown) {
-        canvas.addEventListener("mousemove", aimDirection);
+        canvas.addEventListener("mousemove", aimDirection);       // FIX LIgtsaber throw MOFOFOFOFOFOFO, remove lightsaber after throw, no swinging while thrown
     } else {
-        console.log("REMOVE MOUSE MOVE");
+        // console.log("REMOVE MOUSE MOVE");
         canvas.removeEventListener("mousemove", aimDirection);
     }
 
@@ -387,9 +356,8 @@ Luke.prototype.update = function () {
         if (curEnt instanceof LaserBeam && curEnt.tag == "trooperLaser") {
             // console.log('Luke Health (laser): ' + this.health);
             if (this.getDistance(this, curEnt) < this.width + curEnt.width && !blocking) {
-                let laserDamage = 5;
-                statusBars.update(-laserDamage, 0);
-                this.health -= laserDamage;
+                statusBars.update(-5, 0);
+                this.health -= 5;
                 curEnt.deleteLaserbeam();
             } else if (this.getDistance(this, curEnt) < this.width + curEnt.width && blocking) {
                 let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
@@ -400,7 +368,7 @@ Luke.prototype.update = function () {
                 for (let i = 0; i < this.game.entities.length; i++) {
                     let trooper = this.game.entities[i];
                     if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
-                        console.log("HIT");
+                        // console.log("HIT");
                         trooper.health -= 500;
                     }
                 }
@@ -436,24 +404,15 @@ Luke.prototype.update = function () {
         }
         // console.log('if (gameEngine.w)');
     }
+
     if (gameEngine.d && !this.dead) {
-        this.movingRight = true;
-        this.movingLeft = false;
-        this.standing = false;
-        this.crouching = false;
+        this.movingRight = true; this.movingLeft = false; this.standing = false; this.crouching = false;
     }
     if (gameEngine.a && !this.dead) {
-        this.movingRight = false;
-        this.movingLeft = true;
-        this.standing = false;
-        this.crouching = false;
+        this.movingRight = false; this.movingLeft = true; this.standing = false; this.crouching = false;
     }
     if (gameEngine.s && !this.dead) {
-        this.crouching = true;
-        this.movingLeft = false;
-        this.movingRight = false;
-        this.standing = false;
-        blocking = false;
+        this.crouching = true; this.movingLeft = false; this.movingRight = false; this.standing = false; blocking = false;
     }
     if (gameEngine.spacebar) {
         this.dropping = true;
@@ -524,9 +483,7 @@ Luke.prototype.update = function () {
     }
 
     if (this.game.r && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
-        this.switching = true;
-        this.standing = false;
-        this.attacking = false;
+        this.switching = true; this.standing = false; this.attacking = false;
         // this.aiming = true;
         if (!primaryWeapon) {
             var audio = AM.getSound('./sounds/LightsaberTurnOn.wav').cloneNode();
@@ -540,16 +497,9 @@ Luke.prototype.update = function () {
         primaryWeapon = !primaryWeapon;
     }
     if (this.health <= 0) {
-        this.dying = true;
-        this.standing = false;
-        this.movingRight = false;
-        this.movingLeft = false;
-        this.jumping = false;
-        this.attacking = false;
-        this.crouching = false;
-        this.switching = false;
+        this.dying = true; this.standing = false; this.movingRight = false; this.movingLeft = false; blocking = false;
+        this.jumping = false; this.attacking = false; this.crouching = false; this.switching = false;
         this.dead = true;
-        blocking = false;
         for (var i = 0; i < gameEngine.entities[i]; i++) {
             if (gameEngine.entities[i].tag === 'player') {
                 gameEngine.entities.splice(i, 1);
@@ -559,14 +509,15 @@ Luke.prototype.update = function () {
 
     if (this.game.click && !this.dead) {
         if (primaryWeapon) {
-            if (transitionCounter == 0) {
-                let audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
-                audio.volume = sfxVolume * 0.2;
-                audio.play();
-                statusBars.update(0, -20);
-                this.attacking = true;
-                this.switching = false;
+            for (let i = 0; i < this.game.entities.length; i++) {   // FIX : only one swing at a time
+                let ent = this.game.entities[i];
+                if (ent instanceof Trooper && this.attackCollide(this, ent)) {
+                    ent.health -= 500;
+                }
             }
+            lukeClick();
+            this.attacking = true;
+            this.switching = false;
         } else {
             let laserShot = false;
             for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -602,7 +553,7 @@ Luke.prototype.update = function () {
                         let trooper = this.game.entities[i];
                         if (trooper instanceof Trooper && this.attackCollide(laser, trooper)) {
                             trooper.health -= 500;
-                            console.log("AGSSAGSA");
+                            // console.log("AGSSAGSA");
                             laser.deleteLaserbeam();
                         }
                     }
@@ -611,32 +562,10 @@ Luke.prototype.update = function () {
         }
     }
 
-    canvas.addEventListener('mousedown', function (e) {
-        rightClickIsDown = true;
-        if (e.button == 2 && primaryWeapon) {
-            setTimeout(function () {
-                if (rightClickIsDown) {
-                    blocking = true;
-                }
-            }, 50);
-        }
-    });
-    let that = this;
-    canvas.addEventListener('mouseup', function (e) {
-        rightClickIsDown = false;
-        if (e.button == 2 && primaryWeapon) {
-            blocking = false;
-            that.standing = true;
-        }
-    });
+    
     // Jumping
     if (this.jumping) {
-        this.crouching = false;
-        this.attacking = false;
-        this.switching = false;
-        this.standing = false;
-        blocking = false;
-        var jumpDistance;
+        this.crouching = false; this.attacking = false; this.switching = false; this.standing = false; blocking = false;
         if (primaryWeapon) {
             if (this.jumpRightAnim.isDone() || this.jumpLeftAnim.isDone()) {
                 this.jumpRightAnim.elapsedTime = 0;
@@ -657,13 +586,6 @@ Luke.prototype.update = function () {
 
     // Attacking
     if (this.attacking) {
-        for (let i = 0; i < this.game.entities.length; i++) {
-            let ent = this.game.entities[i];
-            // if (ent.tag == "AI" || ent.tag === "trooper") {
-            if (ent instanceof Trooper && this.attackCollide(this, ent)) {
-                ent.health -= 30; // putting this here won't work cuz it wud be instant death for the troopers.
-            }
-        }
         this.standing = false;
         if (this.attk1RightAnim.isDone() || this.attk1LefttAnim.isDone()) {
             this.attk1RightAnim.elapsedTime = 0;
@@ -722,7 +644,7 @@ Luke.prototype.draw = function () {
         ctx.fill();
     }
     if (this.dead && this.dyingRightAnim.isDone()) {
-        this.deadAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
+        this.deadAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
     }
     if (this.game.mouseMoveX + cursorOffset > this.x) {
         //console.log("this.x: " + this.x + ", mouseX: " + (this.game.mouseMoveX + cursorOffset));
@@ -736,39 +658,39 @@ Luke.prototype.draw = function () {
 Luke.prototype.drawRight = function () {
     if (primaryWeapon) { // If the character is using their primaryWeapon
         if (blocking) {
-            this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 10, this.y + groundHeight, SCALE_LUKE);
+            this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 10, this.y, SCALE_LUKE);
         } else {
             if (this.switching) {
-                this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+                this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
             }
             if (this.standing) {
-                this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+                this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
             }
             if (this.crouching) {
-                this.crouchRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+                this.crouchRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
             }
             if (this.attacking) {
                 if (attkNumLuke === 1) {
-                    this.attk1RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+                    this.attk1RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
                 } else {
-                    this.attk2RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+                    this.attk2RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
                 }
             }
             if (this.jumping) {
-                this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
+                this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y, SCALE_LUKE);
             }
             if (this.dying) {
-                this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
+                this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
             }
             if (this.movingRight && !this.jumping && !this.attacking) {
-                this.runRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+                this.runRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
             } else if (this.movingLeft && !this.jumping && !this.attacking) {
-                this.runRightBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+                this.runRightBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
             }
         }
     } else { // If the character is using their secondary weapon
         if (this.switching) {
-            this.saberOffRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.saberOffRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         }
         if (this.standing) {
             this.drawGunStanding();
@@ -777,15 +699,15 @@ Luke.prototype.drawRight = function () {
             this.drawGunCrouching();
         }
         if (this.jumping) {
-            this.gunJumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.gunJumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         }
         if (this.dying) {
-            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
+            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
         }
         if (this.movingRight && !this.jumping && !this.attacking) {
-            this.gunRunRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.gunRunRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         } else if (this.movingLeft && !this.jumping && !this.attacking) {
-            this.gunRunRightBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.gunRunRightBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         }
     }
     Entity.prototype.draw.call(this);
@@ -794,39 +716,39 @@ Luke.prototype.drawRight = function () {
 Luke.prototype.drawLeft = function () {
     if (primaryWeapon) { // If the character is using their primaryWeapon
         if (blocking) {
-            this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y + groundHeight, SCALE_LUKE);
+            this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y, SCALE_LUKE);
         } else {
             if (this.switching) {
-                this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+                this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
             }
             if (this.standing) {
-                this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
+                this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
             }
             if (this.crouching) {
-                this.crouchLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+                this.crouchLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
             }
             if (this.attacking) {
                 if (attkNumLuke === 1) {
-                    this.attk1LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+                    this.attk1LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
                 } else {
-                    this.attk2LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF + groundHeight, SCALE_LUKE);
+                    this.attk2LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
                 }
             }
             if (this.jumping) {
-                this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y + groundHeight, SCALE_LUKE);
+                this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y, SCALE_LUKE);
             }
             if (this.dying) {
-                this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
+                this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
             }
             if (this.movingLeft && !this.jumping && !this.attacking) {
-                this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
+                this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
             } else if (this.movingRight && !this.jumping && !this.attacking) {
-                this.runLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
+                this.runLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
             }
         }
     } else { // If the character is using their secondary weapon
         if (this.switching) {
-            this.saberOffLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.saberOffLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         }
         if (this.standing) {
             this.drawGunStanding();
@@ -835,15 +757,15 @@ Luke.prototype.drawLeft = function () {
             this.drawGunCrouching();
         }
         if (this.jumping) {
-            this.gunJumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+            this.gunJumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         }
         if (this.dying) {
-            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10 + groundHeight, SCALE_LUKE);
+            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
         }
         if (this.movingLeft && !this.jumping && !this.attacking) {
-            this.gunRunLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
+            this.gunRunLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
         } else if (this.movingRight && !this.jumping && !this.attacking) {
-            this.gunRunLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y + groundHeight, SCALE_LUKE);
+            this.gunRunLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
         }
     }
     Entity.prototype.draw.call(this);
@@ -853,21 +775,21 @@ var absDegree;
 Luke.prototype.drawGunStanding = function () {
     absDegree = Math.abs(degree);
     if (absDegree >= 0 && absDegree < 11) {
-        (degree > 0) ? this.gunStanding0RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding0LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding0RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunStanding0LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, SCALE_LUKE);
     } else if (absDegree >= 11 && absDegree < 33) {
-        (degree > 0) ? this.gunStanding22RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding22LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding22RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunStanding22LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, SCALE_LUKE);
     } else if (absDegree >= 33 && absDegree < 56) {
-        (degree > 0) ? this.gunStanding45RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding45LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding45RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunStanding45LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, SCALE_LUKE);
     } else if (absDegree >= 56 && absDegree < 78) {
-        (degree > 0) ? this.gunStanding67RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding67LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding67RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunStanding67LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, SCALE_LUKE);
     } else if (absDegree >= 78 && absDegree < 112) {
-        (degree > 0) ? this.gunStanding90RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding90LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding90RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunStanding90LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, SCALE_LUKE);
     } else if (absDegree >= 112 && absDegree < 146) {
-        (degree > 0) ? this.gunStanding135RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding135LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding135RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunStanding135LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, SCALE_LUKE);
     } else if (absDegree >= 146 && absDegree <= 180) {
-        (degree > 0) ? this.gunStanding157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunStanding157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, SCALE_LUKE);
     } else {
-        (degree > 0) ? this.gunStanding157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunStanding157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunStanding157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunStanding157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 10, this.y, SCALE_LUKE);
     }
     return degree;
 }
@@ -875,27 +797,27 @@ Luke.prototype.drawGunStanding = function () {
 Luke.prototype.drawGunCrouching = function () {
     absDegree = Math.abs(degree);
     if (absDegree >= 0 && absDegree < 11) {
-        (degree > 0) ? this.gunCrouching0RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunCrouching0LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunCrouching0RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunCrouching0LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
     } else if (absDegree >= 11 && absDegree < 33) {
-        (degree > 0) ? this.gunCrouching22RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunCrouching22LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunCrouching22RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunCrouching22LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
     } else if (absDegree >= 33 && absDegree < 56) {
-        (degree > 0) ? this.gunCrouching45RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunCrouching45LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunCrouching45RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunCrouching45LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
     } else if (absDegree >= 56 && absDegree < 78) {
-        (degree > 0) ? this.gunCrouching67RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunCrouching67LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunCrouching67RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunCrouching67LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
     } else if (absDegree >= 78 && absDegree < 112) {
-        (degree > 0) ? this.gunCrouching90RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunCrouching90LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunCrouching90RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunCrouching90LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
     } else if (absDegree >= 112 && absDegree < 146) {
-        (degree > 0) ? this.gunCrouching135RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunCrouching135LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunCrouching135RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunCrouching135LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
     } else if (absDegree >= 146 && absDegree <= 180) {
-        (degree > 0) ? this.gunCrouching157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunCrouching157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunCrouching157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunCrouching157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
     } else {
-        (degree > 0) ? this.gunCrouching157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE) : this.gunCrouching157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + groundHeight, SCALE_LUKE);
+        (degree > 0) ? this.gunCrouching157RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE) : this.gunCrouching157LeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
     }
 }
 
-function lukeClick(event) {
+function lukeClick() {
     var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
-    audio.volume = sfxVolume * 0.2;
+    audio.volume = sfxVolume * 0.25;
     audio.play();
     statusBars.update(0, -40);
     gameEngine.entities[0].attacking = true;
@@ -930,9 +852,9 @@ function lightsaberThrow(e) {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         if (gameEngine.entities[i].tag == "lightsaberthrow") {
             laserthrown = true;
-            for (let i = 0; i < LUKE_THIS.game.entities.length; i++) {
-                let trooper = LUKE_THIS.game.entities[i];
-                console.log("please fucking collide")
+            for (let i = 0; i < gameEngine.entities.length; i++) {
+                let trooper = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles
+                // console.log("please fucking collide");
                 if (trooper instanceof Trooper && LUKE_THIS.getDistance(gameEngine.entities[i], trooper) < 50) {
                     trooper.health -= 250;
                 }
@@ -944,10 +866,7 @@ function lightsaberThrow(e) {
         var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
         audio.volume = sfxVolume;
         audio.play();
-        var rect = canvas.getBoundingClientRect();
-        // var endCoor = {x: e.clientX - rect.left, y: e.clientY - rect.top};
         playerCoor = { x: center_x, y: center_y };
-        // console.log("Luke.js: " + playerCoor.x + " " + playerCoor.y);
         gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
         statusBars.update(0, -50);
     }

@@ -199,8 +199,7 @@ Trooper.prototype.update = function () {
             }
 
             if (this.attackLeftAnim.isDone() || this.attackRightAnim.isDone()) {
-                statusBars.update(-DAMAGE_LUKE, 0);
-                this.player.health -= DAMAGE_LUKE;
+
             }
 
         }
