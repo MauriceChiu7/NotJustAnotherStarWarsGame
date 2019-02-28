@@ -11,7 +11,8 @@ function Dummy(game) {
    this.game = game;
    
    this.x = 900;
-   this.y = 400;
+   this.y = 10;
+   this.health =1000;
 
    // Collisions Stuff
    this.platformCollisions = [];
@@ -48,22 +49,23 @@ function Dummy(game) {
    this.hurting = false;
    this.dead = false;
    this.jumping = null;
+   this.collisionRight;
+   this.collisionLeft;
+   this.collisionTop;
+   this.collisionBottom;
+   this.currentDisplacementX = MACE_COLLISION_WIDTH + MACE_HITBOX_X_OFFSET;
+   this.currentDisplacementY = MACE_COLLISION_HEIGHT + MACE_HITBOX_Y_OFFSET;
 
    // AI Stuff
-   this.updateCount = 0;
+   this.updateCount = null;
    this.attackCount = 0;
    this.distance = null;
    this.chanceToBlock = 0;
    this.lives = 3;
 
    this.ctx = game.ctx;
-   for (let i = 0; i < this.game.entities.length; i++) {
-      let object = this.game.entities[i];
-      if (object.tag == "player") {
-         this.player = object;
-      }
-   }
-   Entity.call(this, game, 900, 400);
+   
+   Entity.call(this, game, this.x, this.y);
    // setInterval(() => { console.log('delta_x: ' + this.delta_x_from_player + 'delta_y: ' + this.delta_y_from_player) }, 500);
 }
 
@@ -72,73 +74,107 @@ Dummy.prototype.constructor = Dummy;
 
 Dummy.prototype.update = function () {
    // vvvvvv Collision Stuff vvvvvv
-   this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+   //this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+   this.getMapCollisions();
+   collisionRight = this.getMapCollision("right");
+   collisionLeft = this.getMapCollision("left");
+   collisionTop = this.getMapCollision("top");
+   collisionBottom = this.getMapCollision("bottom");
+   if (!this.updateCount ) this.findPlayer(); //will just run once
+   this.updateCount = 1;
 
    // Stops movement if collision encountered
-   if (this.getCollision("right") != null) {
-      this.x = this.getCollision("right").entity.collisionX + this.getCollision("right").entity.collisionWidth + 2; // 2
+   if (collisionRight != null) {
+      this.x = collisionRight.x + collisionRight.width + 1 - this.currentDisplacementX;
       this.xAcceleration = 0;
-   } else if (this.getCollision("left") != null) {
-      this.x = this.getCollision("left").entity.collisionX - 2; // 2
+  } else if (collisionLeft != null) {
+      this.x = collisionLeft.x - 1 - this.currentDisplacementX;
       this.xAcceleration = 0;
-   }
-   if (this.getCollision("top") != null) {
+  }
+  if (collisionTop != null) {
       this.yAcceleration = 0;
-   } else if (this.getCollision("bottom") != null) {
-      this.y = this.getCollision("bottom").entity.collisionY + 1;
-      this.yAcceleration = 0;
-   } else {
+  } else if (collisionBottom != null) {
+      if (collisionBottom instanceof BottomOnlyCollision && this.crouching && this.dropping) {
+          this.yAcceleration += 0.4;
+      } else {
+          this.y = collisionBottom.y + 1 - this.currentDisplacementY;
+          this.yAcceleration = 0;
+      }
+  } else {
       this.yAcceleration += 0.4;
-   }
+  }
    // ^^^^^^ Collision Stuff ^^^^^^^
 
    // this.distance = this.player.x - this.x + 45;
-   this.distance = this.player.x - this.x;
+   this.distance = this.player.x + 35 - this.x;
 
    // this.delta_x_from_player = this.player.x - this.x + 45;
    // this.delta_y_from_player = this.player.y - this.y;
 
-   // if (gameEngine.click) {
-   //    console.log("x :" + this.x + " y :" + this.y);
-   //    console.log("distance: " + this.distance);
-   //    if (this.getCollision("right"))
-   //       console.log("right x :" + this.getCollision("right").entity.collisionX + "right y:" + this.getCollision("right").entity.collisionY);
-   //    else
-   //       console.log("right :" + this.getCollision("right"));
-   //    if (this.getCollision("left"))
-   //       console.log("left x :" + this.getCollision("left").entity.collisionX + "left y:" + this.getCollision("left").entity.collisionY);
-   //    else
-   //       console.log("left :" + this.getCollision("left"));
-   //    if (this.getCollision("top"))
-   //       console.log("top x : " + this.getCollision("top").entity.collisionX + " top y:" + this.getCollision("top").entity.collisionY);
-   //    else
-   //       console.log("top :" + this.getCollision("top"));
-   //    if (this.getCollision("bottom"))
-   //       console.log("bottom x : " + this.getCollision("bottom").entity.collisionX + " bottom y:" + this.getCollision("bottom").entity.collisionY);
-   //    else
-   //       console.log("bottom :" + this.getCollision("bottom"));
-   // }
+   if (gameEngine.click) {
+      console.log("x :" + this.x + " y :" + this.y);
+      console.log("distance: " + this.distance);
+      if (collisionRight)
+         console.log("right x :" + his.getMapCollision("right") + "right y:" + this.getMapCollision("right"));
+      else
+         console.log("right :" + this.getMapCollision("right"));
+      if (collisionLeft)
+         console.log("left x :" + this.getMapCollision("left") + "left y:" + this.getMapCollision("left"));
+      else
+         console.log("left :" + this.getMapCollision("left"));
+      if (collisionTop)
+         console.log("top x : " + this.getMapCollision("top") + " top y:" + this.getMapCollision("top"));
+      else
+         console.log("top :" + this.getMapCollision("top"));
+      if (collisionBottom)
+         console.log("bottom x : " + this.getMapCollision("bottom") + " bottom y:" + this.getMapCollision("bottom"));
+      else
+         console.log("bottom :" + this.getMapCollision("bottom"));
+   }
 
-   if (this.distance > 60) {
-      // this.x += this.game.clockTick * this.speed;
+   // friction
+   if (this.xAcceleration > 0) {
+      this.xAcceleration -= 0.5;
+      if (this.xAcceleration < 0) {
+         this.xAcceleration = 0;
+      }
+   } else if (this.xAcceleration < 0) {
+      this.xAcceleration += 0.5;
+      if (this.xAcceleration > 0) {
+         this.xAcceleration = 0;
+      }
+   }
+
+   if (this.distance > 105 && this.player.y - this.y == 0) { // player on the right
       this.xAcceleration +=1;
-      this.chanceToBlock = Math.round(Math.random());
+      // this.chanceToBlock = Math.round(Math.random());
       this.block = false;
       this.attack = false;
       this.jumping = false;
       this.hurting = false;
       this.dead = false;
-   } else if (this.distance < -60) {
-      // this.x -= this.game.clockTick * this.speed;
+   } else if (this.distance < -105 && this.player.y - this.y == 0) { //player on the left
       this.xAcceleration -=1;
-      this.chanceToBlock = Math.round(Math.random());
+      // this.chanceToBlock = Math.round(Math.random());
       this.block = false;
       this.attack = false;
       this.jumping = false;
       this.hurting = false;
       this.dead = false;
-   } else if (!this.block && !this.attack && Math.abs(this.player.y - this.y) < 100
-      && Math.abs(this.distance) < 60 && this.getCollision("bottom") != null) {
+   } else if (this.distance > 0 && this.player.y - this.y > 0) {// player is lower && on the right
+      this.xAcceleration +=1;
+      // this.chanceToBlock = Math.round(Math.random());
+      this.block = false;
+      this.attack = false;
+      this.jumping = false;
+      //this.hurting = false;
+   } else if (this.distance < -0 && this.player.y - this.y > 0) {// player is lower && on the left
+      this.xAcceleration -=1;
+      this.block = false;
+      this.attack = false;
+      this.jumping = false;
+   } else if (!this.block && !this.attack && Math.abs(this.player.y - this.y) < 40
+      && Math.abs(this.distance) < 105 && collisionBottom != null) {
 
       this.chanceToBlock = Math.round(Math.random() * 5);
       this.blocking = false;
@@ -159,25 +195,42 @@ Dummy.prototype.update = function () {
             this.dead = true;
          }
       }
-   } else if (this.player.y - this.y < -100 && this.getCollision("bottom") != null) {
+   } else if (this.player.y - this.y < -100 && collisionBottom != null) { // player is higher
+      var collisionCheck = this.getMapCollisions2(this.x, this.y - 13);
+      var canJump = true;
+      for (var i = 0; i < collisionCheck.length; i++) {
+         if (collisionCheck[i].direction == "bottom") {
+               canJump = false;
+         }
+      }
+      if (canJump) {
+         this.jumping = true;
+         this.yAcceleration -= 13;
+         if (this.distance > 0) {
+            this.xAcceleration ++;
+         } else if (this.distance < 0) {
+            this.xAcceleration --;
+         }
+      }
       this.block = false;
       this.attack = false;
       this.hurting = false;
-      this.dead = false;
-      this.yAcceleration -= 13;
-      if (this.distance > 100) {
-         // this.x += this.game.clockTick * this.speed;
-      } else if (this.distance < -100) {
-         // this.x -= this.game.clockTick * this.speed;
-      }
-      this.jumping = true;
+      this.dead = false;    
       // console.log(this.jumping);
       if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
          this.jumpingRightAnim.elapsedTime = 0;
          this.jumpingLeftAnim.elapsedTime = 0;
          this.jumping = false;
       }
-   } else {
+   } else if (Math.abs(this.player.y - this.y) < 50 && Math.abs(this.distance) < 80) { // avoiding the player getting too close
+      if (this.distance > 0) {
+         this.xAcceleration --;
+      } else {
+         this.xAcceleration ++;
+      }
+   } else if (this.player.y - this.y > 50) {
+      //this.xAcceleration ++;
+   }else {
       this.blocking = true; // This is just to prevent Mace from disapearing when the AI decides to do nothing.
    }
     /*else if (Math.abs(this.distance) > 50){
@@ -189,18 +242,7 @@ Dummy.prototype.update = function () {
   }*/
 
   // More Physics Stuff
-  // friction
-   if (this.xAcceleration > 0) {
-      this.xAcceleration -= 0.5;
-      if (this.xAcceleration < 0) {
-         this.xAcceleration = 0;
-      }
-   } else if (this.xAcceleration < 0) {
-      this.xAcceleration += 0.5;
-      if (this.xAcceleration > 0) {
-         this.xAcceleration = 0;
-      }
-   }
+  
 
    //speed limits
    if (this.xAcceleration > 7) {
@@ -220,9 +262,9 @@ Dummy.prototype.update = function () {
    // World Boundary
    if (this.x > 1140) {
       this.x = 1140;
-  } else if (this.x + 25 < 0) {
+   } else if (this.x + 25 < 0) {
       this.x = -25;
-  }
+   }
    Entity.prototype.update.call(this);
 };
 
@@ -273,6 +315,84 @@ Dummy.prototype.drawLeft = function () {
 
 }
 
+
+Dummy.prototype.getMapCollision = function(direction) {
+   for (var i = 0; i < this.fullMCollisions.length; i++) {
+       if (this.fullMCollisions[i].direction == direction) {
+           return this.fullMCollisions[i].object;
+       }
+   }
+   if (direction == "bottom") {
+       if (this.bottomMCollisions.length > 0) {
+           return this.bottomMCollisions[i];
+       }
+   }
+   return null;
+}
+Dummy.prototype.getMapCollisions = function() {
+   this.fullMCollisions = [];
+   for (var i = 0; i < fullCollisions.length; i++) {
+       let current = fullCollisions[i];
+       if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x &&
+           this.y + this.yAcceleration + this.currentDisplacementY < current.y + current.height && this.y + this.yAcceleration + this.currentDisplacementY > current.y) {
+           var direction = [];
+           if (this.y + this.currentDisplacementY > current.y + current.height) {
+               direction = "top";
+           } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
+               direction = "bottom";
+           }
+           if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
+               direction = "right";
+           } else if (this.x + this.currentDisplacementX <= current.x  + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
+               direction = "left";
+           }
+           this.fullMCollisions.push({object: current, direction: direction});
+       }
+   }
+   this.bottomMCollisions = [];
+   for (var i = 0; i < bottomOnlyCollisions.length; i++) {
+       let current = bottomOnlyCollisions[i];
+       if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y && 
+           this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
+           this.bottomMCollisions.push(bottomOnlyCollisions[i]);
+       }
+   }
+}
+
+Dummy.prototype.getMapCollisions2 = function(x, y) {
+   this.fullMCollisions = [];
+   var toReturn = [];
+   for (var i = 0; i < fullCollisions.length; i++) {
+       let current = fullCollisions[i];
+       if (x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && x + this.xAcceleration + this.currentDisplacementX > current.x &&
+           y + this.yAcceleration + this.currentDisplacementY < current.y + current.height && y + this.yAcceleration + this.currentDisplacementY > current.y) {
+           var direction = [];
+           if (y + this.currentDisplacementY > current.y + current.height) {
+               direction = "top";
+           } else if (y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
+               direction = "bottom";
+           }
+           if (x + 1 + this.currentDisplacementX >= current.x + current.width && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
+               direction = "right";
+           } else if (x + this.currentDisplacementX <= current.x  + 1 && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
+               direction = "left";
+           }
+           toReturn.push({object: current, direction: direction});
+       }
+   }
+   return toReturn;
+}
+Dummy.prototype.collideRight = function (thisEnt, otherEnt) {
+   let distance = this.getDistance(thisEnt, otherEnt);
+   // console.log(this.x > ent.x);
+   return distance < thisEnt.width && thisEnt.x > otherEnt.x;
+}
+Dummy.prototype.collideLeft = function (thisEnt, otherEnt) {
+   let distance = this.getDistance(thisEnt, otherEnt);
+   return thisEnt.x < otherEnt.x + otherEnt.width && distance < thisEnt.width;
+}
+
+
 Dummy.prototype.collide = function (xDisplacement, yDisplacement, tag) {
    var collisions = [];
    for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -302,6 +422,8 @@ Dummy.prototype.collide = function (xDisplacement, yDisplacement, tag) {
    return collisions;
 }
 
+
+
 Dummy.prototype.getCollision = function (direction) {
    for (var i = 0; i < this.platformCollisions.length; i++) {
       if (this.platformCollisions[i].direction == direction) {
@@ -311,54 +433,63 @@ Dummy.prototype.getCollision = function (direction) {
    return null;
 }
 
+Dummy.prototype.findPlayer = function() {
+   for (let i = 0; i < this.game.entities.length; i++) {
+      let object = this.game.entities[i];
+      if (object.tag == "player") {
+         this.player = object;
+      }
+   }
+}
 
 
-// Dummy.prototype.collide = function (xDisplacement, yDisplacement, tag) {
-//    var collisions = [];
-//    for (var i = 0; i < gameEngine.entities.length; i++) {
-//       let current = gameEngine.entities[i];
-//       let theTag = gameEngine.entities[i].tag;
-//       if (theTag === tag) {
-//          // console.log(current);
-//          if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-//             this.y + yDisplacement < current.collisionY + current.collisionHeight + 1 && this.y + yDisplacement > current.collisionY) {
-//             var direction = "";
-//             // console.log(current);
-//             if (gameEngine.click)
-//                console.log("this.y: " + this.y + " current.collisionY " + current.collisionY + " current.collisionHeight: " + current.collisionHeight);
-//             if (this.y > current.collisionY + current.collisionHeight) {
-//                direction = "top";
-//             }
-//             if (this.y + height > current.collisionY) {
-//                direction = "bottom";
-//             }
-//             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth
-//                && this.x + xDisplacement > current.collisionX) {
-//                direction = "right";
-//             }
-//             if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth
-//                && this.x + xDisplacement > current.collisionX) {
-//                direction = "left";
-//             }
-//             collisions.push({ entity: current, 'direction': direction });
-//          }
-//       }
-//    }
-//    // var obj = JSON.parse(collisions);
-//    for (var i = 0; i < collisions.length; i++) {
-//       // var obj = JSON.parse(collisions[i]);
-//       // console.log(obj.direction);
-//       console.log(collisions[i].direction)
-//    }
+/*
+Dummy.prototype.collide = function (xDisplacement, yDisplacement, tag) {
+   var collisions = [];
+   for (var i = 0; i < gameEngine.entities.length; i++) {
+      let current = gameEngine.entities[i];
+      let theTag = gameEngine.entities[i].tag;
+      if (theTag === tag) {
+         // console.log(current);
+         if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX /*&&
+            this.y + yDisplacement < current.collisionY + current.collisionHeight + 1 && this.y + yDisplacement > current.collisionY) {
+            var direction = "";
+            // console.log(current);
+            if (gameEngine.click)
+               console.log("this.y: " + this.y + " current.collisionY " + current.collisionY + " current.collisionHeight: " + current.collisionHeight);
+            if (this.y < current.collisionY + current.collisionHeight && this.y > current.collisionY) {
+               direction = "top";
+            }
+            if (this.y + height > current.collisionY) {
+               direction = "bottom";
+            }
+            if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth
+               && this.x + xDisplacement > current.collisionX) {
+               direction = "right";
+            }
+            if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth
+               && this.x + xDisplacement > current.collisionX) {
+               direction = "left";
+            }
+            collisions.push({ entity: current, 'direction': direction });
+         }
+      }
+   }
+   // var obj = JSON.parse(collisions);
+   for (var i = 0; i < collisions.length; i++) {
+      // var obj = JSON.parse(collisions[i]);
+      // console.log(obj.direction);
+      console.log(collisions[i].direction)
+   }
 
-//    return collisions;
-// }
+   return collisions;
+}
 
-// Dummy.prototype.getCollision = function (direction) {
-//    for (var i = 0; i < this.platformCollisions.length; i++) {
-//       if (this.platformCollisions[i].direction === direction) {
-//          return this.platformCollisions[i];
-//       }
-//    }
-//    return null;
-// }
+Dummy.prototype.getCollision = function (direction) {
+   for (var i = 0; i < this.platformCollisions.length; i++) {
+      if (this.platformCollisions[i].direction === direction) {
+         return this.platformCollisions[i];
+      }
+   }
+   return null;
+}*/
