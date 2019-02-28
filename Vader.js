@@ -241,3 +241,130 @@ function vaderClick(event) {
     statusBars.update(0, -40);
     gameEngine.entities[0].attacking = true;
 }
+
+Vader.prototype.getMapCollision = function(direction) {
+    for (var i = 0; i < this.fullMCollisions.length; i++) {
+        if (this.fullMCollisions[i].direction == direction) {
+            return this.fullMCollisions[i].object;
+        }
+    }
+    if (direction == "bottom") {
+        if (this.bottomMCollisions.length > 0) {
+            return this.bottomMCollisions[i];
+        }
+    }
+    return null;
+ }
+ Vader.prototype.getMapCollisions = function() {
+    this.fullMCollisions = [];
+    for (var i = 0; i < fullCollisions.length; i++) {
+        let current = fullCollisions[i];
+        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x &&
+            this.y + this.yAcceleration + this.currentDisplacementY < current.y + current.height && this.y + this.yAcceleration + this.currentDisplacementY > current.y) {
+            var direction = [];
+            if (this.y + this.currentDisplacementY > current.y + current.height) {
+                direction = "top";
+            } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
+                direction = "bottom";
+            }
+            if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
+                direction = "right";
+            } else if (this.x + this.currentDisplacementX <= current.x  + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
+                direction = "left";
+            }
+            this.fullMCollisions.push({object: current, direction: direction});
+        }
+    }
+    this.bottomMCollisions = [];
+    for (var i = 0; i < bottomOnlyCollisions.length; i++) {
+        let current = bottomOnlyCollisions[i];
+        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y && 
+            this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
+            this.bottomMCollisions.push(bottomOnlyCollisions[i]);
+        }
+    }
+ }
+ 
+ Vader.prototype.getMapCollisions2 = function(x, y) {
+    this.fullMCollisions = [];
+    var toReturn = [];
+    for (var i = 0; i < fullCollisions.length; i++) {
+        let current = fullCollisions[i];
+        if (x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && x + this.xAcceleration + this.currentDisplacementX > current.x &&
+            y + this.yAcceleration + this.currentDisplacementY < current.y + current.height && y + this.yAcceleration + this.currentDisplacementY > current.y) {
+            var direction = [];
+            if (y + this.currentDisplacementY > current.y + current.height) {
+                direction = "top";
+            } else if (y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
+                direction = "bottom";
+            }
+            if (x + 1 + this.currentDisplacementX >= current.x + current.width && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
+                direction = "right";
+            } else if (x + this.currentDisplacementX <= current.x  + 1 && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
+                direction = "left";
+            }
+            toReturn.push({object: current, direction: direction});
+        }
+    }
+    return toReturn;
+ }
+ Vader.prototype.collideRight = function (thisEnt, otherEnt) {
+    let distance = this.getDistance(thisEnt, otherEnt);
+    // console.log(this.x > ent.x);
+    return distance < thisEnt.width && thisEnt.x > otherEnt.x;
+ }
+ Vader.prototype.collideLeft = function (thisEnt, otherEnt) {
+    let distance = this.getDistance(thisEnt, otherEnt);
+    return thisEnt.x < otherEnt.x + otherEnt.width && distance < thisEnt.width;
+ }
+ 
+ 
+ Vader.prototype.collide = function (xDisplacement, yDisplacement, tag) {
+    var collisions = [];
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+       let theTag = gameEngine.entities[i].tag;
+       let current = gameEngine.entities[i];
+       if (tag === 'Platform') {
+          if (theTag == tag) {
+             if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
+                this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
+                var direction = 'bottom';
+                // console.log(current);
+                if (this.y > current.collisionY + current.collisionHeight) {
+                   direction = "top";
+                } else if (this.y + this.height > current.collisionY) {
+                   direction = "bottom";
+                }
+                if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+                   direction = "right";
+                } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
+                   direction = "left";
+                }
+                collisions.push({ entity: current, direction: direction });
+             }
+          }
+       } 
+    }
+    return collisions;
+ }
+ 
+ 
+ 
+ Vader.prototype.getCollision = function (direction) {
+    for (var i = 0; i < this.platformCollisions.length; i++) {
+       if (this.platformCollisions[i].direction == direction) {
+          return this.platformCollisions[i];
+       }
+    }
+    return null;
+ }
+ 
+ Vader.prototype.findPlayer = function() {
+    for (let i = 0; i < this.game.entities.length; i++) {
+       let object = this.game.entities[i];
+       if (object.tag == "player") {
+          this.player = object;
+       }
+    }
+ }
+ 
