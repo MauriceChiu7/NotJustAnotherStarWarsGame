@@ -1,4 +1,4 @@
-var paused = false;
+// var paused = false;
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -32,13 +32,13 @@ GameEngine.prototype.init = function (ctx) {
 GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
-    if (!paused) {
+    // if (!paused) {
         (function gameLoop() {
             // console.log('loopping');
             that.loop();
             requestAnimFrame(gameLoop, that.ctx.canvas);
         })();
-    }
+    // }
 }
 
 GameEngine.prototype.startInput = function () {
@@ -246,7 +246,7 @@ Entity.prototype.update = function () {
 }
 
 Entity.prototype.draw = function (ctx) {
-    console.log(" ctx: "+ ctx);
+    // console.log(" ctx: "+ ctx);
     if (this.game.showOutlines && this.radius) {
         this.game.ctx.beginPath();
         this.game.ctx.strokeStyle = "green";
@@ -344,10 +344,10 @@ Animation.prototype.isDone = function () {
 }
 
 
-function pause () {
-    paused = true;
-}
+// function pause () {
+//     paused = true;
+// }
 
-function unpause () {
-    paused = false;
-}
+// function unpause () {
+//     paused = false;
+// }

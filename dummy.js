@@ -9,7 +9,7 @@ const MACE_COLLISION_HEIGHT = 59;
 console.log("in dummy");
 function Dummy(game) {
    this.game = game;
-   console.log("in dummy");
+   console.log("in dummy constructor");
    this.x = 900; 
    this.y = 10; 
    this.health =1000;
