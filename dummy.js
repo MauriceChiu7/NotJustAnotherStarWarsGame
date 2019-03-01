@@ -47,10 +47,6 @@ function Dummy() {
    this.hurting = false;
    this.dead = false;
    this.jumping = null;
-   // this.collisionRight;
-   // this.collisionLeft;
-   // this.collisionTop;
-   // this.collisionBottom;
    this.currentDisplacementX = MACE_COLLISION_WIDTH + MACE_HITBOX_X_OFFSET;
    this.currentDisplacementY = MACE_COLLISION_HEIGHT + MACE_HITBOX_Y_OFFSET;
 
@@ -257,8 +253,7 @@ Dummy.prototype.update = function () {
 };
 
 Dummy.prototype.draw = function () {
-   console.log("dummy draw");
-   if (SHOWBOX) {
+   if (true) {
       ctx.strokeStyle = 'orange';
       ctx.strokeRect(this.x + MACE_HITBOX_X_OFFSET, this.y + MACE_HITBOX_Y_OFFSET, MACE_COLLISION_WIDTH, MACE_COLLISION_HEIGHT);
       ctx.fill();
@@ -327,7 +322,7 @@ Dummy.prototype.getMapCollisions = function() {
            var direction = [];
            if (this.y + this.currentDisplacementY > current.y + current.height) {
                direction = "top";
-           } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
+           } else if (this.y + MACE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
                direction = "bottom";
            }
            if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
@@ -342,7 +337,7 @@ Dummy.prototype.getMapCollisions = function() {
    for (var i = 0; i < bottomOnlyCollisions.length; i++) {
        let current = bottomOnlyCollisions[i];
        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y && 
-           this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
+           this.y + MACE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
            this.bottomMCollisions.push(bottomOnlyCollisions[i]);
        }
    }
@@ -357,7 +352,7 @@ Dummy.prototype.getMapCollisions2 = function(x, y) {
            var direction = [];
            if (y + this.currentDisplacementY > current.y + current.height) {
                direction = "top";
-           } else if (y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
+           } else if (y + MACE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
                direction = "bottom";
            }
            if (x + 1 + this.currentDisplacementX >= current.x + current.width && x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
@@ -378,36 +373,6 @@ Dummy.prototype.collideRight = function (thisEnt, otherEnt) {
 Dummy.prototype.collideLeft = function (thisEnt, otherEnt) {
    let distance = this.getDistance(thisEnt, otherEnt);
    return thisEnt.x < otherEnt.x + otherEnt.width && distance < thisEnt.width;
-}
-
-
-Dummy.prototype.collide = function (xDisplacement, yDisplacement, tag) {
-   var collisions = [];
-   for (var i = 0; i < gameEngine.entities.length; i++) {
-      let theTag = gameEngine.entities[i].tag;
-      let current = gameEngine.entities[i];
-      if (tag === 'Platform') {
-         if (theTag == tag) {
-            if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-               this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-               var direction = 'bottom';
-               // console.log(current);
-               if (this.y > current.collisionY + current.collisionHeight) {
-                  direction = "top";
-               } else if (this.y + this.height > current.collisionY) {
-                  direction = "bottom";
-               }
-               if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                  direction = "right";
-               } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                  direction = "left";
-               }
-               collisions.push({ entity: current, direction: direction });
-            }
-         }
-      } 
-   }
-   return collisions;
 }
 
 Dummy.prototype.getCollision = function (direction) {

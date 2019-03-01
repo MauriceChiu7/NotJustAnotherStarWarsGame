@@ -160,7 +160,6 @@ GameEngine.prototype.draw = function () {
         1200, 600); // destination width and height
     for (var i = 0; i < this.entities.length; i++) {
         this.entities[i].draw(this.ctx);
-        console.log("game engine draw");
     }
 
     if (gameover) {
@@ -246,7 +245,7 @@ Entity.prototype.update = function () {
 }
 
 Entity.prototype.draw = function (ctx) {
-    console.log("ctx: " + this.game.ctx);
+    // console.log("ctx: " + this.game.ctx);
     if (this.game.showOutlines && this.radius) {
         this.game.ctx.beginPath();
         this.game.ctx.strokeStyle = "green";
