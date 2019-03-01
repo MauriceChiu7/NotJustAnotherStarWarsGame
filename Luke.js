@@ -276,25 +276,6 @@ Luke.prototype.collide = function (xDisplacement, yDisplacement, tag) {
                     collisions.push({ entity: current, direction: direction });
                 }
             }
-            // } else if (tag === 'enemy') {
-            //     console.log('Luke Health (enemy): ' + this.health);
-            //     if (theTag == tag) {
-            //         if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-            //             this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-            //             if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-            //                 // direction = "right";
-            //                 if (gameEngine.entities[i].attacking) {
-            //                     this.health -= DAMAGE_LUKE;
-            //                 }
-            //             } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-            //                 // direction = "left";
-            //                 if (gameEngine.entities[i].attacking) {
-            //                     this.health -= DAMAGE_LUKE;
-            //                 }
-            //             }
-            //             // collisions.push({entity: current, direction: direction});
-            //         }
-            //     }
         }
     }
     return collisions;
@@ -334,14 +315,13 @@ Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
 
 Luke.prototype.update = function () {
     // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
-
     this.enemyCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'enemy');
     this.getMapCollisions();
     collisionRight = this.getMapCollision("right");
     collisionLeft = this.getMapCollision("left");
     collisionTop = this.getMapCollision("top");
     collisionBottom = this.getMapCollision("bottom");
-    // this.laserCollisios = this.collide(this.xAcceleration, this.yAcceleration, 'laser');
+
     canvas.addEventListener("keyup", lightsaberThrow);
     if (!laserthrown) {
         canvas.addEventListener("mousemove", aimDirection);
@@ -434,7 +414,6 @@ Luke.prototype.update = function () {
             this.jumping = true;
             this.yAcceleration -= 13;
         }
-        // console.log('if (gameEngine.w)');
     }
     if (gameEngine.d && !this.dead) {
         this.movingRight = true;
@@ -646,7 +625,6 @@ Luke.prototype.update = function () {
             }
         } else {
             if (this.gunJumpRightAnim.isDone() || this.gunJumpLeftAnim.isDone()) {
-                // console.log('if (this.gunJumpAnim.isDone()');
                 this.gunJumpRightAnim.elapsedTime = 0;
                 this.gunJumpLeftAnim.elapsedTime = 0;
                 this.jumping = false;
@@ -657,11 +635,10 @@ Luke.prototype.update = function () {
 
     // Attacking
     if (this.attacking) {
-        for (let i = 0; i < this.game.entities.length; i++) {
+        for (let i = 0; i < this.game.entities.length; i++) {       //Damage to trooper
             let ent = this.game.entities[i];
-            // if (ent.tag == "AI" || ent.tag === "trooper") {
             if (ent instanceof Trooper && this.attackCollide(this, ent)) {
-                ent.health -= 30; // putting this here won't work cuz it wud be instant death for the troopers.
+                ent.health -= 30; 
             }
         }
         this.standing = false;
@@ -925,15 +902,15 @@ function aimDirection(event) {
     }
 }
 
-function lightsaberThrow(e) {
+function lightsaberThrow(e) {           
     laserthrown = false;
     for (var i = 0; i < gameEngine.entities.length; i++) {
         if (gameEngine.entities[i].tag == "lightsaberthrow") {
             laserthrown = true;
             for (let i = 0; i < LUKE_THIS.game.entities.length; i++) {
                 let trooper = LUKE_THIS.game.entities[i];
-                console.log("please fucking collide")
-                if (trooper instanceof Trooper && LUKE_THIS.getDistance(gameEngine.entities[i], trooper) < 50) {
+                console.log("please fucking collide");
+                if (trooper instanceof Trooper && LUKE_THIS.attackCollide(gameEngine.entities[i], trooper)) {
                     trooper.health -= 250;
                 }
             }
