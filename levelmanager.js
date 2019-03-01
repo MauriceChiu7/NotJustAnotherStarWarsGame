@@ -133,6 +133,7 @@ Map.prototype.makeLevel_1 = function () {
 
     this.addPlayer(new Luke());
     // this.addEnemy(new Dummy(gameEngine));
+    this.addEnemy(new Vader());
 
     this.addEnemy(new Trooper(gameEngine));
     // let trooper2 = new Trooper(gameEngine);

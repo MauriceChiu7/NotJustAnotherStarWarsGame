@@ -6,13 +6,11 @@ const MACE_HITBOX_X_OFFSET = 1;
 const MACE_HITBOX_Y_OFFSET = 11;
 const MACE_COLLISION_WIDTH = 32;
 const MACE_COLLISION_HEIGHT = 59;
-console.log("in dummy");
 function Dummy(game) {
    this.game = game;
-   console.log("in dummy");
    this.x = 900; 
    this.y = 10; 
-   this.health =1000;
+   this.health = 1000;
 
    // Collisions Stuff
    this.platformCollisions = [];
@@ -49,10 +47,10 @@ function Dummy(game) {
    this.hurting = false;
    this.dead = false;
    this.jumping = null;
-   this.collisionRight;
-   this.collisionLeft;
-   this.collisionTop;
-   this.collisionBottom;
+   // this.collisionRight;
+   // this.collisionLeft;
+   // this.collisionTop;
+   // this.collisionBottom;
    this.currentDisplacementX = MACE_COLLISION_WIDTH + MACE_HITBOX_X_OFFSET;
    this.currentDisplacementY = MACE_COLLISION_HEIGHT + MACE_HITBOX_Y_OFFSET;
 
@@ -76,10 +74,10 @@ Dummy.prototype.update = function () {
    // vvvvvv Collision Stuff vvvvvv
    //this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
    this.getMapCollisions();
-   collisionRight = this.getMapCollision("right");
-   collisionLeft = this.getMapCollision("left");
-   collisionTop = this.getMapCollision("top");
-   collisionBottom = this.getMapCollision("bottom");
+   var collisionRight = this.getMapCollision("right");
+   var collisionLeft = this.getMapCollision("left");
+   var collisionTop = this.getMapCollision("top");
+   var collisionBottom = this.getMapCollision("bottom");
    if (!this.updateCount ) this.findPlayer(); //will just run once
    this.updateCount = 1;
 
@@ -115,7 +113,7 @@ Dummy.prototype.update = function () {
       console.log("x :" + this.x + " y :" + this.y);
       console.log("distance: " + this.distance);
       if (collisionRight)
-         console.log("right x :" + his.getMapCollision("right") + "right y:" + this.getMapCollision("right"));
+         console.log("right x :" + this.getMapCollision("right") + "right y:" + this.getMapCollision("right"));
       else
          console.log("right :" + this.getMapCollision("right"));
       if (collisionLeft)
