@@ -379,6 +379,8 @@ function multiplayerClick(event) {
                     editingName = false;
                     canvas.removeEventListener('keyup', nameEditHandler, true);
                     transition = true;
+                    searching = false;
+                    menuItems[0].text = "FIND MATCH";
                 } else if (menuSelection == "FIND MATCH") {
                     var audio = AM.getSound("./sounds/StartSearch.mp3").cloneNode();
                     audio.volume = sfxVolume;

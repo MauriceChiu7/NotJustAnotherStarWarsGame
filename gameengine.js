@@ -175,7 +175,7 @@ GameEngine.prototype.draw = function () {
             ctx.fillText("(RIGHT CLICK ANYWHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
         }
     }
-
+    drawSparks();
     statusBars.draw();
     this.ctx.restore();
 }
