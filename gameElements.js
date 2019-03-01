@@ -268,6 +268,7 @@ function drawSparks() {
     for (var i = 0; i < sparks.length; i++) {
         sparks[i].move(0, GRAVITY);
         sparks[i].integrate();
+        sparks[i].collide();
         sparks[i].bounce();
         sparks[i].draw();
         sparks[i].lifespan--;
@@ -287,6 +288,7 @@ function Particle(x, y) {
     this.lifespan = 100;
     this.x = this.oldX = x;
     this.y = this.oldY = y;
+    this.floorCollision;
 }
 
 Particle.prototype.integrate = function () {
@@ -309,10 +311,23 @@ Particle.prototype.move = function (x, y) {
     this.y += y;
 };
 
+Particle.prototype.collide = function () {
+    this.floorCollision = null;
+    for (var i = 0; i < fullCollisions.length; i++) {
+        let current = fullCollisions[i];
+        if (this.x < current.x + current.width && this.x > current.x &&
+            this.y < current.y + current.height && this.y > current.y) {
+            if (this.oldY < current.y) {
+                this.floorCollision = current;
+            }
+        }
+    }
+}
+
 Particle.prototype.bounce = function () {
-    if (this.y > canvas.height) {
+    if (this.floorCollision != null) {
         var velocity = this.getVelocity();
-        this.oldY = canvas.height;
+        this.oldY = this.floorCollision.y;
         this.y = this.oldY - velocity.y * 0.3;
     }
 };

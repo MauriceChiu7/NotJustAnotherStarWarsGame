@@ -858,6 +858,7 @@ function lightsaberThrow(e) {
                 // console.log("please fucking collide");
                 if (trooper instanceof Trooper && LUKE_THIS.getDistance(gameEngine.entities[i], trooper) < 50) {
                     trooper.health -= 250;
+                    createSparks(trooper.x + trooper.width, trooper.y + trooper.height / 2);
                 }
             }
         }
