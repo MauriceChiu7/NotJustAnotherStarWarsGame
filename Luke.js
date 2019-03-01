@@ -513,6 +513,7 @@ Luke.prototype.update = function () {
                 let ent = this.game.entities[i];
                 if (ent instanceof Trooper && this.attackCollide(this, ent)) {
                     ent.health -= 500;
+                    createSparks(ent.x + ent.width, ent.y + ent.height / 2);
                 }
             }
             lukeClick();

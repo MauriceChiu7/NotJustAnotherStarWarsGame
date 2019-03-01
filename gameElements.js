@@ -82,9 +82,9 @@ function initializeCustomGameItems() {
 
 function initializeMultiplayerItems() {
     menuItems = [];
+    new MenuItem("FIND MATCH", 600, 325, 25);
     new MenuItem("<", 180, 450, 30);
     new MenuItem(">", 340, 450, 30);
-    new MenuItem("FIND MATCH", 600, 325, 25);
     new MenuItem("BACK", 600, 550, 20);
     new MenuItem(playerName, 260, 120, 20, "playername");
 }
@@ -258,7 +258,7 @@ function createSparks(x, y) {
         spark.move(Math.random() * 5 - 2.5, Math.random() * -5);
         sparks.push(spark);
     }
-    flash.push(new RadialGradient(x, y, Math.random() * 20 + 40));
+    // flash.push(new RadialGradient(x, y, Math.random() * 20 + 40));
 }
 
 function drawSparks() {
