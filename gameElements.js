@@ -197,11 +197,18 @@ MenuItem.prototype.draw = function () {
 }
 
 // --------------------- STATUS BARS ----------------------------
-let regenerate = false;
 function StatusBars() {
     this.health = 100;
     this.stamina = 100;
-    this.saveTime = 0;
+    this.pauseRegeneration = false;
+}
+
+StatusBars.prototype.checkStaminaUse = function(staminaMod) {
+    if (this.stamina - staminaMod < 0) {
+        return false;
+    } else {
+        return true;
+    }
 }
 
 StatusBars.prototype.update = function (healthMod, staminaMod) {
@@ -238,14 +245,8 @@ StatusBars.prototype.draw = function () {
     ctx.fillStyle = "yellow";
     ctx.rect(11, 36, this.stamina * 3 - 2, 10);
     ctx.fill();
-    if (this.stamina < 100) {
-        // setTimeout(function () {
-            statusBars.update(0, 0.5);
-        // }, 2000);
-    } else if (this.stamina < 0){
-        // setTimeout(function () {
-            statusBars.update(0, 0.5);
-        // }, 5000);
+    if (this.stamina < 100 && !this.pauseRegeneration) {
+        this.update(0, 0.5);
     }
 }
 
