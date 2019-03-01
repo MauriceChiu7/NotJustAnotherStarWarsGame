@@ -159,8 +159,8 @@ GameEngine.prototype.draw = function () {
         0, 0, // destination coordinates
         1200, 600); // destination width and height
     for (var i = 0; i < this.entities.length; i++) {
-        this.entities[i].checkCollisions();
         this.entities[i].draw(this.ctx);
+        console.log("game engine draw");
     }
 
     if (gameover) {
@@ -246,6 +246,7 @@ Entity.prototype.update = function () {
 }
 
 Entity.prototype.draw = function (ctx) {
+    console.log("ctx: " + this.game.ctx);
     if (this.game.showOutlines && this.radius) {
         this.game.ctx.beginPath();
         this.game.ctx.strokeStyle = "green";
@@ -254,22 +255,6 @@ Entity.prototype.draw = function (ctx) {
         this.game.ctx.closePath();
     }
 }
-
-Entity.prototype.checkCollisions = function() {
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        var current = gameEngine.entities[i];
-        if (current != this) {
-            if (this.x < current.x + current.width && this.x > current.x &&
-                this.y < current.y + current.height && this.y > current.y) {
-                    // this.collide(current);
-            }
-        }
-    }
-}
-
-// Entity.prototype.collide = function() {
-//     // console.log("collided");
-// }
 
 Entity.prototype.rotateAndCache = function (image, angle) {
     var offscreenCanvas = document.createElement('canvas');

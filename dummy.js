@@ -6,8 +6,8 @@ const MACE_HITBOX_X_OFFSET = 1;
 const MACE_HITBOX_Y_OFFSET = 11;
 const MACE_COLLISION_WIDTH = 32;
 const MACE_COLLISION_HEIGHT = 59;
-function Dummy(game) {
-   this.game = game;
+function Dummy() {
+   this.game = gameEngine;
    this.x = 900; 
    this.y = 10; 
    this.health = 1000;
@@ -61,9 +61,9 @@ function Dummy(game) {
    this.chanceToBlock = 0;
    this.lives = 3;
 
-   this.ctx = game.ctx;
+   this.ctx = this.game.ctx;
    
-   Entity.call(this, game, this.x, this.y);
+   Entity.call(this, this.game, this.x, this.y);
    // setInterval(() => { console.log('delta_x: ' + this.delta_x_from_player + 'delta_y: ' + this.delta_y_from_player) }, 500);
 }
 
@@ -257,6 +257,7 @@ Dummy.prototype.update = function () {
 };
 
 Dummy.prototype.draw = function () {
+   console.log("dummy draw");
    if (SHOWBOX) {
       ctx.strokeStyle = 'orange';
       ctx.strokeRect(this.x + MACE_HITBOX_X_OFFSET, this.y + MACE_HITBOX_Y_OFFSET, MACE_COLLISION_WIDTH, MACE_COLLISION_HEIGHT);

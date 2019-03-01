@@ -132,10 +132,13 @@ Map.prototype.makeLevel_1 = function () {
     new BottomOnlyCollision(734, 344, 133);
 
     this.addPlayer(new Luke());
-    // this.addEnemy(new Dummy(gameEngine));
-    this.addEnemy(new Vader());
+    let trooper2 = new Trooper(gameEngine);
+    this.addEnemy(trooper2);
 
-    this.addEnemy(new Trooper(gameEngine));
+    // this.addEnemy(new Dummy());
+    // this.addEnemy(new Vader());
+
+    // this.addEnemy(new Trooper(gameEngine));
     // let trooper2 = new Trooper(gameEngine);
     // trooper2.x = 900;
     // trooper2.y = 300 - 80;
@@ -143,7 +146,7 @@ Map.prototype.makeLevel_1 = function () {
     let trooper3 = new Trooper(gameEngine);
     trooper3.x = 1000;
     trooper3.y = 70;
-    this.addEnemy(trooper3);
+    // this.addEnemy(trooper3);
 }
 
 Map.prototype.makeLevel_2 = function () {
