@@ -400,6 +400,7 @@ Luke.prototype.update = function () {
         }
         if (canJump) {
             this.jumping = true;
+            statusBars.pauseRegeneration = true;
             this.yAcceleration -= 13;
         }
         // console.log('if (gameEngine.w)');
@@ -509,16 +510,18 @@ Luke.prototype.update = function () {
 
     if (this.game.click && !this.dead) {
         if (primaryWeapon) {
-            for (let i = 0; i < this.game.entities.length; i++) {   // FIX : only one swing at a time
-                let ent = this.game.entities[i];
-                if (ent instanceof Trooper && this.attackCollide(this, ent)) {
-                    ent.health -= 500;
-                    createSparks(ent.x + ent.width, ent.y + ent.height / 2);
+                if (statusBars.checkStaminaUse(30)) {
+                for (let i = 0; i < this.game.entities.length; i++) {   // FIX : only one swing at a time
+                    let ent = this.game.entities[i];
+                    if (ent instanceof Trooper && this.attackCollide(this, ent)) {
+                        ent.health -= 500;
+                        createSparks(ent.x + ent.width, ent.y + ent.height / 2);
+                    }
                 }
+                lukeClick();
+                this.attacking = true;
+                this.switching = false;
             }
-            lukeClick();
-            this.attacking = true;
-            this.switching = false;
         } else {
             let laserShot = false;
             for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -571,6 +574,7 @@ Luke.prototype.update = function () {
             if (this.jumpRightAnim.isDone() || this.jumpLeftAnim.isDone()) {
                 this.jumpRightAnim.elapsedTime = 0;
                 this.jumpLeftAnim.elapsedTime = 0;
+                statusBars.pauseRegeneration = false;
                 this.jumping = false;
                 this.standing = true;
             }
@@ -579,6 +583,7 @@ Luke.prototype.update = function () {
                 // console.log('if (this.gunJumpAnim.isDone()');
                 this.gunJumpRightAnim.elapsedTime = 0;
                 this.gunJumpLeftAnim.elapsedTime = 0;
+                statusBars.pauseRegeneration = false;
                 this.jumping = false;
                 this.standing = true;
             }
@@ -820,8 +825,7 @@ function lukeClick() {
     var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
     audio.volume = sfxVolume * 0.25;
     audio.play();
-    statusBars.update(0, -40);
-    gameEngine.entities[0].attacking = true;
+    statusBars.update(0, -30);
 }
 
 function aimDirection(event) {
@@ -849,26 +853,29 @@ function aimDirection(event) {
 }
 
 function lightsaberThrow(e) {
-    laserthrown = false;
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        if (gameEngine.entities[i].tag == "lightsaberthrow") {
-            laserthrown = true;
-            for (let i = 0; i < gameEngine.entities.length; i++) {
-                let trooper = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles
-                // console.log("please fucking collide");
-                if (trooper instanceof Trooper && LUKE_THIS.getDistance(gameEngine.entities[i], trooper) < 50) {
-                    trooper.health -= 250;
+    if (statusBars.checkStaminaUse(50)) {
+        laserthrown = false;
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            if (gameEngine.entities[i].tag == "lightsaberthrow") {
+                laserthrown = true;
+                for (let i = 0; i < gameEngine.entities.length; i++) {
+                    let trooper = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles good job
+                    // console.log("please fucking collide");
+                    if (trooper instanceof Trooper && LUKE_THIS.getDistance(gameEngine.entities[i], trooper) < 50) {
+                        trooper.health -= 250;
+                        createSparks(trooper.x + trooper.width, trooper.y + trooper.height / 2);
+                    }
                 }
             }
         }
-    }
-    
-    if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
-        var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
-        audio.volume = sfxVolume;
-        audio.play();
-        playerCoor = { x: center_x, y: center_y };
-        gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
-        statusBars.update(0, -50);
+        
+        if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
+            var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
+            audio.volume = sfxVolume;
+            audio.play();
+            playerCoor = { x: center_x, y: center_y };
+            gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
+            statusBars.update(0, -50);
+        }
     }
 }

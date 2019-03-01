@@ -657,19 +657,12 @@ function inGame() {
     audio.volume = musicVolume;
     audio.play();
     frameId = requestAnimationFrame(inGameFrame);
-    // var gameEngine = new GameEngine(); // Made it an instance field.
-
-    // let levelManager = new LevelManager();
-    // levelManager.makeLevel_1();
-
     gameEngine.init(ctx);
     
-    // gameEngine.start();
     var promise = new Promise(function (resolve, reject) {
         let levelManager = new LevelManager();
         gameEngine.addEntity(levelManager);
-        resolve('done loading');
-        // setTimeout(()=>{resolve('done loading')}, 500);
+        resolve('LM done loading');
     });
     
     promise.then(function(value) {

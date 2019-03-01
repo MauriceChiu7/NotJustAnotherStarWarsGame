@@ -1,116 +1,120 @@
-var level = 1;
+var levelNum = 0;
 var gameover = false;
 var win = false;
-var currentMap;
+var levelTrans = false;
 
+/**
+ * LevelManager has to be added as one of the entities in gameEngine at all times because
+ * we rely on the update method to keep track of the health status of all entities.
+ */
 function LevelManager() {
     this.tag = 'LM';
-    this.x = 0;
-    this.y = 0;
-    var map1 = new Map(1);
-    var map2 = new Map(2);
+    var map1 = new Map(0);
+    var map2 = new Map(1);
     this.levels = [map1, map2];
-    // this.levels = [map1];
-    this.startLevel(1);
-    // setInterval(()=>{console.log(this.levels[level-1].enemies)}, 1500)
-    // setInterval(()=>{console.log(gameEngine.entities)}, 1500)
+    this.startLevel(levelNum);
 }
 
 LevelManager.prototype = new Entity();
 LevelManager.prototype.constructor = LevelManager;
 
 LevelManager.prototype.startLevel = function (levelNum) {
-    console.log('bp startLevel');
-    pause();
-    gameEngine.entities = gameEngine.entities.filter(entity => entity.tag === 'LM')
-    
-    for (var i = 0; i < this.levels[levelNum - 1].platforms.length; i++) {
-        gameEngine.addEntity(this.levels[levelNum - 1].platforms[i]);
+    /**
+     * Removing EVERY OLD entities except for the LevelManager
+     */
+    for (var i; i < gameEngine.entities.length; i++) {
+        if (gameEngine.entities[i].tag != 'LM') {
+            gameEngine.entities[i].removeFromWorld = true;
+            gameEngine.entities.splice(i, 1);
+        }
     }
-    for (var i = 0; i < this.levels[levelNum - 1].players.length; i++) {
-        gameEngine.addEntity(this.levels[levelNum - 1].players[i]);
+
+    /**
+     * Adding EVERY NEW entities into gameEngine.entities
+     */
+    for (var i = 0; i < this.levels[levelNum].players.length; i++) {
+        gameEngine.addEntity(this.levels[levelNum].players[i]);
     }
-    for (var i = 0; i < this.levels[levelNum - 1].enemies.length; i++) {
-        gameEngine.addEntity(this.levels[levelNum - 1].enemies[i]);
+    for (var i = 0; i < this.levels[levelNum].enemies.length; i++) {
+        gameEngine.addEntity(this.levels[levelNum].enemies[i]);
     }
     
     ctx.font = "25px monospace";
     ctx.fillStyle = "WHITE";
-    ctx.fillText('Level' + level, canvas.width - 200, 100);
-    unpause();
+    ctx.fillText('Level' + levelNum + 1, canvas.width - 200, 100);
 }
 
 LevelManager.prototype.update = function () {
-    var player;
-    if (gameEngine.entities.length != 0) {
+    var player; // Keep a reference of the player
+    if (gameEngine.entities.length > 0) {
         for (var i = 0; i < gameEngine.entities.length; i++) {
             if (gameEngine.entities[i].tag === 'player') {
                 player = gameEngine.entities[i];
             }
         }
     }
-    this.levels[level-1].enemies = this.levels[level-1].enemies.filter(enemy => enemy.health > 0);
-    if (level !== this.levels.length && this.levels[level-1].enemies.length === 0) {
-        level++;
-        console.log('Leveled up');
-        this.startLevel(level);
-    } else if (level === this.levels.length && this.levels[level-1].enemies.length === 0) { // Winning the last level
-        gameover = true;
-        win = true;
 
-        // gameEngine.entities = gameEngine.entities.filter(entity => entity.tag === 'LM');
+    /**
+     * Set removeFromWorld to true and Remove them from gameEngine for enemies with NO health
+     */
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        if (gameEngine.entities[i].tag === 'enemy' && gameEngine.entities[i].health <= 0) {
+            gameEngine.entities[i].removeFromWorld = true;
+            gameEngine.entities.splice(i, 1);
+        }
+    }
 
-        // for (var i = 0; i < gameEngine.entities.length; i++) {
-        //     gameEngine.entities.pop();
-        // }
-        
-        console.log('won the game');
-        canvas.addEventListener('contextmenu', reload);
-        // canvas.removeEventListener('click', reload);
-    } else if (player.health <= 0) { // Loosing the game
-        gameover = true;
+    /**
+     * Remove entities with NO health from MAP
+     */
+    this.levels[levelNum].enemies = this.levels[levelNum].enemies.filter(enemy => enemy.health > 0);
 
-        // gameEngine.entities = gameEngine.entities.filter(entity => entity.tag === 'LM');
-
-        // for (var i = 0; i < gameEngine.entities.length; i++) {
-        //     gameEngine.entities.pop();
-        // }
-
-        canvas.addEventListener('contextmenu', reload);
-        // canvas.removeEventListener('click', reload);
+    /**
+     * Checks if all enemies are dead
+     */
+    if (this.levels[levelNum].enemies.length === 0) {
+        setTimeout(()=>{
+            if (levelNum !== this.levels.length && this.levels[levelNum].enemies.length === 0) { // Check to see if all enemies were defeated
+                for (var i = 0; i < gameEngine.entities.length; i++) {
+                    if (gameEngine.entities[i].tag === 'player') {
+                        gameEngine.entities.splice(i, 1);
+                    }
+                }
+                levelNum++;
+                this.startLevel(levelNum);
+            } else if (levelNum === this.levels.length && this.levels[levelNum].enemies.length === 0) { // Winning the last level
+                gameover = true;
+                win = true;
+                canvas.addEventListener('contextmenu', reload);
+            } else if (player.health <= 0) { // Loosing the game
+                gameover = true;
+                canvas.addEventListener('contextmenu', reload);
+            }
+        }, 1000)
     }
 }
 
 LevelManager.prototype.draw = function () {
-
+    // Requires empty draw method.
 }
 
 function Map(mapNumber) {
     this.enemies = [];
-    this.platforms = [];
     this.players = [];
     switch(mapNumber) {
-        case 1: 
+        case 0: 
             this.makeLevel_1();
-            console.log('map1 built');
             break;
-        case 2: 
+        case 1: 
             this.makeLevel_2();
-            console.log('map2 built');
             break;
     }
-    // redraw map
 }
 
-// Map.prototype = new Entity();
 Map.prototype.constructor = Map;
 
 Map.prototype.addEnemy = function (enemy) {
     this.enemies.push(enemy);
-}
-
-Map.prototype.addPlatform = function (platform) {
-    this.platforms.push(platform);
 }
 
 Map.prototype.addPlayer = function (player) {
@@ -166,24 +170,15 @@ Map.prototype.makeLevel_2 = function () {
     this.addEnemy(new Trooper(gameEngine));
     let trooper2 = new Trooper(gameEngine);
     trooper2.x = 700;
-    trooper2.y = 300 - 80;
+    trooper2.y = 220;
     this.addEnemy(trooper2);
     let trooper3 = new Trooper(gameEngine);
     trooper3.x = 1000;
     trooper3.y = 70;
     this.addEnemy(trooper3);
+    this.addEnemy(new Dummy(gameEngine));
 }
 
 function reload () {
     location.reload(true);
 }
-
-
-
-// LevelManager.prototype.deleteEntity(type) = function () {
-//     for (var i = 0; i < gameEngine.entities.length; i++) {
-//         if (gameEngine.entities[i] instanceof type) {
-//             gameEngine.entities.splice(i, 1);
-//         }
-//     }
-// }
