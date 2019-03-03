@@ -25,6 +25,7 @@ AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
 AM.queueDownload("./img/luke_sprites_left.png");
 AM.queueDownload("./img/vader_sprites_left - Copy.png");
+AM.queueDownload("./img/vader_sprites_right.png");  
 AM.queueDownload("./img/blueLightsaber.png");
 AM.queueDownload("./img/mapAssets1.png");
 AM.queueDownload("./img/laserbeams_angle.png");

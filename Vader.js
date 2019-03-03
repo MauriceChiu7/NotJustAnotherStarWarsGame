@@ -1,11 +1,11 @@
 const VADER_COLLISION_WIDTH = 32;
-const VADER_COLLISION_HEIGHT = 56;
+const VADER_COLLISION_HEIGHT = 59;
 const VADER_HITBOX_X_OFFSET = 33;
-const VADER_HITBOX_Y_OFFSET = 10;
+const VADER_HITBOX_Y_OFFSET = 11;
 function Vader() {
     canvas.addEventListener("click", vaderClick);
     this.vaderLeft = AM.getAsset("./img/vader_sprites_left - Copy.png");
-    this.vaderRight = AM.getAsset('./img/vader_sprites_right')
+    this.vaderRight = AM.getAsset('./img/vader_sprites_right.png')
     this.x = 800;
     this.y = 10;
     this.xDisplacement = 0;
@@ -21,13 +21,18 @@ function Vader() {
     this.yAcceleration = 0;
 
 // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
-    this.attack1Anim = new Animation(this.vaderLeft, 0, 320, 120, 80, 0.05, 13, false, false);
-    this.attack2Anim = new Animation(this.vaderLeft, 0, 480, 120, 80, 0.05, 11, false, false);
-    // this.idleAnim = new Animation(this.vaderLeft, 720, 160, 120, 80, 1, 2, true, false);
-    this.idleAnim = new Animation(this.vaderLeft, 720, 160, 120, 80, 1, 2, true, false);
-    this.jumpingLeftAnim = new Animation(this.vaderLeft, 0, 721, 120, 169, 0.2, 5, true, false);
-    this.walkLeftAnim = new Animation(this.vaderLeft, 0, 940, 80, 80, 0.15, 8, true, false);
-    this.jumpingRightAnim = new Animation(this.vaderRight, 0, 120, 169, 0.2, 5, false);
+// right
+    this.walkRightAnim = new Animation(this.vaderRight, 1600, 890, -120, 70, 0.15, 9, true, false);
+    this.jumpingRightAnim = new Animation(this.vaderRight, 1560, 780, -120, 100, 0.2, 5, true, false);
+    this.blockRightAnim = new Animation(this.vaderRight, 950, 320, -120, 80, 1, 1, true, false);
+    this.attackRightAnim = new Animation(this.vaderRight, 960, 450 , -120, 110, 0.1, 6, true, false)
+// left
+    this.attackLeftAnim = new Animation(this.vaderLeft, 600, 450, 120, 110, 0.1, 6, true, false);
+    this.blockLeftAnim = new Animation(this.vaderLeft, 590, 320, 120, 80, 1, 1, true, false);
+    //this.attack2Anim = new Animation(this.vaderLeft, 0, 480, 120, 80, 0.05, 11, false, false);
+    this.jumpingLeftAnim = new Animation(this.vaderLeft, 0, 780, 120, 100, 0.2, 5, true, false);
+    this.walkLeftAnim = new Animation(this.vaderLeft, 0, 890, 120, 70, 0.15, 9, true, false);
+    
     this.attacking = false;
     this.switchAttack = true;
     this.jumping = false;
@@ -76,6 +81,11 @@ Vader.prototype.update = function() {
     }
 
     this.distance = this.player.x + 35 - this.x;
+    if (gameEngine.click) {
+        console.log("x :" + this.x + " y :" + this.y);
+        console.log("distance: " + this.distance);
+        console.log("difference in y: " + (this.player.y  -this.y));
+    }
 
     // friction
     if (this.xAcceleration > 0) {
@@ -155,7 +165,7 @@ Vader.prototype.update = function() {
         this.attack = false;
         this.hurting = false;
         this.dead = false;    
-        // console.log(this.jumping);
+         console.log(this.jumping);
         if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
            this.jumpingRightAnim.elapsedTime = 0;
            this.jumpingLeftAnim.elapsedTime = 0;
@@ -258,12 +268,28 @@ Vader.prototype.draw = function() {
 }
 
 Vader.prototype.drawRight = function () {
-    this.idleAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y  , this.scale);
+    if (this.block) {
+        this.blockRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90 , this.y + 5, this.scale);
+    } else if (this.attack) {
+        this.attackRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 95, this.y - 20, this.scale);
+    } else if (this.jumping) {
+        this.jumpingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 95, this.y - 10, this.scale);
+    } else {
+        this.walkRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 130, this.y + 14 , this.scale);
+    }
     Entity.prototype.draw.call(this);
 }
 
 Vader.prototype.drawLeft = function() {
-    this.idleAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y  , this.scale);
+    if (this.block) {
+        this.blockLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y + 5, this.scale);
+    } else if (this.attack) {
+        this.attackLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y - 20, this.scale);
+    } else if (this.jumping) {
+        this.jumpingLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
+    } else {
+        this.walkLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y + 14 , this.scale);
+    }
     Entity.prototype.draw.call(this);
 }
 
@@ -289,7 +315,7 @@ Vader.prototype.getMapCollision = function(direction) {
     return null;
  }
  Vader.prototype.getMapCollisions = function() {
-    //this.fullMCollisions = [];
+    this.fullMCollisions = [];
     for (var i = 0; i < fullCollisions.length; i++) {
         let current = fullCollisions[i];
         if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x &&
@@ -297,7 +323,7 @@ Vader.prototype.getMapCollision = function(direction) {
             var direction = [];
             if (this.y + this.currentDisplacementY > current.y + current.height) {
                 direction = "top";
-            } else if (this.y +VADER_COLLISION_HEIGHT+ this.currentDisplacementY > current.y) {
+            } else if (this.y + VADER_COLLISION_HEIGHT+ this.currentDisplacementY > current.y) {
                 direction = "bottom";
             }
             if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
@@ -308,7 +334,7 @@ Vader.prototype.getMapCollision = function(direction) {
             this.fullMCollisions.push({object: current, direction: direction});
         }
     }
-    //this.bottomMCollisions = [];
+    this.bottomMCollisions = [];
     for (var i = 0; i < bottomOnlyCollisions.length; i++) {
         let current = bottomOnlyCollisions[i];
         if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y && 
@@ -341,19 +367,17 @@ Vader.prototype.getMapCollision = function(direction) {
     }
     return toReturn;
  }
- Vader.prototype.collideRight = function (thisEnt, otherEnt) {
+Vader.prototype.collideRight = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
     // console.log(this.x > ent.x);
     return distance < thisEnt.width && thisEnt.x > otherEnt.x;
  }
- Vader.prototype.collideLeft = function (thisEnt, otherEnt) {
+Vader.prototype.collideLeft = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
     return thisEnt.x < otherEnt.x + otherEnt.width && distance < thisEnt.width;
  }
  
-
- 
- Vader.prototype.getCollision = function (direction) {
+Vader.prototype.getCollision = function (direction) {
     for (var i = 0; i < this.platformCollisions.length; i++) {
        if (this.platformCollisions[i].direction == direction) {
           return this.platformCollisions[i];
