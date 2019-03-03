@@ -646,7 +646,7 @@ Luke.prototype.update = function () {
 }
 
 Luke.prototype.draw = function () {
-    if (SHOWBOX) {
+    if (true) {
         ctx.strokeStyle = 'orange';
         ctx.strokeRect(this.x + LUKE_HITBOX_X_OFFSET, this.y + LUKE_HITBOX_Y_OFFSET, LUKE_COLLISION_WIDTH, LUKE_COLLISION_HEIGHT);
         ctx.fill();
