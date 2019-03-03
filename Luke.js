@@ -481,6 +481,8 @@ Luke.prototype.update = function () {
     if (this.y > 600) {
         statusBars.update(-100, 0);
         this.health = 0;
+        gameover = true;
+        canvas.addEventListener('contextmenu', reload);
     }
 
     if (this.game.r && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
