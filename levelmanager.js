@@ -38,9 +38,9 @@ function LevelManager() {
     new FullCollision(1034, 554, 200, 45); // Ground floor right
     // new FullCollision(1195, 0, 5, 600); // Right side wall
     new FullCollision(-10, -10, 1220, 10); // Ceiling
-    new BottomOnlyCollision(800, 62, 245); // Small top left
+    new BottomOnlyCollision(800, 62, 255); // Small top left
     new BottomOnlyCollision(1120, 62, 90); // Small top right               // @Jake Falls thru fm the right
-    new BottomOnlyCollision(1032, 142, 66); // Small middle
+    new BottomOnlyCollision(1032, 142, 110); // Small middle
     new BottomOnlyCollision(0, 226, 1210); // Main divider                  // @Jake Falls thru fm the right
     new BottomOnlyCollision(315, 331, 291); // Upper hanging platform
     new BottomOnlyCollision(315, 423, 291); // Lower hanging platform
