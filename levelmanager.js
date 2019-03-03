@@ -35,16 +35,16 @@ function LevelManager() {
     fullCollisions = [];                                                    // @Jake Sometimes if you fell from a BottomOnlyCollision, 
     bottomOnlyCollisions = [];                                              // you could keep falling thru subsequent platforms.
     new FullCollision(0, 554, 922, 45); // Ground floor left
-    new FullCollision(1034, 554, 169, 45); // Ground floor right
-    new FullCollision(1195, 0, 5, 600); // Right side wall
+    new FullCollision(1034, 554, 200, 45); // Ground floor right
+    // new FullCollision(1195, 0, 5, 600); // Right side wall
     new FullCollision(-10, -10, 1220, 10); // Ceiling
     new BottomOnlyCollision(800, 62, 245); // Small top left
     new BottomOnlyCollision(1120, 62, 90); // Small top right               // @Jake Falls thru fm the right
     new BottomOnlyCollision(1032, 142, 66); // Small middle
     new BottomOnlyCollision(0, 226, 1210); // Main divider                  // @Jake Falls thru fm the right
-    new BottomOnlyCollision(315, 331, 281); // Upper hanging platform
-    new BottomOnlyCollision(315, 423, 281); // Lower hanging platform
-    new BottomOnlyCollision(0, 494, 243); // Throne platform                // @Jake Most of the time luke doesn't land on it
+    new BottomOnlyCollision(315, 331, 291); // Upper hanging platform
+    new BottomOnlyCollision(315, 423, 291); // Lower hanging platform
+    new BottomOnlyCollision(0, 494, 250); // Throne platform                // @Jake Most of the time luke doesn't land on it
     var map2FullColl = fullCollisions;
     var map2BottColl = bottomOnlyCollisions;
 
