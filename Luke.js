@@ -190,13 +190,17 @@ Luke.prototype.getMapCollisions = function () {
             var direction = [];
             if (this.y + this.currentDisplacementY > current.y + current.height) {
                 direction = "top";
+                console.log("TOP");
             } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
                 direction = "bottom";
+                console.log("BOTTOM");
             }
             if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
                 direction = "right";
+                console.log("RIGHT");
             } else if (this.x + this.currentDisplacementX <= current.x + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
                 direction = "left";
+                console.log("LEFT");
             }
             this.fullMCollisions.push({ object: current, direction: direction });
         }
@@ -205,8 +209,9 @@ Luke.prototype.getMapCollisions = function () {
     for (var i = 0; i < bottomOnlyCollisions.length; i++) {
         let current = bottomOnlyCollisions[i];
         if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y &&
-            this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
+            this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 20 && this.yAcceleration >= 0) {
             this.bottomMCollisions.push(bottomOnlyCollisions[i]);
+            console.log("BOTTOM");
         }
     }
 }
@@ -512,7 +517,7 @@ Luke.prototype.update = function () {
 
     if (this.game.click && !this.dead) {
         if (primaryWeapon) {
-                if (statusBars.checkStaminaUse(30)) {
+            if (statusBars.checkStaminaUse(30)) {
                 for (let i = 0; i < this.game.entities.length; i++) {   // FIX : only one swing at a time
                     let ent = this.game.entities[i];
                     if (ent instanceof Trooper && this.attackCollide(this, ent)) {
@@ -663,7 +668,7 @@ Luke.prototype.draw = function () {
     }
 }
 
-Luke.prototype.drawRight = function () {
+Luke.prototype.drawRight = function () { // FIX : ANIMATION OVERLAP, NEED IF ELSES OR BETTER BOOLEAN SETTINGS CUS SOMETIMES MULTIPLE ANIMATIONS PLAY AT THE SAME TIME
     if (primaryWeapon) { // If the character is using their primaryWeapon
         if (blocking) {
             this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 10, this.y, SCALE_LUKE);

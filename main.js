@@ -6,7 +6,7 @@ var transition = false;
 var frameId;
 var transitionCounter = 0;
 var menuSelection;
-var musicVolume = 0.7;
+var musicVolume = 0.1;
 var sfxVolume = 1;
 var playerName = "<PLAYER NAME>";
 var tempName = "";
