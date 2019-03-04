@@ -153,6 +153,7 @@ GameEngine.prototype.addEntity = function (entity) {
 GameEngine.prototype.draw = function () {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
+    // console.log(currentMap);
     this.ctx.drawImage(currentMap,
         0, 0,  // source from sheet
         1200, 600, // width and height of source

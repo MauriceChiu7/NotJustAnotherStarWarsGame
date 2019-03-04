@@ -6,7 +6,7 @@ var transition = false;
 var frameId;
 var transitionCounter = 0;
 var menuSelection;
-var musicVolume = 0.7;
+var musicVolume = 0.1;
 var sfxVolume = 1;
 var playerName = "<PLAYER NAME>";
 var tempName = "";
@@ -35,6 +35,7 @@ AM.queueDownload("./img/macewindu_right.png");
 AM.queueDownload("./img/trooper_right.png");
 AM.queueDownload("./img/trooper_left.png");
 AM.queueDownload("./img/background.png");
+AM.queueDownload("./img/background2.png");
 AM.queueDownload("./img/obiwan_right.png");
 AM.queueDownload("./img/obiwan_left.png");
 
