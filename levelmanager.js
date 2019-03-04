@@ -202,7 +202,8 @@ Map.prototype.makeLevel_2 = function () {
     // trooper3.x = 1000;
     // trooper3.y = 70;
     // this.addEnemy(trooper3);
-    this.addEnemy(new Dummy(gameEngine));
+    this.addEnemy(new Dummy());
+    this.addEnemy(new Vader());
 }
 
 function reload () {
