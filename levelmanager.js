@@ -185,11 +185,13 @@ Map.prototype.addPlayer = function (player) {
 Map.prototype.makeLevel_1 = function () {
     this.addPlayer(new Luke());
     // this.addEnemy(new Dummy());
-    this.addEnemy(new Vader());
-    this.addEnemy(new Trooper(gameEngine));
+    let trooper1 = new Trooper(gameEngine);
+    trooper1.x = 100;
+    trooper1.y = 40;
+    this.addEnemy(trooper1);
     let trooper2 = new Trooper(gameEngine);
-    // trooper2.x = 900;
-    // trooper2.y = 300 - 80;
+    trooper2.x = 800;
+    trooper2.y = 350;
     this.addEnemy(trooper2);
     let trooper3 = new Trooper(gameEngine);
     trooper3.x = 1000;
@@ -199,17 +201,21 @@ Map.prototype.makeLevel_1 = function () {
 
 Map.prototype.makeLevel_2 = function () {
     this.addPlayer(new Luke());
-    // this.addEnemy(new Trooper(gameEngine));
-    // let trooper2 = new Trooper(gameEngine);
-    // trooper2.x = 700;
-    // trooper2.y = 220;
-    // this.addEnemy(trooper2);
+    this.addEnemy(new Trooper(gameEngine));
+    let trooper2 = new Trooper(gameEngine);
+    trooper2.x = 700;
+    trooper2.y = 220;
+    this.addEnemy(trooper2);
     let trooper3 = new Trooper(gameEngine);
     trooper3.x = 1000;
     trooper3.y = 70;
     this.addEnemy(trooper3);
     // this.addEnemy(new Dummy());
     // this.addEnemy(new Vader());
+    let vader = new Vader()
+    vader.x = 100;
+    vader.y = 450;
+    this.addEnemy(vader);
 }
 
 function reload () {
