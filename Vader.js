@@ -111,7 +111,7 @@ Vader.prototype.update = function() {
     }
 
     // movement
-    if (this.distance > 105 && this.player.y - this.y == 0) { // player on the right
+    if (this.distance > 130 && this.player.y - this.y == 0) { // player on the right
         this.xAcceleration +=1;
         this.block = false;
         this.attacking = false;
@@ -120,7 +120,7 @@ Vader.prototype.update = function() {
         this.dead = false;
 
 
-    } else if (this.distance < -105 && this.player.y - this.y == 0) { //player on the left
+    } else if (this.distance < -50 && this.player.y - this.y == 0) { //player on the left
         this.xAcceleration -=1;
         this.block = false;
         this.attacking = false;
@@ -185,7 +185,7 @@ Vader.prototype.update = function() {
             this.jumpingLeftAnim.elapsedTime = 0;
             this.jumping = false;
         }
-    } else if (Math.abs(this.player.y - this.y) < 10 && Math.abs(this.distance) < 70 && !this.jumping) { // avoiding the player getting too close
+    } else if (Math.abs(this.player.y - this.y) < 10 && (this.distance < 110 || this.distance > -20) && !this.jumping) { // avoiding the player getting too close
         var random = Math.round(Math.random());
         console.log(random);
         if (this.distance > 0) {
@@ -194,42 +194,29 @@ Vader.prototype.update = function() {
            this.xAcceleration += random;
         }
     } else {
-    // this.block = false; // This is just to prevent Mace from disapearing when the AI decides to do nothing.
-    this.jumping = false;
-    //console.log("else statement");
+        this.jumping = false;
     }
     
     //console.log(this.attackRightAnim.isDone() || this.attackLeftAnim.isDone());
     if (this.attacking && this.attackCollide) {
-        // for (let i = 0; i < this.game.entities.length; i++) {
-        //     let player = this.game.entities[i];
-        //     if (trooper instanceof player && this.attackCollide(this, player)) {
-        //          console.log("HIT");
-        //         player.health -= 500;
-        //     }
-        // }
-        if (!this.player.block) {
+        if (!blocking) {
+            console.log("not block");
             this.player.health -= 0.5;
             statusBars.update(-0.5,0);
-        } else {
-            this.energy -= 20;
         }
         if (this.attackRightAnim.isDone() || this.attackLeftAnim.isDone()) {
             this.attackRightAnim.elapsedTime = 0;
             this.attackLeftAnim.elapsedTime = 0;
             this.attacking = false;
-            console.log("attack done" + this.attacking);
         }
     }
     if (this.blockLeftAnim.isDone() || this.blockRightAnim.isDone()) {
         this.blockLeftAnim.elapsedTime = 0;
         this.blockRightAnim.elapsedTime = 0;
         this.block = false;
-        console.log("block done:" + this.block);
     }
 
     if (this.player.attacking) {
-        console.log("player attack");
         if (!this.block && this.attackCollide()) {
             this.health -= 40;
         } else if (this.block) {
@@ -244,7 +231,6 @@ Vader.prototype.update = function() {
         this.attacking = false;
         this.jumping = false;
     }
-    // console.log("health: " + this.health);
 
     // speed limits
     if (this.xAcceleration > 7) {
