@@ -88,7 +88,7 @@ Dummy.prototype.update = function () {
   if (collisionTop != null) {
       this.yAcceleration = 0;
   } else if (collisionBottom != null) {
-      if (collisionBottom instanceof BottomOnlyCollision && this.crouching && this.dropping) {
+      if (collisionBottom instanceof BottomOnlyCollision && this.player.y - this.y > 50) {
           this.yAcceleration += 0.4;
       } else {
           this.y = collisionBottom.y + 1 - this.currentDisplacementY;
@@ -186,7 +186,7 @@ Dummy.prototype.update = function () {
             this.dead = true;
          }
       }
-   } else if (this.player.y - this.y < -100 && collisionBottom != null) { // player is higher
+   } else if (this.player.y - this.y < -80 && collisionBottom != null) { // player is higher
       var collisionCheck = this.getMapCollisions2(this.x, this.y - 13);
       var canJump = true;
       for (var i = 0; i < collisionCheck.length; i++) {
@@ -198,9 +198,9 @@ Dummy.prototype.update = function () {
          this.jumping = true;
          this.yAcceleration -= 13;
          if (this.distance > 0) {
-            this.xAcceleration ++;
+            this.xAcceleration += 5;
          } else if (this.distance < 0) {
-            this.xAcceleration --;
+            this.xAcceleration -= 5;
          }
       }
       this.block = false;
@@ -213,17 +213,29 @@ Dummy.prototype.update = function () {
          this.jumpingLeftAnim.elapsedTime = 0;
          this.jumping = false;
       }
-   } else if (Math.abs(this.player.y - this.y) < 50 && Math.abs(this.distance) < 80) { // avoiding the player getting too close
-      if (this.distance > 0) {
-         this.xAcceleration --;
-      } else {
-         this.xAcceleration ++;
-      }
+   } else if (Math.abs(this.player.y - this.y) < 50 && Math.abs(this.distance) < 70 && !this.jumping) { // avoiding the player getting too close
+      var random = Math.round(Math.random());
+        console.log(random);
+        if (this.distance > 0) {
+           this.xAcceleration -= random;
+        } else {
+           this.xAcceleration += random;
+        }
    } else if (this.player.y - this.y > 50) {
       //this.xAcceleration ++;
    }else {
       this.blocking = true; // This is just to prevent Mace from disapearing when the AI decides to do nothing.
    }
+
+   if (this.health <= 0) {
+      this.dying = true; blocking = false;this.jumping = false; this.attacking = false;
+      this.dead = true;
+      for (var i = 0; i < gameEngine.entities[i]; i++) {
+          if (gameEngine.entities[i].tag === 'enemy') {
+              gameEngine.entities.splice(i, 1);
+          }
+      }
+  }
    
   // More Physics Stuff
   
@@ -246,18 +258,18 @@ Dummy.prototype.update = function () {
    // World Boundary
    if (this.x > 1140) {
       this.x = 1140;
-   } else if (this.x + 25 < 0) {
-      this.x = -25;
-   }
+   } else if (this.x + 30 < 0) {
+      this.x = -30;
+   } 
    Entity.prototype.update.call(this);
 };
 
 Dummy.prototype.draw = function () {
-   if (true) {
-      ctx.strokeStyle = 'orange';
-      ctx.strokeRect(this.x + MACE_HITBOX_X_OFFSET, this.y + MACE_HITBOX_Y_OFFSET, MACE_COLLISION_WIDTH, MACE_COLLISION_HEIGHT);
-      ctx.fill();
-   }
+   // if (true) {
+   //    ctx.strokeStyle = 'orange';
+   //    ctx.strokeRect(this.x + MACE_HITBOX_X_OFFSET, this.y + MACE_HITBOX_Y_OFFSET, MACE_COLLISION_WIDTH, MACE_COLLISION_HEIGHT);
+   //    ctx.fill();
+   // }
    if (this.player.x + 50 > this.x) {
       this.drawRight();
    } else if (this.player.x + 50 < this.x) {
@@ -337,7 +349,7 @@ Dummy.prototype.getMapCollisions = function() {
    for (var i = 0; i < bottomOnlyCollisions.length; i++) {
        let current = bottomOnlyCollisions[i];
        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y && 
-           this.y + MACE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
+           this.y + MACE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 20 && this.yAcceleration >= 0) {
            this.bottomMCollisions.push(bottomOnlyCollisions[i]);
        }
    }

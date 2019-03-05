@@ -49,16 +49,16 @@ function LevelManager() {
     var map2BottColl = bottomOnlyCollisions;
 
     // Un-comment this section if you want to test with 2 levels
-    // this.levels = [map1, map2];
-    // this.currentMaps = [AM.getAsset("./img/background.png"), AM.getAsset("./img/background2.png")]
-    // this.fullCollisions = [map1FullColl, map2FullColl];
-    // this.bottomOnlyCollisions = [map1BottColl, map2BottColl];
+    this.levels = [map1, map2];
+    this.currentMaps = [AM.getAsset("./img/background.png"), AM.getAsset("./img/background2.png")]
+    this.fullCollisions = [map1FullColl, map2FullColl];
+    this.bottomOnlyCollisions = [map1BottColl, map2BottColl];
     
     // Comment this out if you are using the code above
-    this.levels = [map2];
-    this.currentMaps = [AM.getAsset("./img/background2.png")]
-    this.fullCollisions = [map2FullColl];
-    this.bottomOnlyCollisions = [map2BottColl];
+    // this.levels = [map2];
+    // this.currentMaps = [AM.getAsset("./img/background2.png")]
+    // this.fullCollisions = [map2FullColl];
+    // this.bottomOnlyCollisions = [map2BottColl];
 
     this.startLevel(levelNum);
 }
@@ -178,7 +178,7 @@ Map.prototype.addPlayer = function (player) {
 
 Map.prototype.makeLevel_1 = function () {
     this.addPlayer(new Luke());
-    this.addEnemy(new Dummy());
+    // this.addEnemy(new Dummy());
     this.addEnemy(new Vader());
     this.addEnemy(new Trooper(gameEngine));
     let trooper2 = new Trooper(gameEngine);
@@ -198,11 +198,12 @@ Map.prototype.makeLevel_2 = function () {
     // trooper2.x = 700;
     // trooper2.y = 220;
     // this.addEnemy(trooper2);
-    // let trooper3 = new Trooper(gameEngine);
-    // trooper3.x = 1000;
-    // trooper3.y = 70;
-    // this.addEnemy(trooper3);
-    this.addEnemy(new Dummy(gameEngine));
+    let trooper3 = new Trooper(gameEngine);
+    trooper3.x = 1000;
+    trooper3.y = 70;
+    this.addEnemy(trooper3);
+    // this.addEnemy(new Dummy());
+    // this.addEnemy(new Vader());
 }
 
 function reload () {
