@@ -35,6 +35,7 @@ function Luke() {
     this.yAcceleration = 0;
     this.tag = "player";
     this.health = 100;
+    this.fullHealth = 100;
     LUKE_THIS = this;
 
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
@@ -193,7 +194,7 @@ Luke.prototype.getMapCollisions = function () {
                 console.log("TOP");
             } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
                 direction = "bottom";
-                console.log("BOTTOM");
+                //console.log("BOTTOM");
             }
             if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
                 direction = "right";
@@ -211,7 +212,7 @@ Luke.prototype.getMapCollisions = function () {
         if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y &&
             this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 20 && this.yAcceleration >= 0) {
             this.bottomMCollisions.push(bottomOnlyCollisions[i]);
-            console.log("BOTTOM");
+            //console.log("BOTTOM");
         }
     }
 }
@@ -644,18 +645,19 @@ Luke.prototype.update = function () {
         this.standing = false;
         this.crouching = false;
     }
-
+    // statusBars.update((this.health - this.fullHealth), 0)
+    // console.log("health"+ (this.health - this.fullHealth));
     center_x = this.x;
     center_y = this.y;
     Entity.prototype.update.call(this);
 }
 
 Luke.prototype.draw = function () {
-    if (true) {
-        ctx.strokeStyle = 'orange';
-        ctx.strokeRect(this.x + LUKE_HITBOX_X_OFFSET, this.y + LUKE_HITBOX_Y_OFFSET, LUKE_COLLISION_WIDTH, LUKE_COLLISION_HEIGHT);
-        ctx.fill();
-    }
+    // if (true) {
+    //     ctx.strokeStyle = 'orange';
+    //     ctx.strokeRect(this.x + LUKE_HITBOX_X_OFFSET, this.y + LUKE_HITBOX_Y_OFFSET, LUKE_COLLISION_WIDTH, LUKE_COLLISION_HEIGHT);
+    //     ctx.fill();
+    // }
     if (this.dead && this.dyingRightAnim.isDone()) {
         this.deadAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
     }

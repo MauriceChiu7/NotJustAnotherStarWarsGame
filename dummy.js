@@ -258,18 +258,18 @@ Dummy.prototype.update = function () {
    // World Boundary
    if (this.x > 1140) {
       this.x = 1140;
-   } else if (this.x + 25 < 0) {
-      this.x = -25;
-   }
+   } else if (this.x + 30 < 0) {
+      this.x = -30;
+   } 
    Entity.prototype.update.call(this);
 };
 
 Dummy.prototype.draw = function () {
-   if (true) {
-      ctx.strokeStyle = 'orange';
-      ctx.strokeRect(this.x + MACE_HITBOX_X_OFFSET, this.y + MACE_HITBOX_Y_OFFSET, MACE_COLLISION_WIDTH, MACE_COLLISION_HEIGHT);
-      ctx.fill();
-   }
+   // if (true) {
+   //    ctx.strokeStyle = 'orange';
+   //    ctx.strokeRect(this.x + MACE_HITBOX_X_OFFSET, this.y + MACE_HITBOX_Y_OFFSET, MACE_COLLISION_WIDTH, MACE_COLLISION_HEIGHT);
+   //    ctx.fill();
+   // }
    if (this.player.x + 50 > this.x) {
       this.drawRight();
    } else if (this.player.x + 50 < this.x) {
@@ -349,7 +349,7 @@ Dummy.prototype.getMapCollisions = function() {
    for (var i = 0; i < bottomOnlyCollisions.length; i++) {
        let current = bottomOnlyCollisions[i];
        if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y && 
-           this.y + MACE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 10 && this.yAcceleration >= 0) {
+           this.y + MACE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 20 && this.yAcceleration >= 0) {
            this.bottomMCollisions.push(bottomOnlyCollisions[i]);
        }
    }
