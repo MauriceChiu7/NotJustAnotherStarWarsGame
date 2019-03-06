@@ -32,19 +32,19 @@ function LevelManager() {
     var map1BottColl = bottomOnlyCollisions;
 
     // Setup map 2 collisions
-    fullCollisions = [];                                                    // @Jake Sometimes if you fell from a BottomOnlyCollision, 
-    bottomOnlyCollisions = [];                                              // you could keep falling thru subsequent platforms.
+    fullCollisions = [];
+    bottomOnlyCollisions = [];
     new FullCollision(0, 554, 922, 45); // Ground floor left
     new FullCollision(1034, 554, 200, 45); // Ground floor right
     // new FullCollision(1195, 0, 5, 600); // Right side wall
     new FullCollision(-10, -10, 1220, 10); // Ceiling
     new BottomOnlyCollision(800, 62, 255); // Small top left
-    new BottomOnlyCollision(1120, 62, 90); // Small top right               // @Jake Falls thru fm the right
+    new BottomOnlyCollision(1120, 62, 90); // Small top right
     new BottomOnlyCollision(1032, 142, 110); // Small middle
-    new BottomOnlyCollision(0, 226, 1210); // Main divider                  // @Jake Falls thru fm the right
+    new BottomOnlyCollision(0, 226, 1210); // Main divider
     new BottomOnlyCollision(315, 331, 291); // Upper hanging platform
     new BottomOnlyCollision(315, 423, 291); // Lower hanging platform
-    new BottomOnlyCollision(0, 494, 250); // Throne platform                // @Jake Most of the time luke doesn't land on it
+    new BottomOnlyCollision(0, 494, 250); // Throne platform
     var map2FullColl = fullCollisions;
     var map2BottColl = bottomOnlyCollisions;
 
@@ -67,6 +67,12 @@ LevelManager.prototype = new Entity();
 LevelManager.prototype.constructor = LevelManager;
 
 LevelManager.prototype.startLevel = function (levelNum) {
+    /**
+     * Reset Status Bar
+     */
+    statusBars.health = 100;
+    statusBars.stamina = 100;
+    
     /**
      * Setting up map and map collisions
      */
@@ -129,7 +135,7 @@ LevelManager.prototype.update = function () {
      */
     if (this.levels[levelNum].enemies.length === 0) {
         setTimeout(()=>{
-            if (levelNum !== this.levels.length && this.levels[levelNum].enemies.length === 0) { // Check to see if all enemies were defeated
+            if (levelNum !== this.levels.length-1 && this.levels[levelNum].enemies.length === 0) { // Check to see if all enemies were defeated
                 for (var i = 0; i < gameEngine.entities.length; i++) {
                     if (gameEngine.entities[i].tag === 'player') {
                         gameEngine.entities.splice(i, 1);
@@ -137,15 +143,15 @@ LevelManager.prototype.update = function () {
                 }
                 levelNum++;
                 this.startLevel(levelNum);
-            } else if (levelNum === this.levels.length && this.levels[levelNum].enemies.length === 0) { // Winning the last level
+            } else if (levelNum === this.levels.length-1 && this.levels[levelNum].enemies.length === 0) { // Winning the last level
                 gameover = true;
                 win = true;
                 canvas.addEventListener('contextmenu', reload);
-            } else if (player.health <= 0) { // Loosing the game
-                gameover = true;
-                canvas.addEventListener('contextmenu', reload);
             }
         }, 1000)
+    } else if (player.health <= 0) { // Loosing the game
+        gameover = true;
+        canvas.addEventListener('contextmenu', reload);
     }
 }
 
@@ -179,11 +185,13 @@ Map.prototype.addPlayer = function (player) {
 Map.prototype.makeLevel_1 = function () {
     this.addPlayer(new Luke());
     // this.addEnemy(new Dummy());
-    this.addEnemy(new Vader());
-    this.addEnemy(new Trooper(gameEngine));
+    let trooper1 = new Trooper(gameEngine);
+    trooper1.x = 100;
+    trooper1.y = 40;
+    this.addEnemy(trooper1);
     let trooper2 = new Trooper(gameEngine);
-    // trooper2.x = 900;
-    // trooper2.y = 300 - 80;
+    trooper2.x = 800;
+    trooper2.y = 350;
     this.addEnemy(trooper2);
     let trooper3 = new Trooper(gameEngine);
     trooper3.x = 1000;
@@ -193,17 +201,21 @@ Map.prototype.makeLevel_1 = function () {
 
 Map.prototype.makeLevel_2 = function () {
     this.addPlayer(new Luke());
-    // this.addEnemy(new Trooper(gameEngine));
-    // let trooper2 = new Trooper(gameEngine);
-    // trooper2.x = 700;
-    // trooper2.y = 220;
-    // this.addEnemy(trooper2);
+    this.addEnemy(new Trooper(gameEngine));
+    let trooper2 = new Trooper(gameEngine);
+    trooper2.x = 700;
+    trooper2.y = 220;
+    this.addEnemy(trooper2);
     let trooper3 = new Trooper(gameEngine);
     trooper3.x = 1000;
     trooper3.y = 70;
     this.addEnemy(trooper3);
     // this.addEnemy(new Dummy());
     // this.addEnemy(new Vader());
+    let vader = new Vader()
+    vader.x = 100;
+    vader.y = 450;
+    this.addEnemy(vader);
 }
 
 function reload () {

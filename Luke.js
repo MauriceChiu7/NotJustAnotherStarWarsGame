@@ -485,7 +485,7 @@ Luke.prototype.update = function () {
         this.x = -30;
     } 
     if (this.y > 600) {
-        statusBars.update(-100, 0);
+        statusBars.health = 0;
         this.health = 0;
         gameover = true;
         canvas.addEventListener('contextmenu', reload);
