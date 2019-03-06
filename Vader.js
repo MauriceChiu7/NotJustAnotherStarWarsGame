@@ -3,7 +3,7 @@ const VADER_COLLISION_HEIGHT = 59;
 const VADER_HITBOX_X_OFFSET = 33;
 const VADER_HITBOX_Y_OFFSET = 11;
 function Vader() {
-    canvas.addEventListener("click", vaderClick);
+    //canvas.addEventListener("click", vaderClick);
     this.vaderLeft = AM.getAsset("./img/vader_sprites_left - Copy.png");
     this.vaderRight = AM.getAsset('./img/vader_sprites_right.png')
     this.x = 800;
@@ -298,13 +298,13 @@ Vader.prototype.drawLeft = function() {
     Entity.prototype.draw.call(this);
 }
 
-function vaderClick(event) {
-    var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
-    audio.volume = sfxVolume * 0.2;
-    audio.play();
-    statusBars.update(0, -40);
-    gameEngine.entities[0].attacking = true;
-}
+// function vaderClick(event) {
+//     var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
+//     audio.volume = sfxVolume * 0.2;
+//     audio.play();
+//     statusBars.update(0, -40);
+//     gameEngine.entities[0].attacking = true;
+// }
 
 Vader.prototype.getMapCollision = function(direction) {
     for (var i = 0; i < this.fullMCollisions.length; i++) {
