@@ -20,8 +20,8 @@ function LevelManager() {
     // Setup map 1 collisions
     fullCollisions = [];
     bottomOnlyCollisions = [];
-    new FullCollision(-100, 480, 980, 200);
-    new FullCollision(1030, 480, 200, 200);
+    new FullCollision(-100, 480, 1030, 200);
+    new FullCollision(1080, 480, 200, 200);
     new FullCollision(300, 219, 385, 250);
     new FullCollision(420, -100, 265, 200);
     new BottomOnlyCollision(53, 361, 213);

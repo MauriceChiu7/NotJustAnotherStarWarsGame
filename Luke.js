@@ -496,11 +496,11 @@ Luke.prototype.update = function () {
         // this.aiming = true;
         if (!primaryWeapon) {
             var audio = AM.getSound('./sounds/LightsaberTurnOn.wav').cloneNode();
-            audio.volume = sfxVolume;
+            audio.volume = sfxVolume * 0.8;
             audio.play();
         } else {
             var audio = AM.getSound('./sounds/LightsaberTurnOff.wav').cloneNode();
-            audio.volume = sfxVolume;
+            audio.volume = sfxVolume * 0.8;
             audio.play();
         }
         primaryWeapon = !primaryWeapon;
@@ -518,7 +518,7 @@ Luke.prototype.update = function () {
 
     if (this.game.click && !this.dead) {
         if (primaryWeapon) {
-            if (statusBars.checkStaminaUse(30)) {
+            if (statusBars.checkStaminaUse(25)) {
                 for (let i = 0; i < this.game.entities.length; i++) {   // FIX : only one swing at a time
                     let ent = this.game.entities[i];
                     if (ent instanceof Trooper && this.attackCollide(this, ent)) {
@@ -539,7 +539,7 @@ Luke.prototype.update = function () {
             }
             if (!laserShot) {
                 let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
-                audio.volume = sfxVolume;
+                audio.volume = sfxVolume * 0.5;
                 audio.play();
                 let x, y;
                 if (center_x > gameEngine.clickx) {
@@ -834,7 +834,7 @@ function lukeClick() {
     var audio = AM.getSound('./sounds/Swing2.WAV').cloneNode();
     audio.volume = sfxVolume * 0.25;
     audio.play();
-    statusBars.update(0, -30);
+    statusBars.update(0, -25);
 }
 
 function aimDirection(event) {
