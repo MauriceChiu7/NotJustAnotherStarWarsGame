@@ -91,11 +91,11 @@ Vader.prototype.update = function() {
     }
 
     this.distance = this.player.x + 35 - this.x;
-    if (gameEngine.click) {
+    /*if (gameEngine.click) {
         console.log("x :" + this.x + " y :" + this.y);
         console.log("distance: " + this.distance);
         console.log("difference in y: " + (this.player.y  -this.y));
-    }
+    }*/
 
     // friction
     if (this.xAcceleration > 0) {
@@ -139,26 +139,25 @@ Vader.prototype.update = function() {
         this.attacking = false;
         this.jumping = false;
     } else if (!this.block && !this.attacking && Math.abs(this.player.y - this.y) < 40
-        && Math.abs(this.distance) < 100 && collisionBottom != null) {
-
-    this.chanceToBlock = Math.round(Math.random() * 5); this.blocking = false; this.attacking = false; this.jumping = false;
-    if (this.chanceToBlock === 1) {
-        this.block = true;
-        this.energy -= 10;
-    } else if (this.chanceToBlock === 0 && this.energy > 150) {
-        this.attacking = true;
-        this.energy -= 100;
-    }
-    if (this.player.attacking) {
-        // this.blocking =false;
-        this.chanceToBlock = -1;
-        this.hurting = true;
-        this.lives--;
-        if (this.lives === 0) {
-            this.dead = true;
+        && (this.distance <= 130 && this.distance >= -50) && collisionBottom != null) {
+        console.log("try to block or attack");
+        this.chanceToBlock = Math.round(Math.random() * 5); this.blocking = false; this.attacking = false; this.jumping = false;
+        if (this.chanceToBlock === 1) {
+            this.block = true;
+            this.energy -= 10;
+        } else if (this.chanceToBlock === 0 && this.energy > 150) {
+            this.attacking = true;
+            this.energy -= 100;
         }
-    }
-    console.log(this.energy);
+        if (this.player.attacking) {
+            // this.blocking =false;
+            this.chanceToBlock = -1;
+            this.hurting = true;
+            this.lives--;
+            if (this.lives === 0) {
+                this.dead = true;
+            }
+        }
     } else if (this.player.y - this.y < -100 && collisionBottom != null) { // player is higher
         var collisionCheck = this.getMapCollisions2(this.x, this.y - 13);
         var canJump = true;
@@ -185,7 +184,8 @@ Vader.prototype.update = function() {
             this.jumpingLeftAnim.elapsedTime = 0;
             this.jumping = false;
         }
-    } else if (Math.abs(this.player.y - this.y) < 10 && (this.distance < 110 || this.distance > -20) && !this.jumping) { // avoiding the player getting too close
+    } else if (Math.abs(this.player.y - this.y) < 10 && (this.distance < 110 && this.distance > -20) && !this.jumping) { // avoiding the player getting too close
+        console.log("too close");
         var random = Math.round(Math.random());
         console.log(random);
         if (this.distance > 0) {
@@ -200,7 +200,6 @@ Vader.prototype.update = function() {
     //console.log(this.attackRightAnim.isDone() || this.attackLeftAnim.isDone());
     if (this.attacking && this.attackCollide) {
         if (!blocking) {
-            console.log("not block");
             this.player.health -= 0.5;
             statusBars.update(-0.5,0);
         }
@@ -246,7 +245,9 @@ Vader.prototype.update = function() {
 
     this.y += this.yAcceleration;
     this.x += this.xAcceleration;
-
+    if (this.y > 600) {
+        this.health = 0;
+    }
     // World Boundary
     if (this.x > 1140) {
         this.x = 1140;
@@ -278,7 +279,7 @@ Vader.prototype.drawRight = function () {
     } else if (this.jumping) {
         this.jumpingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 95, this.y - 10, this.scale);
     } else {
-        this.walkRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 130, this.y + 14 , this.scale);
+        this.walkRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 115, this.y + 14 , this.scale);
     }
     Entity.prototype.draw.call(this);
 }
