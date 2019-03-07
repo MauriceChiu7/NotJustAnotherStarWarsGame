@@ -6,8 +6,8 @@ var transition = false;
 var frameId;
 var transitionCounter = 0;
 var menuSelection;
-var musicVolume = 0.7;
-var sfxVolume = 1;
+var musicVolume = 0.4;
+var sfxVolume = 0.8;
 var playerName = "<PLAYER NAME>";
 var tempName = "";
 var searching = false;
@@ -25,6 +25,7 @@ AM.queueDownload("./img/StarWarsLogo.png");
 AM.queueDownload("./img/luke_sprites_right.png");
 AM.queueDownload("./img/luke_sprites_left.png");
 AM.queueDownload("./img/vader_sprites_left - Copy.png");
+AM.queueDownload("./img/vader_sprites_right.png");  
 AM.queueDownload("./img/blueLightsaber.png");
 AM.queueDownload("./img/mapAssets1.png");
 AM.queueDownload("./img/laserbeams_angle.png");
@@ -34,6 +35,7 @@ AM.queueDownload("./img/macewindu_right.png");
 AM.queueDownload("./img/trooper_right.png");
 AM.queueDownload("./img/trooper_left.png");
 AM.queueDownload("./img/background.png");
+AM.queueDownload("./img/background2.png");
 AM.queueDownload("./img/obiwan_right.png");
 AM.queueDownload("./img/obiwan_left.png");
 
@@ -379,6 +381,8 @@ function multiplayerClick(event) {
                     editingName = false;
                     canvas.removeEventListener('keyup', nameEditHandler, true);
                     transition = true;
+                    searching = false;
+                    menuItems[0].text = "FIND MATCH";
                 } else if (menuSelection == "FIND MATCH") {
                     var audio = AM.getSound("./sounds/StartSearch.mp3").cloneNode();
                     audio.volume = sfxVolume;
@@ -655,19 +659,12 @@ function inGame() {
     audio.volume = musicVolume;
     audio.play();
     frameId = requestAnimationFrame(inGameFrame);
-    // var gameEngine = new GameEngine(); // Made it an instance field.
-
-    // let levelManager = new LevelManager();
-    // levelManager.makeLevel_1();
-
     gameEngine.init(ctx);
     
-    // gameEngine.start();
     var promise = new Promise(function (resolve, reject) {
         let levelManager = new LevelManager();
         gameEngine.addEntity(levelManager);
-        resolve('done loading');
-        // setTimeout(()=>{resolve('done loading')}, 500);
+        resolve('LM done loading');
     });
     
     promise.then(function(value) {

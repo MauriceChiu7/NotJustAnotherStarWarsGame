@@ -1,4 +1,4 @@
-var paused = false;
+// var paused = false;
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
@@ -32,13 +32,13 @@ GameEngine.prototype.init = function (ctx) {
 GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
-    if (!paused) {
+    // if (!paused) {
         (function gameLoop() {
             // console.log('loopping');
             that.loop();
             requestAnimFrame(gameLoop, that.ctx.canvas);
         })();
-    }
+    // }
 }
 
 GameEngine.prototype.startInput = function () {
@@ -153,13 +153,13 @@ GameEngine.prototype.addEntity = function (entity) {
 GameEngine.prototype.draw = function () {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
+    // console.log(currentMap);
     this.ctx.drawImage(currentMap,
         0, 0,  // source from sheet
         1200, 600, // width and height of source
         0, 0, // destination coordinates
         1200, 600); // destination width and height
     for (var i = 0; i < this.entities.length; i++) {
-        this.entities[i].checkCollisions();
         this.entities[i].draw(this.ctx);
     }
 
@@ -175,7 +175,7 @@ GameEngine.prototype.draw = function () {
             ctx.fillText("(RIGHT CLICK ANYWHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
         }
     }
-
+    drawSparks();
     statusBars.draw();
     this.ctx.restore();
 }
@@ -255,22 +255,6 @@ Entity.prototype.draw = function (ctx) {
     }
 }
 
-Entity.prototype.checkCollisions = function() {
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        var current = gameEngine.entities[i];
-        if (current != this) {
-            if (this.x < current.x + current.width && this.x > current.x &&
-                this.y < current.y + current.height && this.y > current.y) {
-                    // this.collide(current);
-            }
-        }
-    }
-}
-
-// Entity.prototype.collide = function() {
-//     // console.log("collided");
-// }
-
 Entity.prototype.rotateAndCache = function (image, angle) {
     var offscreenCanvas = document.createElement('canvas');
     var size = Math.max(image.width, image.height);
@@ -343,10 +327,10 @@ Animation.prototype.isDone = function () {
 }
 
 
-function pause () {
-    paused = true;
-}
+// function pause () {
+//     paused = true;
+// }
 
-function unpause () {
-    paused = false;
-}
+// function unpause () {
+//     paused = false;
+// }

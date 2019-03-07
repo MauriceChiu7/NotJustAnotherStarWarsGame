@@ -138,6 +138,7 @@ Trooper.prototype.attackCollide = function () {
 }
 
 Trooper.prototype.update = function () {
+    //this.health = 0; //for testing
     for (let i = 0; i < gameEngine.entities.length; i++) {
         let object = this.game.entities[i];
         if (object.tag === 'player') {
@@ -199,8 +200,7 @@ Trooper.prototype.update = function () {
             }
 
             if (this.attackLeftAnim.isDone() || this.attackRightAnim.isDone()) {
-                statusBars.update(-DAMAGE_LUKE, 0);
-                this.player.health -= DAMAGE_LUKE;
+
             }
 
         }
