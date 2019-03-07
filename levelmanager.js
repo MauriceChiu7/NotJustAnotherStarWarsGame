@@ -23,7 +23,7 @@ LevelManager.prototype.startLevel = function (levelNum) {
     console.log('bp startLevel');
     pause();
     gameEngine.entities = gameEngine.entities.filter(entity => entity.tag === 'LM')
-    
+
     for (var i = 0; i < this.levels[levelNum - 1].platforms.length; i++) {
         gameEngine.addEntity(this.levels[levelNum - 1].platforms[i]);
     }
@@ -33,7 +33,7 @@ LevelManager.prototype.startLevel = function (levelNum) {
     for (var i = 0; i < this.levels[levelNum - 1].enemies.length; i++) {
         gameEngine.addEntity(this.levels[levelNum - 1].enemies[i]);
     }
-    
+
     ctx.font = "25px monospace";
     ctx.fillStyle = "WHITE";
     ctx.fillText('Level' + level, canvas.width - 200, 100);
@@ -63,7 +63,7 @@ LevelManager.prototype.update = function () {
         // for (var i = 0; i < gameEngine.entities.length; i++) {
         //     gameEngine.entities.pop();
         // }
-        
+
         console.log('won the game');
         canvas.addEventListener('contextmenu', reload);
         // canvas.removeEventListener('click', reload);
@@ -90,11 +90,11 @@ function Map(mapNumber) {
     this.platforms = [];
     this.players = [];
     switch(mapNumber) {
-        case 1: 
+        case 1:
             this.makeLevel_1();
             console.log('map1 built');
             break;
-        case 2: 
+        case 2:
             this.makeLevel_2();
             console.log('map2 built');
             break;
