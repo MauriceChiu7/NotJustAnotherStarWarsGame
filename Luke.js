@@ -369,8 +369,9 @@ Luke.prototype.update = function () {
                 let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
                 audio.volume = sfxVolume * 0.2;
                 audio.play();
-                curEnt.xVelocity = -(curEnt.xVelocity);
-                curEnt.yVelocity = -(curEnt.yVelocity);
+
+                curEnt.deflection();
+
                 for (let i = 0; i < this.game.entities.length; i++) {
                     let trooper = this.game.entities[i];
                     if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
@@ -564,7 +565,6 @@ Luke.prototype.update = function () {
                         let trooper = this.game.entities[i];
                         if (trooper instanceof Trooper && this.attackCollide(laser, trooper)) {
                             trooper.health -= 500;
-                            // console.log("AGSSAGSA");
                             laser.deleteLaserbeam();
                         }
                     }
@@ -862,19 +862,6 @@ function aimDirection(event) {
 function lightsaberThrow(e) {
     if (statusBars.checkStaminaUse(50)) {
         laserthrown = false;
-        for (var i = 0; i < gameEngine.entities.length; i++) {
-            if (gameEngine.entities[i].tag == "lightsaberthrow") {
-                laserthrown = true;
-                for (let i = 0; i < gameEngine.entities.length; i++) {
-                    let trooper = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles good job
-                    // console.log("please fucking collide");
-                    if (trooper instanceof Trooper && LUKE_THIS.getDistance(gameEngine.entities[i], trooper) < 50) {
-                        trooper.health -= 250;
-                        createSparks(trooper.x + trooper.width, trooper.y + trooper.height / 2);
-                    }
-                }
-            }
-        }
 
         if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
             var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();

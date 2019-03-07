@@ -109,6 +109,9 @@ GameEngine.prototype.startInput = function () {
         //   var rect = that.ctx.canvas.getBoundingClientRect();
         //   that.e = {pressed: true, x: event.clientX - rect.left, y: event.clientY - rect.top}
         // }
+        if (e.code === "KeyE"){
+            that.e = true;
+          }
         if (e.code === "KeyD"){
           that.d = true;
         }
@@ -201,6 +204,7 @@ GameEngine.prototype.loop = function () {
     
     this.mouseMoveX = this.saveX;
     this.mouseMoveY = this.saveY;
+    this.e = null;
     this.d = null;
     this.a = null;
     this.w = null;

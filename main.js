@@ -38,6 +38,7 @@ AM.queueDownload("./img/background.png");
 AM.queueDownload("./img/background2.png");
 AM.queueDownload("./img/obiwan_right.png");
 AM.queueDownload("./img/obiwan_left.png");
+AM.queueDownload("./img/blue_laser_small.png");
 
 AM.queueSound("./sounds/VaderVsLukeTheme.wav");
 AM.queueSound("./sounds/Swing2.WAV");
