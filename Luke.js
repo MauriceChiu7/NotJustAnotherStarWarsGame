@@ -290,7 +290,7 @@ Luke.prototype.getDistance = function (thisEnt, otherEnt) {
     dx = thisEnt.x - otherEnt.x;
     dy = thisEnt.y - otherEnt.y;
     let theDist = Math.sqrt(dx * dx + dy * dy);
-    // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
+    console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
     return theDist;
 }
 
@@ -374,13 +374,16 @@ Luke.prototype.update = function () {
                 audio.play();
 
                 curEnt.deflection();
-
-                for (let i = 0; i < this.game.entities.length; i++) {
-                    let trooper = this.game.entities[i];
-                    if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
-                        // console.log("HIT");
-                        trooper.health -= 500;
-                    }
+                curEnt.tag = "luke_laser";
+            }
+        } 
+        if (curEnt instanceof LaserBeam && curEnt.tag == "luke_laser"){
+            for (let i = 0; i < this.game.entities.length; i++) {
+                let trooper = this.game.entities[i];
+                if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
+                    trooper.health -= 250;
+                    curEnt.deleteLaserbeam();
+                    createSparks(trooper.x + trooper.width, trooper.y + trooper.height / 2);
                 }
             }
         }
@@ -560,18 +563,6 @@ Luke.prototype.update = function () {
                 let luke_beam = new LaserBeam(playerCoor, endCoor, gameEngine);
                 luke_beam.tag = "luke_laser";
                 gameEngine.addEntity(luke_beam);
-            }
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-                let laser = this.game.entities[i];
-                if (laser instanceof LaserBeam && laser.tag == "luke_laser") {
-                    for (let i = 0; i < this.game.entities.length; i++) {
-                        let trooper = this.game.entities[i];
-                        if (trooper instanceof Trooper && this.attackCollide(laser, trooper)) {
-                            trooper.health -= 500;
-                            laser.deleteLaserbeam();
-                        }
-                    }
-                }
             }
         }
     }

@@ -39,8 +39,27 @@ function LaserBeam(start, end, game) {
 LaserBeam.prototype = new Entity();
 LaserBeam.prototype.constructor = LaserBeam;
 
+LaserBeam.prototype.getDistance = function (otherEnt) {
+  let dx, dy;
+  dx = this.x - otherEnt.x;
+  dy = this.y - otherEnt.y;
+  let theDist = Math.sqrt(dx * dx + dy * dy);
+  // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
+  return theDist;
+}
+
 LaserBeam.prototype.update = function () {
   // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+
+  // for (let i = 0; i < gameEngine.entities.length; i++) {
+  //   let curentEnt = gameEngine.entities[i];   
+  //   if (curentEnt instanceof Trooper || curentEnt instanceof Vader || curentEnt instanceof Luke
+  //         && this.getDistance(curentEnt) < 50) {
+  //     curentEnt.health -= 25;
+  //     createSparks(curentEnt.x + curentEnt.width, curentEnt.y + curentEnt.height / 2);
+  //   }
+  // }
+
   this.platformCollisions = [];
 
   var fullMCollisions = [];
@@ -141,12 +160,24 @@ LaserBeam.prototype.getDegree = function () {
 }
 
 LaserBeam.prototype.deflection = function () {
-  // this.end.y = this.end.y + 50;
-  // this.start.y  = this.start.y + 50;
-  // this.end.x  = this.end.x + 50;
-  // this.start.x  = this.start.x + 50;
-  this.xVelocity = -this.xVelocity;
-  this.yVelocity = -this.yVelocity;
+  let chanceToHit = Math.round(Math.random() * 5);
+
+  if (chanceToHit == 1) {
+    this.xVelocity = -this.xVelocity;
+    this.yVelocity = -this.yVelocity;
+  } else {
+    let chanceDeflectUp = Math.round(Math.random());
+    let saveStartx = this.start.x;
+    let saveStarty = this.start.y;
+    this.start.x = this.end.x;
+    this.start.y = this.end.y;
+    this.end.x = saveStartx
+    if (chanceDeflectUp == 0){
+      this.end.y = saveStarty - 400;
+    } else {
+      this.end.y = saveStarty + 400;
+    }    
+  }
 }
 
 function drawRotatedImage(image, x, y, angle) {
@@ -215,10 +246,14 @@ LightsaberThrow.prototype.getDistance = function (otherEnt) {
 
 LightsaberThrow.prototype.update = function () {
   for (let i = 0; i < gameEngine.entities.length; i++) {
-    let trooper = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles good job
-    if (trooper instanceof Trooper && this.getDistance(trooper) < 50) {
-      trooper.health -= 50;
-      createSparks(trooper.x + trooper.width, trooper.y + trooper.height / 2);
+    let curentEnt = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles good job
+    if (curentEnt instanceof Trooper && this.getDistance(curentEnt) < 50) {
+      curentEnt.health -= 50;
+      createSparks(curentEnt.x + curentEnt.width, curentEnt.y + curentEnt.height / 2);
+    }
+    if (curentEnt instanceof Vader && this.getDistance(curentEnt) < 50) {
+      curentEnt.health -= 50;
+      createSparks(curentEnt.x + curentEnt.width, curentEnt.y + curentEnt.height / 2);
     }
   }
   if (this.right) {      // Throwing to the right side
