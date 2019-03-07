@@ -211,8 +211,8 @@ Trooper.prototype.update = function () {
             this.walk = false;
             that.action = that.attacking;
             if (that.attackCollide()) {
-                statusBars.update(-20, 0);
-                that.player.health -= 20;
+                // statusBars.update(-20, 0);
+                // that.player.health -= 20;
                 setInterval(function () {
                     // statusBars.update(-20, 0);
                     // that.player.health -= 20;

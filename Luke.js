@@ -303,7 +303,7 @@ Luke.prototype.attackCollide = function (thisEnt, otherEnt) {
 
 Luke.prototype.collideRight = function (thisEnt, otherEnt) {
     let distance = this.getDistance(thisEnt, otherEnt);
-    return distance < thisEnt.width && thisEnt.x > otherEnt.x;
+    return distance < thisEnt.width + 30 && thisEnt.x < otherEnt.x;
 }
 
 Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
@@ -319,11 +319,14 @@ Luke.prototype.update = function () {
     collisionBottom = this.getMapCollision("bottom");
 
     canvas.addEventListener("keyup", lightsaberThrow);
+    canvas.addEventListener("mousemove", aimDirection);
     if (!laserthrown) {
-        canvas.addEventListener("mousemove", aimDirection);       // FIX LIgtsaber throw MOFOFOFOFOFOFO, remove lightsaber after throw, no swinging while thrown
+        // canvas.addEventListener("mousemove", aimDirection);       // FIX LIgtsaber throw MOFOFOFOFOFOFO, remove lightsaber after throw, no swinging while thrown
     } else {
-        // console.log("REMOVE MOUSE MOVE");
+        // primaryWeapon = !primaryWeapon;
+        console.log("REMOVE MOUSE MOVE");
         canvas.removeEventListener("mousemove", aimDirection);
+        laserthrown = false;
     }
 
     // stops movement if collision encountered
@@ -350,14 +353,14 @@ Luke.prototype.update = function () {
     for (let i = 0; i < this.game.entities.length; i++) {
         let curEnt = this.game.entities[i];
         if (curEnt instanceof Trooper) {
-            if (this.collideLeft(this, curEnt)) {         //Left works :) // Well done!  //Luke is goin to be
-                this.x = curEnt.x + curEnt.width;
-                this.xAcceleration = 0;
-            } else if (this.collideRight(this, curEnt)) {             // Right collide wont FUCKING work // LOL!
-                this.x = curEnt.x - this.width - 20;
+            if (this.collideRight(this, curEnt)) {             // Right collide wont FUCKING work // LOL!
+                this.x = curEnt.x - this.width - 30;
                 this.xAcceleration = 0;
                 // console.log("collide right" + this.x + " ");
-            }
+            } else if (this.collideLeft(this, curEnt)) {         //Left works :) // Well done!  //Luke is goin to be
+                this.x = curEnt.x + curEnt.width;
+                this.xAcceleration = 0;
+            } 
         }
         if (curEnt instanceof LaserBeam && curEnt.tag == "trooperLaser") {
             // console.log('Luke Health (laser): ' + this.health);
@@ -870,6 +873,8 @@ function lightsaberThrow(e) {
             playerCoor = { x: center_x, y: center_y };
             gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
             statusBars.update(0, -50);
-        }
+            // primaryWeapon = !primaryWeapon;  //put lightsaber away;
+        } 
+        
     }
 }
