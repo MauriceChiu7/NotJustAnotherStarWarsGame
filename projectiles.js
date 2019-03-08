@@ -136,7 +136,7 @@ LaserBeam.prototype.draw = function () {
   let theDeg = this.getDegree()
   let absDegree = Math.abs(theDeg);
   if (this.isShotgun){
-    this.img = AM.getAsset("./img/shotgun_bullet.PNG");
+    this.img = AM.getAsset("./img/shotgun_bullet.png");
   }
   drawRotatedImage(this.img, this.x, this.y, theDeg);
 
