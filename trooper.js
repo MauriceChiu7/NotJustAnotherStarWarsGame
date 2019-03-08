@@ -181,15 +181,19 @@ Trooper.prototype.update = function () {
         if (Math.abs(this.distance) > 50) {
             if (this.isCharger) {
                 this.walk = true;
-                if (Math.abs(this.distance) < 40) {
-                    this.action = this.standing;
-                } else {
-                    this.action = this.walking;
-                }
-                if (this.player.x + 50 > this.x) {
+                // if (Math.abs(this.distance) < 40) {
+                //     this.action = this.standing;
+                // } else {
+                //     this.action = this.walking;
+                // }
+                if (this.player.x + 50 > this.x && Math.abs(this.player.y - this.y) < 10 ) {
                     this.x += 1;
-                } else if (this.player.x + 50 < this.x) {
+                    this.action = this.walking;
+                } else if (this.player.x + 50 < this.x && Math.abs(this.player.y - this.y) < 10) {
                     this.x -= 1;
+                    this.action = this.walking;
+                } else {
+                    this.action = this.standing;
                 }
             } else {
                 this.action = this.standing;
@@ -300,7 +304,7 @@ Trooper.prototype.update = function () {
 Trooper.prototype.charger = function () {
     this.walk = true;
     this.isCharger = true;
-    this.health = 750;
+    this.health = 500;
 }
 
 Trooper.prototype.draw = function () {

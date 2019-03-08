@@ -318,16 +318,13 @@ Luke.prototype.update = function () {
     collisionTop = this.getMapCollision("top");
     collisionBottom = this.getMapCollision("bottom");
 
-    canvas.addEventListener("keyup", lightsaberThrow);
-    canvas.addEventListener("mousemove", aimDirection);
-    if (!laserthrown) {
-        canvas.addEventListener("mousemove", aimDirection);       // FIX LIgtsaber throw MOFOFOFOFOFOFO, remove lightsaber after throw, no swinging while thrown
+    if (!this.dead){
+        canvas.addEventListener("keyup", lightsaberThrow);
     } else {
-        // primaryWeapon = !primaryWeapon;
-        console.log("REMOVE MOUSE MOVE");
-        canvas.removeEventListener("mousemove", aimDirection);
-        laserthrown = false;
+        canvas.removeEventListener("keyup", lightsaberThrow);
     }
+    canvas.addEventListener("mousemove", aimDirection);
+        
 
     // stops movement if collision encountered
     if (collisionRight != null) {
@@ -863,9 +860,9 @@ function lightsaberThrow(e) {
             audio.volume = sfxVolume;
             audio.play();
             playerCoor = { x: center_x, y: center_y };
-            gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
+            const endCoor = {x: mouseCoor.x, y: mouseCoor.y};
+            gameEngine.addEntity(new LightsaberThrow(playerCoor, endCoor, gameEngine));
             statusBars.update(0, -50);
-            // primaryWeapon = !primaryWeapon;  //put lightsaber away;
         } 
         
     }
