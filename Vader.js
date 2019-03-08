@@ -187,9 +187,7 @@ Vader.prototype.update = function() {
             this.jumping = false;
         }
     } else if (Math.abs(this.player.y - this.y) < 10 && (this.distance < 110 && this.distance > -20) && !this.jumping) { // avoiding the player getting too close
-        console.log("too close");
         var random = Math.round(Math.random());
-        console.log(random);
         if (this.distance > 0) {
            this.xAcceleration -= random;
         } else {
