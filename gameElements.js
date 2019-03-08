@@ -252,7 +252,7 @@ StatusBars.prototype.draw = function () {
 
 // --------------------- SPARKS ----------------------------
 function createSparks(x, y) {
-    statusBars.update(0, -40);
+    // statusBars.update(0, -40);
     var particleCount = Math.random() * (3) + 2;
     for (var i = 0; i < particleCount; i++) {
         var spark = new Particle(x, y);
