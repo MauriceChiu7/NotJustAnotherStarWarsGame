@@ -1,9 +1,6 @@
 /*
   LaserBeam Object
 */
-var lasersize = 0.15;
-var lasersize2 = 0.5;
-
 function distance(a, b) {
   // console.log(a.x +" "+a.y+ " "+ b.x +" "+b.y);
   var dx = a.x - b.x;
@@ -19,6 +16,7 @@ function LaserBeam(start, end, game) {
   this.x = start.x;
   this.y = start.y;
   this.game = game;
+  this.isShotgun = false;
   this.tag = "laser";
 
   this.xVelocity = 20;
@@ -29,7 +27,6 @@ function LaserBeam(start, end, game) {
 
   this.laserID = null;
   this.enemyTag = null;
-
   this.img = AM.getAsset("./img/blue_laser_small.png");
 
   this.hitbox = 30;
@@ -40,6 +37,12 @@ LaserBeam.prototype = new Entity();
 LaserBeam.prototype.constructor = LaserBeam;
 
 LaserBeam.prototype.update = function () {
+<<<<<<< HEAD
+=======
+  // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
+  this.platformCollisions = [];
+
+>>>>>>> master
   var fullMCollisions = [];
   for (var i = 0; i < fullCollisions.length; i++) {
     let current = fullCollisions[i];
@@ -107,7 +110,9 @@ LaserBeam.prototype.deleteLaserbeam = function () {
 LaserBeam.prototype.draw = function () {
   let theDeg = this.getDegree();
   let absDegree = Math.abs(theDeg);
-
+  if (this.isShotgun){
+    this.img = AM.getAsset("./img/shotgun_bullet.png");
+  }
   drawRotatedImage(this.img, this.x, this.y, theDeg);
 
   Entity.prototype.draw.call(this);
@@ -131,11 +136,11 @@ LaserBeam.prototype.deflection = function () {
     this.start.x = this.end.x;
     this.start.y = this.end.y;
     this.end.x = saveStartx
-    if (chanceDeflectUp == 0){
+    if (chanceDeflectUp == 0) {
       this.end.y = saveStarty - 400;
     } else {
       this.end.y = saveStarty + 400;
-    }    
+    }
   }
 }
 

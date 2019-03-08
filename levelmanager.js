@@ -116,16 +116,6 @@ LevelManager.prototype.update = function () {
     }
 
     /**
-     * Set removeFromWorld to true and Remove them from gameEngine for enemies with NO health
-     */
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        if (gameEngine.entities[i].tag === 'enemy' && gameEngine.entities[i].health <= 0) {
-            gameEngine.entities[i].removeFromWorld = true;
-            gameEngine.entities.splice(i, 1);
-        }
-    }
-
-    /**
      * Remove entities with NO health from MAP
      */
     this.levels[levelNum].enemies = this.levels[levelNum].enemies.filter(enemy => enemy.health > 0);
@@ -133,7 +123,16 @@ LevelManager.prototype.update = function () {
     /**
      * Checks if all enemies are dead
      */
-    if (this.levels[levelNum].enemies.length === 0) {
+    if (this.levels[levelNum].enemies.length === 0) { // Level Up
+        /**
+         * Set removeFromWorld to true and Remove them from gameEngine for enemies with NO health
+         */
+        for (var i = 0; i < gameEngine.entities.length; i++) {
+            if (gameEngine.entities[i].tag === 'enemy' && gameEngine.entities[i].health <= 0) {
+                gameEngine.entities[i].removeFromWorld = true;
+                gameEngine.entities.splice(i, 1);
+            }
+        }
         setTimeout(()=>{
             if (levelNum !== this.levels.length-1 && this.levels[levelNum].enemies.length === 0) { // Check to see if all enemies were defeated
                 for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -184,7 +183,6 @@ Map.prototype.addPlayer = function (player) {
 
 Map.prototype.makeLevel_1 = function () {
     this.addPlayer(new Luke());
-    // this.addEnemy(new Dummy());
     let trooper1 = new Trooper(gameEngine);
     trooper1.x = 100;
     trooper1.y = 40;
@@ -194,9 +192,17 @@ Map.prototype.makeLevel_1 = function () {
     trooper2.y = 350;
     this.addEnemy(trooper2);
     let trooper3 = new Trooper(gameEngine);
-    trooper3.x = 1000;
+    trooper3.x = 1600;
     trooper3.y = 70;
     this.addEnemy(trooper3);
+    trooper3.charger();
+    this.addEnemy(trooper3);
+    let trooper4 = new Trooper(gameEngine);
+    trooper4.x = 1000;
+    trooper4.y = 70;
+    this.addEnemy(trooper4);
+
+    // this.addEnemy(new Dummy());
 }
 
 Map.prototype.makeLevel_2 = function () {
@@ -210,12 +216,24 @@ Map.prototype.makeLevel_2 = function () {
     trooper3.x = 1000;
     trooper3.y = 70;
     this.addEnemy(trooper3);
-    // this.addEnemy(new Dummy());
-    // this.addEnemy(new Vader());
+    this.addEnemy(trooper3);
+    let trooper4 = new Trooper(gameEngine);
+    trooper4.x = 1600;
+    trooper4.y = 70;
+    trooper4.charger();
+    this.addEnemy(trooper4);
+    let trooper5 = new Trooper(gameEngine);
+    trooper5.x = 1000;
+    trooper5.y = 70;
+    trooper5.charger();
+    this.addEnemy(trooper5);
     let vader = new Vader()
     vader.x = 100;
     vader.y = 450;
     this.addEnemy(vader);
+
+    // this.addEnemy(new Dummy());
+    // this.addEnemy(new Vader());
 }
 
 function reload () {
