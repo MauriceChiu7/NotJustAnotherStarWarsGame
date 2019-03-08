@@ -50,6 +50,7 @@ function Vader() {
     this.updateCount = null;
     this.tag = "enemy";
     this.energy = 200;
+    this.collisionBottom;
     //Entity.call(this, this.game, this.x, this.y);
 }
 
@@ -63,6 +64,7 @@ Vader.prototype.update = function() {
     var collisionLeft = this.getMapCollision("left");
     var collisionTop = this.getMapCollision("top");
     var collisionBottom = this.getMapCollision("bottom");
+    this.collisionBottom = this.getMapCollision("bottom");
     if (!this.updateCount ) this.findPlayer(); //will just run once
     this.updateCount = 1;
 
@@ -270,31 +272,39 @@ Vader.prototype.draw = function() {
 }
 
 Vader.prototype.drawRight = function () {
-    if (this.dead) {
-        this.deadRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
-    } else if (this.block) {
-        this.blockRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90 , this.y + 5, this.scale);
-    } else if (this.attacking) {
-        this.attackRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 95, this.y - 20, this.scale);
-    } else if (this.jumping) {
+    if (this.collisionBottom == null) {
         this.jumpingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 95, this.y - 10, this.scale);
     } else {
-        this.walkRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 115, this.y + 14 , this.scale);
+        if (this.dead) {
+            this.deadRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
+        } else if (this.block) {
+            this.blockRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90 , this.y + 5, this.scale);
+        } else if (this.attacking) {
+            this.attackRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 95, this.y - 20, this.scale);
+        } else if (this.jumping) {
+            this.jumpingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 95, this.y - 10, this.scale);
+        } else {
+            this.walkRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 115, this.y + 14 , this.scale);
+        }
     }
     Entity.prototype.draw.call(this);
 }
 
 Vader.prototype.drawLeft = function() {
-    if (this.dead) {
-        this.deadLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
-    } else if (this.block) {
-        this.blockLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y + 5, this.scale);
-    } else if (this.attacking) {
-        this.attackLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y - 20, this.scale);
-    } else if (this.jumping) {
+    if (this.collisionBottom == null) {
         this.jumpingLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
     } else {
-        this.walkLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y + 14 , this.scale);
+        if (this.dead) {
+            this.deadLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
+        } else if (this.block) {
+            this.blockLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y + 5, this.scale);
+        } else if (this.attacking) {
+            this.attackLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y - 20, this.scale);
+        } else if (this.jumping) {
+            this.jumpingLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
+        } else {
+            this.walkLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y + 14 , this.scale);
+        }
     }
     Entity.prototype.draw.call(this);
 }

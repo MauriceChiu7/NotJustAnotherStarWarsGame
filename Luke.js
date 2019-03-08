@@ -191,17 +191,17 @@ Luke.prototype.getMapCollisions = function () {
             var direction = [];
             if (this.y + this.currentDisplacementY > current.y + current.height) {
                 direction = "top";
-                console.log("TOP");
+                // console.log("TOP");
             } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
                 direction = "bottom";
                 //console.log("BOTTOM");
             }
             if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
                 direction = "right";
-                console.log("RIGHT");
+                // console.log("RIGHT");
             } else if (this.x + this.currentDisplacementX <= current.x + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
                 direction = "left";
-                console.log("LEFT");
+                // console.log("LEFT");
             }
             this.fullMCollisions.push({ object: current, direction: direction });
         }
