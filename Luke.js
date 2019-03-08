@@ -353,14 +353,15 @@ Luke.prototype.update = function () {
     for (let i = 0; i < this.game.entities.length; i++) {
         let curEnt = this.game.entities[i];
         if (curEnt instanceof Trooper) {
-            if (this.collideRight(this, curEnt)) {             // Right collide wont FUCKING work // LOL!
-                this.x = curEnt.x - this.width - 30;
-                this.xAcceleration = 0;
-                // console.log("collide right" + this.x + " ");
-            } else if (this.collideLeft(this, curEnt)) {         //Left works :) // Well done!  //Luke is goin to be
-                this.x = curEnt.x + curEnt.width;
-                this.xAcceleration = 0;
-            } 
+            if (!curEnt.dead){
+                if (this.collideRight(this, curEnt)) {
+                    this.x = curEnt.x - this.width - 30;
+                    this.xAcceleration = 0;
+                } else if (this.collideLeft(this, curEnt)) {
+                    this.x = curEnt.x + curEnt.width;
+                    this.xAcceleration = 0;
+                }
+            }
         }
         if (curEnt instanceof LaserBeam && curEnt.tag == "trooperLaser") {
             // console.log('Luke Health (laser): ' + this.health);
@@ -526,7 +527,9 @@ Luke.prototype.update = function () {
                     let ent = this.game.entities[i];
                     if (ent instanceof Trooper && this.attackCollide(this, ent)) {
                         ent.health -= 500;
-                        createSparks(ent.x + ent.width, ent.y + ent.height / 2);
+                        if (!ent.dead) {
+                            createSparks(ent.x + ent.width, ent.y + ent.height / 2);
+                        }
                     }
                 }
                 lukeClick();

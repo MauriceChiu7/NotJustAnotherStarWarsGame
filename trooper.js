@@ -9,7 +9,7 @@ function Trooper(game) {
     this.attackRightAnim = new Animation(this.spriteSheetRight, 0, 444, 62, 74, frameDuration, 9, true, false);
 
     this.dyingRightAnim = new Animation(this.spriteSheetRight, 0, 3 * 74, 62, 74, frameDuration, 6, false, false);
-    this.deadRightAnim = new Animation(this.spriteSheetRight, 5 * 62, 3 * 74, 62, 74, frameDuration, 6, false, false);
+    this.deadRightAnim = new Animation(this.spriteSheetRight, 0 * 62, 4 * 74, 62, 74, frameDuration, 1, true, false);
 
     this.spriteSheetLeft = AM.getAsset("./img/trooper_left.png");
     this.walkLeftAnim = new Animation(this.spriteSheetLeft, 124, 74, 62, 74, frameDuration, 9, true, true);
@@ -220,15 +220,16 @@ Trooper.prototype.update = function () {
             }
         }
 
-    } else {
-        if (this.deadRightAnim.isDone()) {
-            for (var i = 0; i < this.game.entities.length; i++) {
-                if (this.game.entities[i] instanceof Trooper && this.game.entities[i].dead) {
-                    this.game.entities.splice(i, 1);
-                }
-            }
-        }
-    }
+    } 
+    // else {
+    //     if (this.deadRightAnim.isDone()) {
+    //         // for (var i = 0; i < this.game.entities.length; i++) {
+    //         //     if (this.game.entities[i] instanceof Trooper && this.game.entities[i].dead) {
+    //         //         this.game.entities.splice(i, 1);
+    //         //     }
+    //         // }
+    //     }
+    // }
 
     this.getMapCollisions();
     collisionRight = this.getMapCollision("right");
@@ -299,9 +300,8 @@ Trooper.prototype.charger = function () {
 }
 
 Trooper.prototype.draw = function () {
-    // this.drawRight();
     if (this.dead && this.dyingRightAnim.isDone()) {
-        this.deadRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
+        this.deadRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y+7, SCALE_TROOPER);
     }
 
     if (this.dead) {

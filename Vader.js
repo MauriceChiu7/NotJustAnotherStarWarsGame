@@ -27,14 +27,16 @@ function Vader() {
     this.jumpingRightAnim = new Animation(this.vaderRight, 1560, 780, -120, 100, 0.2, 5, true, false);
     this.blockRightAnim = new Animation(this.vaderRight, 950, 320, -120, 80, 1, 1, false, false);
     this.attackRightAnim = new Animation(this.vaderRight, 960, 450 , -120, 110, 0.1, 6, false, false);
-    this.deadRightAnim = new Animation(this.vaderRight, 1560, 640, -120,  80, 1, 7, false, false);
+    this.dyingRightAnim = new Animation(this.vaderRight, 1560, 640, -120,  80, 50, 7, false, false);
+
+    this.deadAnim = new Animation(this.vaderRight, 720, 640, -120, 80, 1, 1, true, false);
 // left
     this.attackLeftAnim = new Animation(this.vaderLeft, 600, 450, 120, 110, 0.1, 6, false, false);
     this.blockLeftAnim = new Animation(this.vaderLeft, 590, 320, 120, 80, 1, 1, false, false);
     //this.attack2Anim = new Animation(this.vaderLeft, 0, 480, 120, 80, 0.05, 11, false, false);
     this.jumpingLeftAnim = new Animation(this.vaderLeft, 0, 780, 120, 100, 0.2, 5, true, false);
     this.walkLeftAnim = new Animation(this.vaderLeft, 0, 890, 120, 70, 0.15, 9, true, false);
-    this.deadLeftAnim = new Animation(this.vaderLeft, 0, 640, 120,  80, 0.5, 7, false, false);
+    // this.deadLeftAnim = new Animation(this.vaderLeft, 0, 640, 120,  80, 0.2, 7, false, false);
     
     this.attacking = false;
     this.switchAttack = true;
@@ -271,7 +273,9 @@ Vader.prototype.draw = function() {
 
 Vader.prototype.drawRight = function () {
     if (this.dead) {
-        this.deadRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
+        this.dyingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90, this.y + 5, this.scale);
+    } else if (this.dead && this.dyingRightAnim.isDone()) {
+        this.deadAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90, this.y + 5, this.scale);
     } else if (this.block) {
         this.blockRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90 , this.y + 5, this.scale);
     } else if (this.attacking) {
@@ -286,7 +290,9 @@ Vader.prototype.drawRight = function () {
 
 Vader.prototype.drawLeft = function() {
     if (this.dead) {
-        this.deadLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
+        this.dyingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y + 5, this.scale);
+    } else if (this.dead && this.dyingRightAnim.isDone()) {
+        this.deadAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y + 5, this.scale);
     } else if (this.block) {
         this.blockLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y + 5, this.scale);
     } else if (this.attacking) {
