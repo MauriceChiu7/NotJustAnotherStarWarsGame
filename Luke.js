@@ -863,6 +863,7 @@ function lightsaberThrow(e) {
             const endCoor = {x: mouseCoor.x, y: mouseCoor.y};
             gameEngine.addEntity(new LightsaberThrow(playerCoor, endCoor, gameEngine));
             statusBars.update(0, -50);
+            primaryWeapon = !primaryWeapon;
         } 
         
     }

@@ -186,10 +186,10 @@ Trooper.prototype.update = function () {
                 // } else {
                 //     this.action = this.walking;
                 // }
-                if (this.player.x + 50 > this.x && Math.abs(this.player.y - this.y) < 10 ) {
+                if (this.player.x + 50 > this.x && Math.abs(this.player.y - this.y) < 50 ) {
                     this.x += 1;
                     this.action = this.walking;
-                } else if (this.player.x + 50 < this.x && Math.abs(this.player.y - this.y) < 10) {
+                } else if (this.player.x + 50 < this.x && Math.abs(this.player.y - this.y) < 50) {
                     this.x -= 1;
                     this.action = this.walking;
                 } else {
@@ -219,8 +219,8 @@ Trooper.prototype.update = function () {
             this.walk = false;
             that.action = that.attacking;
             if (that.attackCollide()) {
-                // statusBars.update(-20, 0);
-                // that.player.health -= 20;
+                statusBars.update(-.2, 0);
+                that.player.health -= .2;
                 setInterval(function () {
                     // statusBars.update(-20, 0);
                     // that.player.health -= 20;
