@@ -277,7 +277,7 @@ Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
 }
 
 Luke.prototype.update = function () {
-    console.log(this.health);
+    // console.log(this.health);
     this.getMapCollisions();
     collisionRight = this.getMapCollision("right");
     collisionLeft = this.getMapCollision("left");
