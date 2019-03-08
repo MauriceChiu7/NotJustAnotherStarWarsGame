@@ -224,7 +224,7 @@ Map.prototype.makeLevel_2 = function () {
     // this.addEnemy(trooper3);
     
     let trooper4 = new Trooper(gameEngine);
-    trooper4.x = 1600;
+    trooper4.x = 1000;
     trooper4.y = 70;
     trooper4.charger();
     // this.addEnemy(trooper4);
