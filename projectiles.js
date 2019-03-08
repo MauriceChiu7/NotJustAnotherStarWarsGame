@@ -1,9 +1,6 @@
 /*
   LaserBeam Object
 */
-var lasersize = 0.15;
-var lasersize2 = 0.5;
-
 function distance(a, b) {
   // console.log(a.x +" "+a.y+ " "+ b.x +" "+b.y);
   var dx = a.x - b.x;
@@ -19,6 +16,7 @@ function LaserBeam(start, end, game) {
   this.x = start.x;
   this.y = start.y;
   this.game = game;
+  this.isShotgun = false;
   this.tag = "laser";
 
   this.xVelocity = 20;
@@ -29,7 +27,6 @@ function LaserBeam(start, end, game) {
 
   this.laserID = null;
   this.enemyTag = null;
-
   this.img = AM.getAsset("./img/blue_laser_small.png");
 
   this.hitbox = 30;
@@ -38,6 +35,15 @@ function LaserBeam(start, end, game) {
 
 LaserBeam.prototype = new Entity();
 LaserBeam.prototype.constructor = LaserBeam;
+
+LaserBeam.prototype.getDistance = function (otherEnt) {
+  let dx, dy;
+  dx = this.x - otherEnt.x;
+  dy = this.y - otherEnt.y;
+  let theDist = Math.sqrt(dx * dx + dy * dy);
+  // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
+  return theDist;
+}
 
 LaserBeam.prototype.update = function () {
   // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
@@ -129,7 +135,9 @@ LaserBeam.prototype.deleteLaserbeam = function () {
 LaserBeam.prototype.draw = function () {
   let theDeg = this.getDegree()
   let absDegree = Math.abs(theDeg);
-
+  if (this.isShotgun){
+    this.img = AM.getAsset("./img/shotgun_bullet.png");
+  }
   drawRotatedImage(this.img, this.x, this.y, theDeg);
 
   Entity.prototype.draw.call(this);
@@ -141,12 +149,24 @@ LaserBeam.prototype.getDegree = function () {
 }
 
 LaserBeam.prototype.deflection = function () {
-  // this.end.y = this.end.y + 50;
-  // this.start.y  = this.start.y + 50;
-  // this.end.x  = this.end.x + 50;
-  // this.start.x  = this.start.x + 50;
-  this.xVelocity = -this.xVelocity;
-  this.yVelocity = -this.yVelocity;
+  let chanceToHit = Math.round(Math.random() * 5);
+
+  if (chanceToHit == 1) {
+    this.xVelocity = -this.xVelocity;
+    this.yVelocity = -this.yVelocity;
+  } else {
+    let chanceDeflectUp = Math.round(Math.random());
+    let saveStartx = this.start.x;
+    let saveStarty = this.start.y;
+    this.start.x = this.end.x;
+    this.start.y = this.end.y;
+    this.end.x = saveStartx
+    if (chanceDeflectUp == 0) {
+      this.end.y = saveStarty - 400;
+    } else {
+      this.end.y = saveStarty + 400;
+    }
+  }
 }
 
 function drawRotatedImage(image, x, y, angle) {
@@ -215,10 +235,14 @@ LightsaberThrow.prototype.getDistance = function (otherEnt) {
 
 LightsaberThrow.prototype.update = function () {
   for (let i = 0; i < gameEngine.entities.length; i++) {
-    let trooper = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles good job
-    if (trooper instanceof Trooper && this.getDistance(trooper) < 50) {
-      trooper.health -= 50;
-      createSparks(trooper.x + trooper.width, trooper.y + trooper.height / 2);
+    let curentEnt = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles good job
+    if (curentEnt instanceof Trooper && this.getDistance(curentEnt) < 50) {
+      curentEnt.health -= 50;
+      createSparks(curentEnt.x + curentEnt.width, curentEnt.y + curentEnt.height / 2);
+    }
+    if (curentEnt instanceof Vader && this.getDistance(curentEnt) < 50) {
+      curentEnt.health -= 50;
+      createSparks(curentEnt.x + curentEnt.width, curentEnt.y + curentEnt.height / 2);
     }
   }
   if (this.right) {      // Throwing to the right side

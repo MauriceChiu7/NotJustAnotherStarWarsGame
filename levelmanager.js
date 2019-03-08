@@ -183,7 +183,6 @@ Map.prototype.addPlayer = function (player) {
 
 Map.prototype.makeLevel_1 = function () {
     this.addPlayer(new Luke());
-    // this.addEnemy(new Dummy());
     let trooper1 = new Trooper(gameEngine);
     trooper1.x = 100;
     trooper1.y = 40;
@@ -191,24 +190,43 @@ Map.prototype.makeLevel_1 = function () {
     let trooper2 = new Trooper(gameEngine);
     trooper2.x = 800;
     trooper2.y = 350;
-    // this.addEnemy(trooper2);
+    this.addEnemy(trooper2);
     let trooper3 = new Trooper(gameEngine);
-    trooper3.x = 1000;
+    trooper3.x = 1600;
     trooper3.y = 70;
-    // this.addEnemy(trooper3);
+    this.addEnemy(trooper3);
+    trooper3.charger();
+    this.addEnemy(trooper3);
+    let trooper4 = new Trooper(gameEngine);
+    trooper4.x = 1000;
+    trooper4.y = 70;
+    this.addEnemy(trooper4);
+
+    // this.addEnemy(new Dummy());
 }
 
 Map.prototype.makeLevel_2 = function () {
     this.addPlayer(new Luke());
-    // this.addEnemy(new Trooper(gameEngine));
+    this.addEnemy(new Trooper(gameEngine));
     let trooper2 = new Trooper(gameEngine);
     trooper2.x = 700;
     trooper2.y = 220;
-    // this.addEnemy(trooper2);
+    this.addEnemy(trooper2);
     let trooper3 = new Trooper(gameEngine);
     trooper3.x = 1000;
     trooper3.y = 70;
-    // this.addEnemy(trooper3);
+    this.addEnemy(trooper3);
+    this.addEnemy(trooper3);
+    let trooper4 = new Trooper(gameEngine);
+    trooper4.x = 1600;
+    trooper4.y = 70;
+    trooper4.charger();
+    this.addEnemy(trooper4);
+    let trooper5 = new Trooper(gameEngine);
+    trooper5.x = 1000;
+    trooper5.y = 70;
+    trooper5.charger();
+    this.addEnemy(trooper5);
     let vader = new Vader()
     vader.x = 100;
     vader.y = 450;

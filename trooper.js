@@ -181,15 +181,19 @@ Trooper.prototype.update = function () {
         if (Math.abs(this.distance) > 50) {
             if (this.isCharger) {
                 this.walk = true;
-                if (Math.abs(this.distance) < 40) {
-                    this.action = this.standing;
-                } else {
-                    this.action = this.walking;
-                }
-                if (this.player.x + 50 > this.x) {
+                // if (Math.abs(this.distance) < 40) {
+                //     this.action = this.standing;
+                // } else {
+                //     this.action = this.walking;
+                // }
+                if (this.player.x + 50 > this.x && Math.abs(this.player.y - this.y) < 10 ) {
                     this.x += 1;
-                } else if (this.player.x + 50 < this.x) {
+                    this.action = this.walking;
+                } else if (this.player.x + 50 < this.x && Math.abs(this.player.y - this.y) < 10) {
                     this.x -= 1;
+                    this.action = this.walking;
+                } else {
+                    this.action = this.standing;
                 }
             } else {
                 this.action = this.standing;
@@ -203,7 +207,11 @@ Trooper.prototype.update = function () {
                         this.shotsFired = true;
                     }
                 }
-                this.shoot();
+                if (this.isCharger){
+                    this.shootCharger();
+                } else {
+                    this.shoot();
+                }                
             }
 
         } else if (Math.abs(this.distance) < 50 && Math.abs(this.player.y - this.y) < 100) {
@@ -297,6 +305,7 @@ Trooper.prototype.update = function () {
 Trooper.prototype.charger = function () {
     this.walk = true;
     this.isCharger = true;
+    this.health = 500;
 }
 
 Trooper.prototype.draw = function () {
@@ -374,15 +383,31 @@ Trooper.prototype.shootCharger = function () {
 
     let rect = canvas.getBoundingClientRect();
     let startCoor = { x: (this.x + 70 + this.x) / 2, y: (this.y + this.height + this.y) / 2 };
-    const xend = center_x;
-    const yend = center_y + 20;
+
+    var xend = center_x;
+    var yend = center_y + 20;
     let endCoor = { x: xend, y: yend };
+    let trooperLaser1 = this.shotgun(startCoor, endCoor);
+    xend = center_x;
+    yend = center_y + 100;
+    endCoor = { x: xend, y: yend };
+    let trooperLaser2 = this.shotgun(startCoor, endCoor);
+    xend = center_x;
+    yend = center_y - 60;
+    endCoor = { x: xend, y: yend };
+    let trooperLaser3 = this.shotgun(startCoor, endCoor);
+    
+    gameEngine.addEntity(trooperLaser1);
+    gameEngine.addEntity(trooperLaser2);
+    gameEngine.addEntity(trooperLaser3);
+}
+
+Trooper.prototype.shotgun = function(startCoor, endCoor){
     let trooperLaser = new LaserBeam(startCoor, endCoor, gameEngine);
     trooperLaser.tag = "trooperLaser";
     trooperLaser.enemyTag = "jedi";
-    // trooperLaser.setID(this.id);
-    // console.log("trooper laser id: " + trooperLaser.laserID);
-    gameEngine.addEntity(trooperLaser);
+    trooperLaser.isShotgun = true;
+    return trooperLaser;
 }
 
 function getAngle(xCoor, yCoor) {

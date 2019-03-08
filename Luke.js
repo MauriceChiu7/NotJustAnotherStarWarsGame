@@ -191,17 +191,17 @@ Luke.prototype.getMapCollisions = function () {
             var direction = [];
             if (this.y + this.currentDisplacementY > current.y + current.height) {
                 direction = "top";
-                console.log("TOP");
+                // console.log("TOP");
             } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
                 direction = "bottom";
                 //console.log("BOTTOM");
             }
             if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
                 direction = "right";
-                console.log("RIGHT");
+                // console.log("RIGHT");
             } else if (this.x + this.currentDisplacementX <= current.x + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
                 direction = "left";
-                console.log("LEFT");
+                // console.log("LEFT");
             }
             this.fullMCollisions.push({ object: current, direction: direction });
         }
@@ -290,7 +290,7 @@ Luke.prototype.getDistance = function (thisEnt, otherEnt) {
     dx = thisEnt.x - otherEnt.x;
     dy = thisEnt.y - otherEnt.y;
     let theDist = Math.sqrt(dx * dx + dy * dy);
-    // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
+    console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
     return theDist;
 }
 
@@ -318,16 +318,13 @@ Luke.prototype.update = function () {
     collisionTop = this.getMapCollision("top");
     collisionBottom = this.getMapCollision("bottom");
 
-    canvas.addEventListener("keyup", lightsaberThrow);
-    canvas.addEventListener("mousemove", aimDirection);
-    if (!laserthrown) {
-        // canvas.addEventListener("mousemove", aimDirection);       // FIX LIgtsaber throw MOFOFOFOFOFOFO, remove lightsaber after throw, no swinging while thrown
+    if (!this.dead){
+        canvas.addEventListener("keyup", lightsaberThrow);
     } else {
-        // primaryWeapon = !primaryWeapon;
-        console.log("REMOVE MOUSE MOVE");
-        canvas.removeEventListener("mousemove", aimDirection);
-        laserthrown = false;
+        canvas.removeEventListener("keyup", lightsaberThrow);
     }
+    canvas.addEventListener("mousemove", aimDirection);
+        
 
     // stops movement if collision encountered
     if (collisionRight != null) {
@@ -363,25 +360,30 @@ Luke.prototype.update = function () {
                 }
             }
         }
-        if (curEnt instanceof LaserBeam && curEnt.tag == "trooperLaser") {
+        if (curEnt instanceof LaserBeam && curEnt.tag == "trooperLaser") {          //Trooper shooting at luke
             // console.log('Luke Health (laser): ' + this.health);
             if (this.getDistance(this, curEnt) < this.width + curEnt.width && !blocking) {
                 statusBars.update(-5, 0);
                 this.health -= 5;
                 curEnt.deleteLaserbeam();
             } else if (this.getDistance(this, curEnt) < this.width + curEnt.width && blocking) {
+                        // && (curEnt.x > this.x && this.game.mouseMoveX + cursorOffset > this.x) 
+                        // || (curEnt.x < this.x && this.game.mouseMoveX + cursorOffset < this.x)) {
                 let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
                 audio.volume = sfxVolume * 0.2;
                 audio.play();
 
                 curEnt.deflection();
-
-                for (let i = 0; i < this.game.entities.length; i++) {
-                    let trooper = this.game.entities[i];
-                    if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
-                        // console.log("HIT");
-                        trooper.health -= 500;
-                    }
+                curEnt.tag = "luke_laser";
+            }
+        } 
+        if (curEnt instanceof LaserBeam && curEnt.tag == "luke_laser"){            // Luke shooting/deflecting at Troopers
+            for (let i = 0; i < this.game.entities.length; i++) {
+                let trooper = this.game.entities[i];
+                if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
+                    trooper.health -= 250;
+                    curEnt.deleteLaserbeam();
+                    createSparks(trooper.x + trooper.width, trooper.y + trooper.height / 2);
                 }
             }
         }
@@ -563,18 +565,6 @@ Luke.prototype.update = function () {
                 let luke_beam = new LaserBeam(playerCoor, endCoor, gameEngine);
                 luke_beam.tag = "luke_laser";
                 gameEngine.addEntity(luke_beam);
-            }
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-                let laser = this.game.entities[i];
-                if (laser instanceof LaserBeam && laser.tag == "luke_laser") {
-                    for (let i = 0; i < this.game.entities.length; i++) {
-                        let trooper = this.game.entities[i];
-                        if (trooper instanceof Trooper && this.attackCollide(laser, trooper)) {
-                            trooper.health -= 500;
-                            laser.deleteLaserbeam();
-                        }
-                    }
-                }
             }
         }
     }
@@ -874,9 +864,9 @@ function lightsaberThrow(e) {
             audio.volume = sfxVolume;
             audio.play();
             playerCoor = { x: center_x, y: center_y };
-            gameEngine.addEntity(new LightsaberThrow(playerCoor, mouseCoor, gameEngine));
+            const endCoor = {x: mouseCoor.x, y: mouseCoor.y};
+            gameEngine.addEntity(new LightsaberThrow(playerCoor, endCoor, gameEngine));
             statusBars.update(0, -50);
-            // primaryWeapon = !primaryWeapon;  //put lightsaber away;
         } 
         
     }
