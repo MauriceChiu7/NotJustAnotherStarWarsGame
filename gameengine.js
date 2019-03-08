@@ -13,6 +13,7 @@ window.requestAnimFrame = (function () {
 
 function GameEngine() {
     this.entities = [];
+    this.projectiles = [];
     this.ctx = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
@@ -166,6 +167,10 @@ GameEngine.prototype.draw = function () {
         this.entities[i].draw(this.ctx);
     }
 
+    for (var i = 0; i < this.projectiles.length; i++) {
+        this.projectiles[i].draw(this.ctx);
+    }
+
     if (gameover) {
         ctx.font = "25px monospace";
         ctx.fillStyle = "WHITE";
@@ -192,6 +197,12 @@ GameEngine.prototype.update = function () {
         var entity = this.entities[i];
         if(entity !== undefined){
             entity.update();
+        }
+    }
+    for (var i = 0; i < this.projectiles.length; i++) {
+        var projectile = this.projectiles[i];
+        if (projectile !== undefined) {
+            projectile.update();
         }
     }
 }
@@ -328,6 +339,15 @@ Animation.prototype.currentFrame = function () {
 
 Animation.prototype.isDone = function () {
     return (this.elapsedTime >= this.totalTime);
+}
+
+function getDistance(thisEnt, otherEnt) {
+    let dx, dy;
+    dx = thisEnt.x - otherEnt.x;
+    dy = thisEnt.y - otherEnt.y;
+    let theDist = Math.sqrt(dx * dx + dy * dy);
+    // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
+    return theDist;
 }
 
 

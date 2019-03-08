@@ -195,7 +195,7 @@ Trooper.prototype.update = function () {
                 this.action = this.standing;
             }
 
-            this.chanceToShoot = Math.round(Math.random() * 40);
+            this.chanceToShoot = Math.round(Math.random() * 60);
             if (this.chanceToShoot == 0) {
                 this.shotsFired = false;
                 for (var i = 0; i < gameEngine.entities.length; i++) {
@@ -364,7 +364,7 @@ Trooper.prototype.shoot = function () {
     trooperLaser.enemyTag = "jedi";
     // trooperLaser.setID(this.id);
     // console.log("trooper laser id: " + trooperLaser.laserID);
-    gameEngine.addEntity(trooperLaser);
+    // gameEngine.addEntity(trooperLaser);
 }
 
 Trooper.prototype.shootCharger = function () {
@@ -382,7 +382,7 @@ Trooper.prototype.shootCharger = function () {
     trooperLaser.enemyTag = "jedi";
     // trooperLaser.setID(this.id);
     // console.log("trooper laser id: " + trooperLaser.laserID);
-    gameEngine.addEntity(trooperLaser);
+    // gameEngine.addEntity(trooperLaser);
 }
 
 function getAngle(xCoor, yCoor) {
