@@ -24,7 +24,7 @@ var playerCoor = { x: 0, y: 0 };
 var blocking = false;
 var rightClickIsDown = false;
 var saberthrown = false;
-var LUKE_THIS;
+var canSwitchWeapons = true;
 
 function Luke() {
     this.x = 300;
@@ -36,7 +36,6 @@ function Luke() {
     this.tag = "player";
     this.health = 100; //100
     this.fullHealth = 100;
-    LUKE_THIS = this;
 
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     // *********************** //
@@ -356,18 +355,20 @@ Luke.prototype.update = function () {
                 var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
                 audio.volume = sfxVolume;
                 audio.play();
-                playerCoor = { x: center_x, y: center_y };
+                playerCoor = { x: center_x, y: center_y +20 };
                 const endCoor = { x: mouseCoor.x, y: mouseCoor.y };
                 gameEngine.addEntity(new LightsaberThrow(playerCoor, endCoor));
                 statusBars.update(0, -50);
                 primaryWeapon = !primaryWeapon;
                 saberthrown = true;
+                canSwitchWeapons = false;
             }    
         }
     }
     if (!isLightSaberThrown() && saberthrown){
         primaryWeapon = !primaryWeapon;
         saberthrown = false;
+        canSwitchWeapons = true;
     }
 
     if (gameEngine.d && !this.dead) {
@@ -448,7 +449,7 @@ Luke.prototype.update = function () {
 
     canvas.addEventListener("mousemove", aimDirection);
 
-    if (this.game.r && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
+    if (this.game.r && canSwitchWeapons && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
         this.switching = true; this.attacking = false;
         // this.aiming = true;
         if (!primaryWeapon) {

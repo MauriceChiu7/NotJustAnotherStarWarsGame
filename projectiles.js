@@ -65,7 +65,7 @@ LaserBeam.prototype.update = function () {
 		} else if (curEnt instanceof Trooper && this.tag == "luke_laser" || curEnt instanceof Vader && this.tag == "luke_laser") {
 			if (getDistance(this, curEnt) < this.width + curEnt.width || distance < this.height + curEnt.height) {				
 				if (curEnt instanceof Vader){
-					curEnt.health -= 175;
+					curEnt.health -= 50;
 				} else {
 					curEnt.health -= 250;
 				}
@@ -219,7 +219,7 @@ LightsaberThrow.prototype.update = function () {
 		} else {
 			// if (this.goBack){
 			let x = center_x - this.end.x;
-			let y = center_y - this.end.y;
+			let y = center_y + 20 - this.end.y;
 			let l = Math.sqrt(x * x + y * y);
 			x = x / l;
 			y = y / l;
