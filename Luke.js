@@ -290,7 +290,7 @@ Luke.prototype.getDistance = function (thisEnt, otherEnt) {
     dx = thisEnt.x - otherEnt.x;
     dy = thisEnt.y - otherEnt.y;
     let theDist = Math.sqrt(dx * dx + dy * dy);
-    console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
+    // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
     return theDist;
 }
 
