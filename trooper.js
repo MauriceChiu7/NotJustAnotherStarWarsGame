@@ -442,6 +442,7 @@ function HealthPack(x, y) {
     this.bottom = y + 10;
     this.floatup = true;
     this.floatSpeed = 0.5;
+    this.tag = "healthpack";
 
     Entity.call(this, gameEngine, this.x, this.y, this.width, this.height);
 }
@@ -477,6 +478,15 @@ HealthPack.prototype.draw = function () {
 HealthPack.prototype.deleteHealthPack = function () {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         if (gameEngine.entities[i] == this) {
+            console.log("delete health pack");
+            gameEngine.entities.splice(i, 1);
+        }
+    }
+}
+
+function deleteAllHealthPacks(){
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        if (gameEngine.entities[i] instanceof HealthPack) {
             console.log("delete health pack");
             gameEngine.entities.splice(i, 1);
         }
