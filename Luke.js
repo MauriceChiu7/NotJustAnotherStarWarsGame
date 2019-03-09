@@ -23,7 +23,7 @@ var playerCoor = { x: 0, y: 0 };
 
 var blocking = false;
 var rightClickIsDown = false;
-var laserthrown = false;
+var saberthrown = false;
 var LUKE_THIS;
 
 function Luke() {
@@ -284,14 +284,6 @@ Luke.prototype.update = function () {
     collisionTop = this.getMapCollision("top");
     collisionBottom = this.getMapCollision("bottom");
 
-    if (!this.dead){
-        canvas.addEventListener("keyup", lightsaberThrow);
-    } else {
-        canvas.removeEventListener("keyup", lightsaberThrow);
-    }
-    canvas.addEventListener("mousemove", aimDirection);
-        
-
     // stops movement if collision encountered
     if (collisionRight != null) {
         this.x = collisionRight.x + collisionRight.width + 1 - this.currentDisplacementX;
@@ -313,10 +305,11 @@ Luke.prototype.update = function () {
         this.yAcceleration += 0.4;
     }
 
+    // Luke collides with troopers when moving 
     for (let i = 0; i < this.game.entities.length; i++) {
         let curEnt = this.game.entities[i];
         if (curEnt instanceof Trooper) {
-            if (!curEnt.dead){
+            if (!curEnt.dead) {
                 if (this.collideRight(this, curEnt)) {
                     this.x = curEnt.x - this.width - 30;
                     this.xAcceleration = 0;
@@ -355,6 +348,26 @@ Luke.prototype.update = function () {
             statusBars.pauseRegeneration = true;
             this.yAcceleration -= 13;
         }
+    }
+
+    if (gameEngine.e && !this.dead) {      // Throw Lightsaber
+        if (statusBars.checkStaminaUse(50)) {    
+            if (primaryWeapon && !isLightSaberThrown()) {
+                var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
+                audio.volume = sfxVolume;
+                audio.play();
+                playerCoor = { x: center_x, y: center_y };
+                const endCoor = { x: mouseCoor.x, y: mouseCoor.y };
+                gameEngine.addEntity(new LightsaberThrow(playerCoor, endCoor));
+                statusBars.update(0, -50);
+                primaryWeapon = !primaryWeapon;
+                saberthrown = true;
+            }    
+        }
+    }
+    if (!isLightSaberThrown() && saberthrown){
+        primaryWeapon = !primaryWeapon;
+        saberthrown = false;
     }
 
     if (gameEngine.d && !this.dead) {
@@ -433,6 +446,8 @@ Luke.prototype.update = function () {
         canvas.addEventListener('contextmenu', reload);
     }
 
+    canvas.addEventListener("mousemove", aimDirection);
+
     if (this.game.r && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
         this.switching = true; this.attacking = false;
         // this.aiming = true;
@@ -496,9 +511,9 @@ Luke.prototype.update = function () {
                 } else {
                     y = center_y + 30;
                 }
-                let playerCoor = {x: x, y: y};
+                let playerCoor = { x: x, y: y };
                 let endCoor = { x: this.game.clickx, y: this.game.clicky };
-                let luke_beam = new LaserBeam(playerCoor, endCoor, gameEngine);
+                let luke_beam = new LaserBeam(playerCoor, endCoor);
                 luke_beam.tag = "luke_laser";
                 // gameEngine.addEntity(luke_beam);
             }
@@ -565,7 +580,7 @@ Luke.prototype.update = function () {
     if (!statusBars.checkStaminaUse(1)) {
         blocking = false;
     }
-    
+
     // Blocking
     if (blocking) {
         statusBars.update(0, -1);
@@ -758,23 +773,5 @@ function aimDirection(event) {
         } else {
             degree = -180 - degree;
         }
-    }
-}
-
-function lightsaberThrow(e) {
-    if (statusBars.checkStaminaUse(50)) {
-        laserthrown = false;
-
-        if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
-            var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
-            audio.volume = sfxVolume;
-            audio.play();
-            playerCoor = { x: center_x, y: center_y };
-            const endCoor = {x: mouseCoor.x, y: mouseCoor.y};
-            gameEngine.addEntity(new LightsaberThrow(playerCoor, endCoor, gameEngine));
-            statusBars.update(0, -50);
-            primaryWeapon = !primaryWeapon;
-        } 
-        
     }
 }

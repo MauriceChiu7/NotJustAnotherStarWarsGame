@@ -2,13 +2,13 @@
 
 window.requestAnimFrame = (function () {
     return window.requestAnimationFrame ||
-            window.webkitRequestAnimationFrame ||
-            window.mozRequestAnimationFrame ||
-            window.oRequestAnimationFrame ||
-            window.msRequestAnimationFrame ||
-            function (/* function */ callback, /* DOMElement */ element) {
-                window.setTimeout(callback, 1000 / 60);
-            };
+        window.webkitRequestAnimationFrame ||
+        window.mozRequestAnimationFrame ||
+        window.oRequestAnimationFrame ||
+        window.msRequestAnimationFrame ||
+        function (/* function */ callback, /* DOMElement */ element) {
+            window.setTimeout(callback, 1000 / 60);
+        };
 })();
 
 function GameEngine() {
@@ -34,11 +34,11 @@ GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
     // if (!paused) {
-        (function gameLoop() {
-            // console.log('loopping');
-            that.loop();
-            requestAnimFrame(gameLoop, that.ctx.canvas);
-        })();
+    (function gameLoop() {
+        // console.log('loopping');
+        that.loop();
+        requestAnimFrame(gameLoop, that.ctx.canvas);
+    })();
     // }
 }
 
@@ -95,11 +95,11 @@ GameEngine.prototype.startInput = function () {
     }, false);
 
     this.ctx.canvas.addEventListener("keydown", function (e) {
-        if (e.code === "KeyD"){
-          that.d = true;
+        if (e.code === "KeyD") {
+            that.d = true;
         }
-        if (e.code === "KeyA"){
-          that.a = true;
+        if (e.code === "KeyA") {
+            that.a = true;
         }
         // console.log(e);
         // console.log("Key Down Event - Char " + e.code + " Code " + e.keyCode);
@@ -110,22 +110,22 @@ GameEngine.prototype.startInput = function () {
         //   var rect = that.ctx.canvas.getBoundingClientRect();
         //   that.e = {pressed: true, x: event.clientX - rect.left, y: event.clientY - rect.top}
         // }
-        if (e.code === "KeyE"){
+        if (e.code === "KeyE") {
             that.e = true;
-          }
-        if (e.code === "KeyD"){
-          that.d = true;
         }
-        if (e.code === "KeyA"){
-          that.a = true;
+        if (e.code === "KeyD") {
+            that.d = true;
         }
-        if (e.code === "KeyW"){
-          that.w = true;
+        if (e.code === "KeyA") {
+            that.a = true;
         }
-        if (e.code === "KeyS"){
-          that.s = true;
+        if (e.code === "KeyW") {
+            that.w = true;
         }
-        if (e.code === "Space"){
+        if (e.code === "KeyS") {
+            that.s = true;
+        }
+        if (e.code === "Space") {
             that.spacebar = true;
         }
         if (e.code === "KeyR") {
@@ -176,11 +176,11 @@ GameEngine.prototype.draw = function () {
         ctx.fillStyle = "WHITE";
         ctx.textAlign = "center";
         if (win) {
-            ctx.fillText("YOU WIN", canvas.width/2, canvas.height/2);
-            ctx.fillText("(RIGHT CLICK ANYWHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
+            ctx.fillText("YOU WIN", canvas.width / 2, canvas.height / 2);
+            ctx.fillText("(RIGHT CLICK ANYWHERE TO PLAY AGAIN)", canvas.width / 2, canvas.height / 2 + 50)
         } else {
-            ctx.fillText("YOU LOSE", canvas.width/2, canvas.height/2);
-            ctx.fillText("(RIGHT CLICK ANYWHERE TO PLAY AGAIN)",  canvas.width/2, canvas.height/2 + 50)
+            ctx.fillText("YOU LOSE", canvas.width / 2, canvas.height / 2);
+            ctx.fillText("(RIGHT CLICK ANYWHERE TO PLAY AGAIN)", canvas.width / 2, canvas.height / 2 + 50)
         }
     }
     drawSparks();
@@ -195,7 +195,7 @@ GameEngine.prototype.update = function () {
 
     for (var i = 0; i < entitiesCount; i++) {
         var entity = this.entities[i];
-        if(entity !== undefined){
+        if (entity !== undefined) {
             entity.update();
         }
     }
@@ -209,10 +209,10 @@ GameEngine.prototype.update = function () {
 
 GameEngine.prototype.loop = function () {
     this.clockTick = this.timer.tick();
-    
-        this.update();
-        this.draw();
-    
+
+    this.update();
+    this.draw();
+
     this.mouseMoveX = this.saveX;
     this.mouseMoveY = this.saveY;
     this.e = null;
@@ -229,7 +229,7 @@ GameEngine.prototype.loop = function () {
     this.keyup = null;
     this.keyReleased = null;
     this.clickx = null;
-    this.clicky =null;
+    this.clicky = null;
 }
 
 function Timer() {
@@ -326,11 +326,11 @@ Animation.prototype.drawFrame = function (tick, ctx, x, y, scaleBy) {
     var locY = y;
     var offset = vindex === 0 ? this.startX : 0;
     ctx.drawImage(this.spriteSheet,
-                  index * this.frameWidth + offset, vindex * this.frameHeight + this.startY,  // source from sheet
-                  this.frameWidth, this.frameHeight,
-                  locX, locY,
-                  this.frameWidth * scaleBy,
-                  this.frameHeight * scaleBy);
+        index * this.frameWidth + offset, vindex * this.frameHeight + this.startY,  // source from sheet
+        this.frameWidth, this.frameHeight,
+        locX, locY,
+        this.frameWidth * scaleBy,
+        this.frameHeight * scaleBy);
 }
 
 Animation.prototype.currentFrame = function () {

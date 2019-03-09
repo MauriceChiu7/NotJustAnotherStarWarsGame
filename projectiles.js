@@ -8,14 +8,13 @@ function distance(a, b) {
 	return Math.sqrt(dx * dx + dy * dy);
 }
 
-function LaserBeam(start, end, game) {
+function LaserBeam(start, end) {
 	// Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
 
 	this.start = start;
 	this.end = end;
 	this.x = start.x;
 	this.y = start.y;
-	this.game = game;
 	this.isShotgun = false;
 	this.tag = "laser";
 
@@ -45,8 +44,8 @@ LaserBeam.prototype.update = function () {
 			fullMCollisions.push(current);
 		}
 	}
-	for (let i = 0; i < this.game.entities.length; i++) {
-		let curEnt = this.game.entities[i];
+	for (let i = 0; i < gameEngine.entities.length; i++) {
+		let curEnt = gameEngine.entities[i];
 
 		if (curEnt instanceof Luke && this.tag == "trooperLaser") {
 			if (getDistance(this, curEnt) < this.width + curEnt.width && !blocking) {
@@ -64,8 +63,12 @@ LaserBeam.prototype.update = function () {
 			}
 
 		} else if (curEnt instanceof Trooper && this.tag == "luke_laser" || curEnt instanceof Vader && this.tag == "luke_laser") {
-			if (getDistance(this, curEnt) < this.width + curEnt.width || distance < this.height + curEnt.height) {
-				curEnt.health -= 250;
+			if (getDistance(this, curEnt) < this.width + curEnt.width || distance < this.height + curEnt.height) {				
+				if (curEnt instanceof Vader){
+					curEnt.health -= 175;
+				} else {
+					curEnt.health -= 250;
+				}
 				this.deleteLaserbeam();
 				createSparks(curEnt.x + curEnt.width, curEnt.y + curEnt.height / 2);
 			}
@@ -108,7 +111,7 @@ LaserBeam.prototype.draw = function () {
 	}
 	drawRotatedImage(this.img, this.x, this.y, theDeg);
 
-	Entity.prototype.draw.call(this);
+	// Entity.prototype.draw.call(this);
 }
 
 LaserBeam.prototype.getDegree = function () {
@@ -163,7 +166,7 @@ function drawRotatedImage(image, x, y, angle) {
 /*
   LightsaberThrow Object
 */
-function LightsaberThrow(start, end, game) {
+function LightsaberThrow(start, end) {
 	// Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
 	this.throwAnim = new Animation(AM.getAsset("./img/luke_sprites_right.png"), 0, 1312, 96, 25, 0.08, 4, true, false);
 	// this.throwAnim = new Animation(AM.getAsset("./img/blue_laser_beam.png"), 45, 70, 527, 59, 1, 0.1, false, false);
@@ -173,7 +176,6 @@ function LightsaberThrow(start, end, game) {
 	this.end = end;
 	this.x = start.x;
 	this.y = start.y;
-	this.game = game;
 	this.width = 30;
 	this.height = 30;
 	this.goBack = false;
@@ -186,8 +188,7 @@ function LightsaberThrow(start, end, game) {
 		this.right = false;
 	}
 
-	// console.log("Init throw: " + start.x + " " + start.y + " " + end.x + " " + end.y);
-	Entity.call(this, game, this.x, this.y, this.width, this.height);
+	Entity.call(this, gameEngine, this.x, this.y, this.width, this.height);
 }
 LightsaberThrow.prototype = new Entity();
 LightsaberThrow.prototype.constructor = LightsaberThrow;
@@ -195,12 +196,14 @@ LightsaberThrow.prototype.constructor = LightsaberThrow;
 LightsaberThrow.prototype.update = function () {
 	for (let i = 0; i < gameEngine.entities.length; i++) {
 		let curentEnt = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles good job
-		if (curentEnt instanceof Trooper && getDistance(this, curentEnt) < 50) {
-			curentEnt.health -= 50;
-			createSparks(curentEnt.x + curentEnt.width, curentEnt.y + curentEnt.height / 2);
-		}
-		if (curentEnt instanceof Vader && getDistance(this, curentEnt) < 50) {
-			curentEnt.health -= 50;
+		if (curentEnt instanceof Trooper && getDistance(this, curentEnt) < 50
+				|| curentEnt instanceof Vader && getDistance(this, curentEnt) < 50) {
+
+			if (curentEnt instanceof Vader){
+				curentEnt.health -= 15;
+			} else {
+				curentEnt.health -= 50;
+			}
 			createSparks(curentEnt.x + curentEnt.width, curentEnt.y + curentEnt.height / 2);
 		}
 	}
@@ -262,6 +265,16 @@ LightsaberThrow.prototype.update = function () {
 LightsaberThrow.prototype.draw = function () {
 	this.throwAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, 1.4);
 	// Entity.prototype.draw.call(this);
+}
+
+function isLightSaberThrown(){
+	for(var i = 0; i < gameEngine.entities.length; i++){
+        let saberThrowEnt = gameEngine.entities[i];
+        if (saberThrowEnt instanceof LightsaberThrow){
+            return true;
+        }
+	}
+	return false;
 }
 
 function deleteLightsaberThrow() {

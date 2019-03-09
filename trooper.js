@@ -368,7 +368,7 @@ Trooper.prototype.shoot = function () {
     const xend = center_x;
     const yend = center_y + 20;
     let endCoor = { x: xend, y: yend };
-    let trooperLaser = new LaserBeam(startCoor, endCoor, gameEngine);
+    let trooperLaser = new LaserBeam(startCoor, endCoor);
     trooperLaser.tag = "trooperLaser";
     trooperLaser.enemyTag = "jedi";
     // trooperLaser.setID(this.id);
@@ -399,7 +399,7 @@ Trooper.prototype.shootCharger = function () {
 }
 
 Trooper.prototype.shotgun = function(startCoor, endCoor){
-    let trooperLaser = new LaserBeam(startCoor, endCoor, gameEngine);
+    let trooperLaser = new LaserBeam(startCoor, endCoor);
     trooperLaser.tag = "trooperLaser";
     trooperLaser.enemyTag = "jedi";
     trooperLaser.isShotgun = true;
