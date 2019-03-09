@@ -173,6 +173,10 @@ Trooper.prototype.update = function () {
         this.standing = false;
         this.attacking = false;
 
+        // gameEngine.addEntity(new HealthPack(
+        //                     (this.x + this.x + this.width) / 2, 
+        //                     (this.y + this.y + this.height) / 2));
+
     }
 
     if (!this.dead) {
@@ -415,4 +419,51 @@ function getAngle(xCoor, yCoor) {
         }
     }
     return theDegree;
+}
+
+var SCALE_HEALTH = 0.1;
+function HealthPack(x, y){
+    this.floatingAnim = new Animation(AM.getAsset("./img/health_pack.png"), 80, 80, 265, 265, 10, 1, false, false);
+    this.x = x;
+    this.y = y;
+    this.maxHeight = y + 1;
+    this.minHeight = y;
+    this.width = 30;
+    this.height = 30;
+    for (var i = 0; i < gameEngine.entities.length; i++){
+        let currentEnt = gameEngine.entities[i];
+        if (currentEnt instanceof Luke){
+            this.player = currentEnt;
+        }
+    }
+    Entity.call(this, gameEngine, this.x, this.y, this.width, this.height);
+}
+
+HealthPack.prototype.update = function(){
+
+    if (this.y < this.maxHeight){
+        this.y ++;
+    } else if (this.y > this.minHeight){
+        this.y --;
+    }
+    if (getDistance(this, this.player) < this.width + this.player.width){
+        this.player.health += 25;
+        statusBars.update(25, 0);
+        deleteHealthPack();
+    }
+    Entity.prototype.update.call(this);
+}
+
+HealthPack.prototype.draw = function(){
+    this.floatingAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, SCALE_HEALTH);
+    Entity.prototype.draw.call(this);
+}
+
+function deleteHealthPack(){
+    for (var i = 0; i < gameEngine.entities.length; i++){
+        let currentEnt = gameEngine.entities[i];
+        if (currentEnt instanceof HealthPack){
+            gameEngine.entities.splice(i, 1);
+        }
+    }
 }

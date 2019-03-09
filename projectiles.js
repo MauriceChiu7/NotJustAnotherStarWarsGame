@@ -9,8 +9,6 @@ function distance(a, b) {
 }
 
 function LaserBeam(start, end) {
-	// Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
-
 	this.start = start;
 	this.end = end;
 	this.x = start.x;
