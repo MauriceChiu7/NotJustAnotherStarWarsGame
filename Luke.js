@@ -476,11 +476,11 @@ Luke.prototype.update = function () {
             }
         } else {
             let laserShot = false;
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-                if (gameEngine.entities[i].tag == "luke_laser") {
-                    laserShot = true;
-                }
-            }
+            // for (var i = 0; i < gameEngine.entities.length; i++) {
+            //     if (gameEngine.entities[i].tag == "luke_laser") {
+            //         laserShot = true;
+            //     }
+            // }
             if (!laserShot) {
                 let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
                 audio.volume = sfxVolume * 0.5;

@@ -189,21 +189,21 @@ Map.prototype.makeLevel_1 = function () {
     trooper1.y = 40;
     this.addEnemy(trooper1);
 
-    let trooper2 = new Trooper(gameEngine);
-    trooper2.x = 800;
-    trooper2.y = 350;
-    this.addEnemy(trooper2);
+    // let trooper2 = new Trooper(gameEngine);
+    // trooper2.x = 800;
+    // trooper2.y = 350;
+    // this.addEnemy(trooper2);
 
-    let trooper3 = new Trooper(gameEngine);
-    trooper3.x = 1600;
-    trooper3.y = 70;
-    trooper3.charger();
-    this.addEnemy(trooper3);
+    // let trooper3 = new Trooper(gameEngine);
+    // trooper3.x = 1600;
+    // trooper3.y = 70;
+    // trooper3.charger();
+    // this.addEnemy(trooper3);
     
-    let trooper4 = new Trooper(gameEngine);
-    trooper4.x = 1000;
-    trooper4.y = 70;
-    this.addEnemy(trooper4);
+    // let trooper4 = new Trooper(gameEngine);
+    // trooper4.x = 1000;
+    // trooper4.y = 70;
+    // this.addEnemy(trooper4);
 
     // this.addEnemy(new Dummy());
 }
