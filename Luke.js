@@ -492,8 +492,8 @@ Luke.prototype.update = function () {
             }
         } else {
             let laserShot = false;
-            // for (var i = 0; i < gameEngine.entities.length; i++) {
-            //     if (gameEngine.entities[i].tag == "luke_laser") {
+            // for (var i = 0; i < gameEngine.projectiles.length; i++) {
+            //     if (gameEngine.projectiles[i].tag == "luke_laser") {
             //         laserShot = true;
             //     }
             // }

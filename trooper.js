@@ -172,7 +172,7 @@ Trooper.prototype.update = function () {
         this.dead = true;
         this.walking = false;
         this.standing = false;
-        this.attacking = false;
+        this.attacking = false;       
 
         if (this.healthPackOut) {
             gameEngine.addEntity(new HealthPack(
@@ -180,6 +180,9 @@ Trooper.prototype.update = function () {
                     (this.y + this.y + this.height) / 2));
             this.healthPackOut = false;
         }
+
+        this.width = -100;
+        this.height = -100;
 
     }
 
@@ -449,22 +452,20 @@ function HealthPack(x, y) {
 HealthPack.prototype = new Entity();
 HealthPack.prototype.constructor = HealthPack;
 
-HealthPack.prototype.update = function () {
-    
+HealthPack.prototype.update = function () {    
     if (this.floatup){
         this.y -= this.floatSpeed;
     } else {
         this.y += this.floatSpeed;
     }
-
     if (this.y < this.top) {        
         this.floatup = false;
     } else if (this.y > this.bottom) {        
         this.floatup = true;
     }
     if (getDistance(this, this.player) < 50) {
-        this.player.health += 25;
-        statusBars.update(25, 0);
+        this.player.health += 15;
+        statusBars.update(15, 0);
         this.deleteHealthPack();
     }
     Entity.prototype.update.call(this);
@@ -478,15 +479,6 @@ HealthPack.prototype.draw = function () {
 HealthPack.prototype.deleteHealthPack = function () {
     for (var i = 0; i < gameEngine.entities.length; i++) {
         if (gameEngine.entities[i] == this) {
-            console.log("delete health pack");
-            gameEngine.entities.splice(i, 1);
-        }
-    }
-}
-
-function deleteAllHealthPacks(){
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        if (gameEngine.entities[i] instanceof HealthPack) {
             console.log("delete health pack");
             gameEngine.entities.splice(i, 1);
         }

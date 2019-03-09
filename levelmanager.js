@@ -79,7 +79,7 @@ LevelManager.prototype.startLevel = function (levelNum) {
     currentMap = this.currentMaps[levelNum];
     fullCollisions = this.fullCollisions[levelNum];
     bottomOnlyCollisions = this.bottomOnlyCollisions[levelNum];
-
+    
     /**
      * Removing EVERY OLD entities except for the LevelManager
      */
@@ -131,6 +131,8 @@ LevelManager.prototype.update = function () {
             if (gameEngine.entities[i].tag === 'enemy' && gameEngine.entities[i].health <= 0) {
                 gameEngine.entities[i].removeFromWorld = true;
                 gameEngine.entities.splice(i, 1);
+            } else if (gameEngine.entities[i] instanceof HealthPack){
+                gameEngine.entities.splice(i, 1);
             }
         }
         setTimeout(()=>{
@@ -140,7 +142,7 @@ LevelManager.prototype.update = function () {
                         gameEngine.entities.splice(i, 1);
                     }
                 }
-                levelNum++;
+                levelNum++;  
                 this.startLevel(levelNum);
             } else if (levelNum === this.levels.length-1 && this.levels[levelNum].enemies.length === 0) { // Winning the last level
                 gameover = true;
@@ -151,7 +153,7 @@ LevelManager.prototype.update = function () {
     } else if (player.health <= 0) { // Loosing the game
         gameover = true;
         canvas.addEventListener('contextmenu', reload);
-    }
+    } 
 }
 
 LevelManager.prototype.draw = function () {
