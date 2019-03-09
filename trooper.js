@@ -45,6 +45,7 @@ function Trooper(game) {
 
     this.isCharger = false;
     this.walk = false;
+    this.healthPackOut = true;
 
     this.game = game;
 
@@ -173,9 +174,12 @@ Trooper.prototype.update = function () {
         this.standing = false;
         this.attacking = false;
 
-        // gameEngine.addEntity(new HealthPack(
-        //                     (this.x + this.x + this.width) / 2, 
-        //                     (this.y + this.y + this.height) / 2));
+        if (this.healthPackOut) {
+            gameEngine.addEntity(new HealthPack(
+                    (this.x + this.x + this.width) / 2,
+                    (this.y + this.y + this.height) / 2));
+            this.healthPackOut = false;
+        }
 
     }
 
@@ -189,7 +193,7 @@ Trooper.prototype.update = function () {
                 // } else {
                 //     this.action = this.walking;
                 // }
-                if (this.player.x + 50 > this.x && Math.abs(this.player.y - this.y) < 50 ) {
+                if (this.player.x + 50 > this.x && Math.abs(this.player.y - this.y) < 50) {
                     this.x += 1;
                     this.action = this.walking;
                 } else if (this.player.x + 50 < this.x && Math.abs(this.player.y - this.y) < 50) {
@@ -210,11 +214,11 @@ Trooper.prototype.update = function () {
                         this.shotsFired = true;
                     }
                 }
-                if (this.isCharger){
+                if (this.isCharger) {
                     this.shootCharger();
                 } else {
                     this.shoot();
-                }                
+                }
             }
 
         } else if (Math.abs(this.distance) < 40 && Math.abs(this.player.y - this.y) < 100) {
@@ -227,7 +231,7 @@ Trooper.prototype.update = function () {
             }
         }
 
-    } 
+    }
     // else {
     //     if (this.deadRightAnim.isDone()) {
     //         // for (var i = 0; i < this.game.entities.length; i++) {
@@ -309,7 +313,7 @@ Trooper.prototype.charger = function () {
 
 Trooper.prototype.draw = function () {
     if (this.dead && this.dyingRightAnim.isDone()) {
-        this.deadRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y+7, SCALE_TROOPER);
+        this.deadRightAnim.drawFrame(gameEngine.clockTick, this.ctx, this.x, this.y + 7, SCALE_TROOPER);
     }
 
     if (this.dead) {
@@ -397,7 +401,7 @@ Trooper.prototype.shootCharger = function () {
     let trooperLaser3 = this.shotgun(startCoor, endCoor);
 }
 
-Trooper.prototype.shotgun = function(startCoor, endCoor){
+Trooper.prototype.shotgun = function (startCoor, endCoor) {
     let trooperLaser = new LaserBeam(startCoor, endCoor);
     trooperLaser.tag = "trooperLaser";
     trooperLaser.enemyTag = "jedi";
@@ -421,48 +425,59 @@ function getAngle(xCoor, yCoor) {
     return theDegree;
 }
 
-var SCALE_HEALTH = 0.1;
-function HealthPack(x, y){
-    this.floatingAnim = new Animation(AM.getAsset("./img/health_pack.png"), 80, 80, 265, 265, 10, 1, false, false);
+var SCALE_HEALTH = 0.07;
+function HealthPack(x, y) {
+    this.floatingAnim = new Animation(AM.getAsset("./img/health_pack.png"), 80, 80, 265, 265, 10, 1, true, false);
     this.x = x;
     this.y = y;
-    this.maxHeight = y + 1;
-    this.minHeight = y;
     this.width = 30;
     this.height = 30;
-    for (var i = 0; i < gameEngine.entities.length; i++){
+    for (var i = 0; i < gameEngine.entities.length; i++) {
         let currentEnt = gameEngine.entities[i];
-        if (currentEnt instanceof Luke){
+        if (currentEnt instanceof Luke) {
             this.player = currentEnt;
         }
     }
+    this.top = y - 20;
+    this.bottom = y + 10;
+    this.floatup = true;
+    this.floatSpeed = 0.5;
+
     Entity.call(this, gameEngine, this.x, this.y, this.width, this.height);
 }
+HealthPack.prototype = new Entity();
+HealthPack.prototype.constructor = HealthPack;
 
-HealthPack.prototype.update = function(){
-
-    if (this.y < this.maxHeight){
-        this.y ++;
-    } else if (this.y > this.minHeight){
-        this.y --;
+HealthPack.prototype.update = function () {
+    
+    if (this.floatup){
+        this.y -= this.floatSpeed;
+    } else {
+        this.y += this.floatSpeed;
     }
-    if (getDistance(this, this.player) < this.width + this.player.width){
+
+    if (this.y < this.top) {        
+        this.floatup = false;
+    } else if (this.y > this.bottom) {        
+        this.floatup = true;
+    }
+    if (getDistance(this, this.player) < 50) {
         this.player.health += 25;
         statusBars.update(25, 0);
-        deleteHealthPack();
+        this.deleteHealthPack();
     }
     Entity.prototype.update.call(this);
 }
 
-HealthPack.prototype.draw = function(){
+HealthPack.prototype.draw = function () {
     this.floatingAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, SCALE_HEALTH);
     Entity.prototype.draw.call(this);
 }
 
-function deleteHealthPack(){
-    for (var i = 0; i < gameEngine.entities.length; i++){
-        let currentEnt = gameEngine.entities[i];
-        if (currentEnt instanceof HealthPack){
+HealthPack.prototype.deleteHealthPack = function () {
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        if (gameEngine.entities[i] == this) {
+            console.log("delete health pack");
             gameEngine.entities.splice(i, 1);
         }
     }
