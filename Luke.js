@@ -678,7 +678,7 @@ Luke.prototype.drawLeft = function () {
         } else if (this.movingRight && !this.jumping && !this.attacking) {
             this.runLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
         } else if (blocking && statusBars.checkStaminaUse(1)) {
-            this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y, SCALE_LUKE);
+            this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 25, this.y, SCALE_LUKE);
         } else {
             this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
         }

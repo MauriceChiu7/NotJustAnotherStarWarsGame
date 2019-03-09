@@ -136,8 +136,7 @@ Trooper.prototype.getDistance = function (ent) {
 }
 Trooper.prototype.attackCollide = function () {
     let distance = this.getDistance();
-    // console.log("Trooper Attack: Distance: " + distance + ", WIDTH: " + this.width + ", " + this.player.width);
-    return distance < this.width + this.player.width;
+    return distance < this.width + this.player.width + 30;
 }
 
 Trooper.prototype.update = function () {
@@ -178,7 +177,7 @@ Trooper.prototype.update = function () {
 
     if (!this.dead) {
         // this.action = this.standing;
-        if (Math.abs(this.distance) > 50) {
+        if (Math.abs(this.distance) > 30) {
             if (this.isCharger) {
                 this.walk = true;
                 // if (Math.abs(this.distance) < 40) {
@@ -214,17 +213,13 @@ Trooper.prototype.update = function () {
                 }                
             }
 
-        } else if (Math.abs(this.distance) < 50 && Math.abs(this.player.y - this.y) < 100) {
+        } else if (Math.abs(this.distance) < 40 && Math.abs(this.player.y - this.y) < 100) {
             let that = this;
             this.walk = false;
-            that.action = that.attacking;
-            if (that.attackCollide()) {
+            this.action = this.attacking;
+            if (this.attackCollide()) {
                 statusBars.update(-.2, 0);
-                that.player.health -= .2;
-                setInterval(function () {
-                    // statusBars.update(-20, 0);
-                    // that.player.health -= 20;
-                }, 2000);
+                this.player.health -= .01;
             }
         }
 
@@ -352,7 +347,7 @@ Trooper.prototype.drawLeft = function () {
 
             break;
         case this.attacking:         //attacking
-            console.log("attack left");
+            // console.log("attack left");
             this.attackLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
             break;
     }

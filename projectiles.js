@@ -49,30 +49,34 @@ LaserBeam.prototype.update = function () {
 
 		if (curEnt instanceof Luke && this.tag == "trooperLaser") {
 			if (getDistance(this, curEnt) < this.width + curEnt.width && !blocking) {
-				statusBars.update(-5, 0);
-				curEnt.health -= 5;
-				this.deleteLaserbeam();
-				createSparks(this.x + this.width, this.y + this.height / 2);
+				this.decreaseEntityHealth(curEnt);
+				
 			} else if (getDistance(this, curEnt) < this.width + curEnt.width && blocking) {
-				let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
-				audio.volume = sfxVolume * 0.2;
-				audio.play();
-				this.deflection();
-				this.tag = "luke_laser";
-				createSparks(this.x + this.width, this.y + this.height / 2);
-			}
+
+					if (this.x > curEnt.x && gameEngine.mouseMoveX + cursorOffset > this.x
+						|| this.x < curEnt.x && gameEngine.mouseMoveX + cursorOffset < this.x) {
+						let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
+						audio.volume = sfxVolume * 0.2;
+						audio.play();
+						this.deflection();
+						this.tag = "luke_laser";
+						createSparks(this.x + this.width, this.y + this.height / 2);
+					} else {
+						this.decreaseEntityHealth(curEnt);
+					}
+				}
 
 		} else if (curEnt instanceof Trooper && this.tag == "luke_laser" || curEnt instanceof Vader && this.tag == "luke_laser") {
-			if (getDistance(this, curEnt) < this.width + curEnt.width || distance < this.height + curEnt.height) {				
-				if (curEnt instanceof Vader){
-					curEnt.health -= 50;
+			if (getDistance(this, curEnt) < this.width + curEnt.width) {
+				if (curEnt instanceof Vader) {
+					curEnt.health -= 25;
 				} else {
 					curEnt.health -= 250;
 				}
 				this.deleteLaserbeam();
 				createSparks(curEnt.x + curEnt.width, curEnt.y + curEnt.height / 2);
 			}
-		} 
+		}
 
 	}
 
@@ -93,6 +97,13 @@ LaserBeam.prototype.update = function () {
 			this.deleteLaserbeam();
 		}
 	}
+}
+
+LaserBeam.prototype.decreaseEntityHealth = function (curEnt) {
+	statusBars.update(-5, 0);
+	curEnt.health -= 5;
+	this.deleteLaserbeam();
+	createSparks(this.x + this.width, this.y + this.height / 2);
 }
 
 LaserBeam.prototype.deleteLaserbeam = function () {
@@ -197,9 +208,9 @@ LightsaberThrow.prototype.update = function () {
 	for (let i = 0; i < gameEngine.entities.length; i++) {
 		let curentEnt = gameEngine.entities[i];   // FIX : lightsaber throw collision put in projectiles good job
 		if (curentEnt instanceof Trooper && getDistance(this, curentEnt) < 50
-				|| curentEnt instanceof Vader && getDistance(this, curentEnt) < 50) {
+			|| curentEnt instanceof Vader && getDistance(this, curentEnt) < 50) {
 
-			if (curentEnt instanceof Vader){
+			if (curentEnt instanceof Vader) {
 				curentEnt.health -= 15;
 			} else {
 				curentEnt.health -= 50;
@@ -267,12 +278,12 @@ LightsaberThrow.prototype.draw = function () {
 	// Entity.prototype.draw.call(this);
 }
 
-function isLightSaberThrown(){
-	for(var i = 0; i < gameEngine.entities.length; i++){
-        let saberThrowEnt = gameEngine.entities[i];
-        if (saberThrowEnt instanceof LightsaberThrow){
-            return true;
-        }
+function isLightSaberThrown() {
+	for (var i = 0; i < gameEngine.entities.length; i++) {
+		let saberThrowEnt = gameEngine.entities[i];
+		if (saberThrowEnt instanceof LightsaberThrow) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -280,7 +291,7 @@ function isLightSaberThrown(){
 function deleteLightsaberThrow() {
 	for (var i = 0; i < gameEngine.entities.length; i++) {
 		if (gameEngine.entities[i] instanceof LightsaberThrow) {
-			console.log("lightsaber deleted");
+			// console.log("lightsaber deleted");
 			gameEngine.entities.splice(i, 1);
 		}
 	}
