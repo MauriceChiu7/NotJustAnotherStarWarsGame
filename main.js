@@ -693,7 +693,7 @@ function inGame() {
     //     }
         // gameEngine.addEntity(new Dummy(gameEngine));
     // }
-    document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
+    document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.png), default";
 }
 
 function inGameFrame() {
