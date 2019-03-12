@@ -145,11 +145,11 @@ Vader.prototype.update = function() {
     } else if (!this.block && !this.attacking && Math.abs(this.player.y - this.y) < 40
         && (this.distance <= 130 && this.distance >= -50) && collisionBottom != null) {
         console.log("try to block or attack");
-        this.chanceToBlock = Math.round(Math.random() * 5); this.blocking = false; this.attacking = false; this.jumping = false;
-        if (this.chanceToBlock === 1) {
+        this.chanceToBlock = Math.round(Math.random() * 20); this.blocking = false; this.attacking = false; this.jumping = false;
+        if (this.chanceToBlock % 3 == 1) {
             this.block = true;
             this.energy -= 10;
-        } else if (this.chanceToBlock === 0 && this.energy > 150) {
+        } else if (this.chanceToBlock % 4 == 0 && this.energy > 150) {
             this.attacking = true;
             this.energy -= 100;
         }
@@ -196,7 +196,12 @@ Vader.prototype.update = function() {
            this.xAcceleration += random;
         }
     } else {
-        this.jumping = false;
+        if (this.distance > 0) {
+            this.xAcceleration += 5;
+        } else if (this.distance < 0) {
+            this.xAcceleration -= 5;
+        }
+        //this.jumping = false;
     }
     
     //console.log(this.attackRightAnim.isDone() || this.attackLeftAnim.isDone());
@@ -219,9 +224,10 @@ Vader.prototype.update = function() {
 
     if (this.player.attacking) {
         if (!this.block && this.attackCollide()) {
+            console.log("get attacK");
             this.health -= 40;
         } else if (this.block) {
-            this.energy +=20;
+            this.energy += 20;
         }
 
     }
@@ -437,23 +443,9 @@ Vader.prototype.getCollision = function (direction) {
     }
     return null;
  }
-//  Vader.prototype.attackCollide = function (thisEnt, otherEnt) {
-//     let distance = this.getDistance(thisEnt, otherEnt);
-//     // console.log("Distance: " + distance + ", WIDTH: " + thisEnt.width + ", " + otherEnt.width);
-//     // console.log(distance < thisEnt.width + otherEnt.width);
-//     return distance < thisEnt.width + otherEnt.width || distance < thisEnt.height + otherEnt.height;
-// }
-// Vader.prototype.getDistance = function (thisEnt, otherEnt) {
-//     let dx, dy;
-//     dx = thisEnt.x - otherEnt.x;
-//     dy = thisEnt.y - otherEnt.y;
-//     let theDist = Math.sqrt(dx * dx + dy * dy);
-//     // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
-//     return theDist;
-// }
 Vader.prototype.attackCollide = function () {
     let distance = this.getDistance();
-    //  console.log("Trooper Attack: Distance: " + distance + ", WIDTH: " + this.width + ", " + this.player.width);
+     console.log("Trooper Attack: Distance: " + distance + ", WIDTH: " + this.width + ", " + this.player.width);
     return distance < this.width + this.player.width;
 }
 Vader.prototype.getDistance = function () {

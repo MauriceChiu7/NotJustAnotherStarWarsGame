@@ -34,7 +34,7 @@ function Luke() {
     this.xAcceleration = 0;
     this.yAcceleration = 0;
     this.tag = "player";
-    this.health = 100;
+    this.health = 10000;
     this.fullHealth = 100;
     LUKE_THIS = this;
 
