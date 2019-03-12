@@ -28,8 +28,6 @@ AM.queueDownload("./img/vader_sprites_left - Copy.png");
 AM.queueDownload("./img/vader_sprites_right.png");  
 AM.queueDownload("./img/blueLightsaber.png");
 AM.queueDownload("./img/mapAssets1.png");
-AM.queueDownload("./img/laserbeams_angle.png");
-AM.queueDownload("./img/laserbeams_angle_left.png");
 AM.queueDownload("./img/macewindu_left.png");
 AM.queueDownload("./img/macewindu_right.png");
 AM.queueDownload("./img/trooper_right.png");
@@ -40,6 +38,7 @@ AM.queueDownload("./img/obiwan_right.png");
 AM.queueDownload("./img/obiwan_left.png");
 AM.queueDownload("./img/blue_laser_small.png");
 AM.queueDownload("./img/shotgun_bullet.png");
+AM.queueDownload("./img/health_pack.png");
 
 AM.queueSound("./sounds/VaderVsLukeTheme.wav");
 AM.queueSound("./sounds/Swing2.WAV");
@@ -693,7 +692,7 @@ function inGame() {
     //     }
         // gameEngine.addEntity(new Dummy(gameEngine));
     // }
-    document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.PNG), default";
+    document.getElementById("gameWorld").style.cursor = "url(./img/red_crosshair.png), default";
 }
 
 function inGameFrame() {

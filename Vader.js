@@ -9,6 +9,7 @@ function Vader() {
     this.x = 800;
     this.y = 10;
     this.width = 30;
+    this.height = 30;
     this.xDisplacement = 0;
     this.yDisplacement = 0;
     this.scale = 0.8;
