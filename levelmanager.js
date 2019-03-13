@@ -37,7 +37,7 @@ function LevelManager() {
     new FullCollision(0, 554, 922, 45); // Ground floor left
     new FullCollision(1034, 554, 200, 45); // Ground floor right
     // new FullCollision(1195, 0, 5, 600); // Right side wall
-    new FullCollision(-10, -10, 1220, 10); // Ceiling
+    new FullCollision(-10, -110, 1220, 110); // Ceiling
     new BottomOnlyCollision(800, 62, 255); // Small top left
     new BottomOnlyCollision(1120, 62, 90); // Small top right
     new BottomOnlyCollision(1032, 142, 110); // Small middle
@@ -79,7 +79,7 @@ LevelManager.prototype.startLevel = function (levelNum) {
     currentMap = this.currentMaps[levelNum];
     fullCollisions = this.fullCollisions[levelNum];
     bottomOnlyCollisions = this.bottomOnlyCollisions[levelNum];
-
+    
     /**
      * Removing EVERY OLD entities except for the LevelManager
      */
@@ -131,6 +131,8 @@ LevelManager.prototype.update = function () {
             if (gameEngine.entities[i].tag === 'enemy' && gameEngine.entities[i].health <= 0) {
                 gameEngine.entities[i].removeFromWorld = true;
                 gameEngine.entities.splice(i, 1);
+            } else if (gameEngine.entities[i] instanceof HealthPack){
+                gameEngine.entities.splice(i, 1);
             }
         }
         setTimeout(()=>{
@@ -140,18 +142,20 @@ LevelManager.prototype.update = function () {
                         gameEngine.entities.splice(i, 1);
                     }
                 }
-                levelNum++;
+                levelNum++;  
                 this.startLevel(levelNum);
             } else if (levelNum === this.levels.length-1 && this.levels[levelNum].enemies.length === 0) { // Winning the last level
-                gameover = true;
-                win = true;
-                canvas.addEventListener('contextmenu', reload);
+                if (player.health > 0) {
+                    gameover = true;
+                    win = true;
+                    canvas.addEventListener('contextmenu', reload);
+                }
             }
         }, 1000)
     } else if (player.health <= 0) { // Loosing the game
         gameover = true;
         canvas.addEventListener('contextmenu', reload);
-    }
+    } 
 }
 
 LevelManager.prototype.draw = function () {
@@ -183,17 +187,17 @@ Map.prototype.addPlayer = function (player) {
 
 Map.prototype.makeLevel_1 = function () {
     this.addPlayer(new Luke());
-    
+
     let trooper1 = new Trooper(gameEngine);
     trooper1.x = 100;
     trooper1.y = 40;
     this.addEnemy(trooper1);
-    
+
     let trooper2 = new Trooper(gameEngine);
     trooper2.x = 800;
     trooper2.y = 350;
     this.addEnemy(trooper2);
-    
+
     let trooper3 = new Trooper(gameEngine);
     trooper3.x = 1600;
     trooper3.y = 70;
@@ -210,7 +214,7 @@ Map.prototype.makeLevel_1 = function () {
 
 Map.prototype.makeLevel_2 = function () {
     this.addPlayer(new Luke());
-    
+
     this.addEnemy(new Trooper(gameEngine));
 
     let trooper2 = new Trooper(gameEngine);

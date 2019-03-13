@@ -23,8 +23,8 @@ var playerCoor = { x: 0, y: 0 };
 
 var blocking = false;
 var rightClickIsDown = false;
-var laserthrown = false;
-var LUKE_THIS;
+var saberthrown = false;
+var canSwitchWeapons = true;
 
 function Luke() {
     this.x = 300;
@@ -34,9 +34,8 @@ function Luke() {
     this.xAcceleration = 0;
     this.yAcceleration = 0;
     this.tag = "player";
-    this.health = 10000; //100
+    this.health = 100; //100
     this.fullHealth = 100;
-    LUKE_THIS = this;
 
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
     // *********************** //
@@ -138,7 +137,6 @@ function Luke() {
     /** Edit by Steven **/
 
     // On create character states
-    this.standing = true;
     this.jumping = false;
     this.crouching = false;
     this.dropping = false;
@@ -191,17 +189,13 @@ Luke.prototype.getMapCollisions = function () {
             var direction = [];
             if (this.y + this.currentDisplacementY > current.y + current.height) {
                 direction = "top";
-                // console.log("TOP");
             } else if (this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y) {
                 direction = "bottom";
-                //console.log("BOTTOM");
             }
             if (this.x + 1 + this.currentDisplacementX >= current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x && this.yAcceleration != 0) {
                 direction = "right";
-                // console.log("RIGHT");
             } else if (this.x + this.currentDisplacementX <= current.x + 1 && this.x + this.xAcceleration + this.currentDisplacementX <= current.x + current.width + 1 && this.x + this.xAcceleration + 1 + this.currentDisplacementX >= current.x) {
                 direction = "left";
-                // console.log("LEFT");
             }
             this.fullMCollisions.push({ object: current, direction: direction });
         }
@@ -212,7 +206,6 @@ Luke.prototype.getMapCollisions = function () {
         if (this.x + this.xAcceleration + this.currentDisplacementX < current.x + current.width && this.x + this.xAcceleration + this.currentDisplacementX > current.x && this.y + this.yAcceleration + this.currentDisplacementY > current.y &&
             this.y + LUKE_COLLISION_HEIGHT + this.currentDisplacementY > current.y && this.y + this.yAcceleration + this.currentDisplacementY <= current.y + 20 && this.yAcceleration >= 0) {
             this.bottomMCollisions.push(bottomOnlyCollisions[i]);
-            //console.log("BOTTOM");
         }
     }
 }
@@ -256,41 +249,12 @@ Luke.prototype.getMapCollision = function (direction) {
     return null;
 }
 
-Luke.prototype.collide = function (xDisplacement, yDisplacement, tag) {
-    var collisions = [];
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        let theTag = gameEngine.entities[i].tag;
-        let current = gameEngine.entities[i];
-        if (tag === 'Platform') {
-            if (theTag == tag) {
-                if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-                    this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-                    var direction = 'bottom';
-                    // console.log(current);
-                    if (this.y > current.collisionY + current.collisionHeight) {
-                        direction = "top";
-                    } else if (this.y + this.height > current.collisionY) {
-                        direction = "bottom";
-                    }
-                    if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                        direction = "right";
-                    } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                        direction = "left";
-                    }
-                    collisions.push({ entity: current, direction: direction });
-                }
-            }
-        }
-    }
-    return collisions;
-}
-
 Luke.prototype.getDistance = function (thisEnt, otherEnt) {
     let dx, dy;
     dx = thisEnt.x - otherEnt.x;
     dy = thisEnt.y - otherEnt.y;
     let theDist = Math.sqrt(dx * dx + dy * dy);
-    console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
+    // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
     return theDist;
 }
 
@@ -312,19 +276,12 @@ Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
 }
 
 Luke.prototype.update = function () {
+    // console.log(this.health);
     this.getMapCollisions();
     collisionRight = this.getMapCollision("right");
     collisionLeft = this.getMapCollision("left");
     collisionTop = this.getMapCollision("top");
     collisionBottom = this.getMapCollision("bottom");
-
-    if (!this.dead){
-        canvas.addEventListener("keyup", lightsaberThrow);
-    } else {
-        canvas.removeEventListener("keyup", lightsaberThrow);
-    }
-    canvas.addEventListener("mousemove", aimDirection);
-        
 
     // stops movement if collision encountered
     if (collisionRight != null) {
@@ -347,43 +304,17 @@ Luke.prototype.update = function () {
         this.yAcceleration += 0.4;
     }
 
+    // Luke collides with troopers when moving 
     for (let i = 0; i < this.game.entities.length; i++) {
         let curEnt = this.game.entities[i];
         if (curEnt instanceof Trooper) {
-            if (!curEnt.dead){
+            if (!curEnt.dead) {
                 if (this.collideRight(this, curEnt)) {
                     this.x = curEnt.x - this.width - 30;
                     this.xAcceleration = 0;
                 } else if (this.collideLeft(this, curEnt)) {
                     this.x = curEnt.x + curEnt.width;
                     this.xAcceleration = 0;
-                }
-            }
-        }
-        if (curEnt instanceof LaserBeam && curEnt.tag == "trooperLaser") {          //Trooper shooting at luke
-            // console.log('Luke Health (laser): ' + this.health);
-            if (this.getDistance(this, curEnt) < this.width + curEnt.width && !blocking) {
-                statusBars.update(-5, 0);
-                this.health -= 5;
-                curEnt.deleteLaserbeam();
-            } else if (this.getDistance(this, curEnt) < this.width + curEnt.width && blocking) {
-                        // && (curEnt.x > this.x && this.game.mouseMoveX + cursorOffset > this.x) 
-                        // || (curEnt.x < this.x && this.game.mouseMoveX + cursorOffset < this.x)) {
-                let audio = AM.getSound('./sounds/lasrhit2.WAV').cloneNode();
-                audio.volume = sfxVolume * 0.2;
-                audio.play();
-
-                curEnt.deflection();
-                curEnt.tag = "luke_laser";
-            }
-        } 
-        if (curEnt instanceof LaserBeam && curEnt.tag == "luke_laser"){            // Luke shooting/deflecting at Troopers
-            for (let i = 0; i < this.game.entities.length; i++) {
-                let trooper = this.game.entities[i];
-                if (trooper instanceof Trooper && this.attackCollide(curEnt, trooper)) {
-                    trooper.health -= 250;
-                    curEnt.deleteLaserbeam();
-                    createSparks(trooper.x + trooper.width, trooper.y + trooper.height / 2);
                 }
             }
         }
@@ -418,14 +349,36 @@ Luke.prototype.update = function () {
         }
     }
 
+    if (gameEngine.e && !this.dead) {      // Throw Lightsaber
+        if (statusBars.checkStaminaUse(50)) {    
+            if (primaryWeapon && !isLightSaberThrown()) {
+                var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
+                audio.volume = sfxVolume;
+                audio.play();
+                playerCoor = { x: center_x, y: center_y +20 };
+                const endCoor = { x: mouseCoor.x, y: mouseCoor.y };
+                gameEngine.addEntity(new LightsaberThrow(playerCoor, endCoor));
+                statusBars.update(0, -50);
+                primaryWeapon = !primaryWeapon;
+                saberthrown = true;
+                canSwitchWeapons = false;
+            }    
+        }
+    }
+    if (!isLightSaberThrown() && saberthrown){
+        primaryWeapon = !primaryWeapon;
+        saberthrown = false;
+        canSwitchWeapons = true;
+    }
+
     if (gameEngine.d && !this.dead) {
-        this.movingRight = true; this.movingLeft = false; this.standing = false; this.crouching = false;
+        this.movingRight = true; this.movingLeft = false; this.crouching = false;
     }
     if (gameEngine.a && !this.dead) {
-        this.movingRight = false; this.movingLeft = true; this.standing = false; this.crouching = false;
+        this.movingRight = false; this.movingLeft = true; this.crouching = false;
     }
     if (gameEngine.s && !this.dead) {
-        this.crouching = true; this.movingLeft = false; this.movingRight = false; this.standing = false; blocking = false;
+        this.crouching = true; this.movingLeft = false; this.movingRight = false; blocking = false;
     }
     if (gameEngine.spacebar) {
         this.dropping = true;
@@ -433,13 +386,10 @@ Luke.prototype.update = function () {
     if (gameEngine.keyup && !this.dead) {
         if (gameEngine.keyReleased == 'd') {
             this.movingRight = false;
-            this.standing = true;
         } else if (gameEngine.keyReleased == 'a') {
             this.movingLeft = false;
-            this.standing = true;
         } else if (gameEngine.keyReleased == 's') {
             this.crouching = false;
-            this.standing = true;
         } else if (gameEngine.keyReleased == ' ') {
             this.dropping = false;
         }
@@ -497,8 +447,10 @@ Luke.prototype.update = function () {
         canvas.addEventListener('contextmenu', reload);
     }
 
-    if (this.game.r && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
-        this.switching = true; this.standing = false; this.attacking = false;
+    canvas.addEventListener("mousemove", aimDirection);
+
+    if (this.game.r && canSwitchWeapons && !this.dead) {                                  // Key R: Switching between primary and secondary weapon
+        this.switching = true; this.attacking = false;
         // this.aiming = true;
         if (!primaryWeapon) {
             var audio = AM.getSound('./sounds/LightsaberTurnOn.wav').cloneNode();
@@ -512,7 +464,7 @@ Luke.prototype.update = function () {
         primaryWeapon = !primaryWeapon;
     }
     if (this.health <= 0) {
-        this.dying = true; this.standing = false; this.movingRight = false; this.movingLeft = false; blocking = false;
+        this.dying = true; this.movingRight = false; this.movingLeft = false; blocking = false;
         this.jumping = false; this.attacking = false; this.crouching = false; this.switching = false;
         this.dead = true;
         for (var i = 0; i < gameEngine.entities[i]; i++) {
@@ -540,11 +492,11 @@ Luke.prototype.update = function () {
             }
         } else {
             let laserShot = false;
-            for (var i = 0; i < gameEngine.entities.length; i++) {
-                if (gameEngine.entities[i].tag == "luke_laser") {
-                    laserShot = true;
-                }
-            }
+            // for (var i = 0; i < gameEngine.projectiles.length; i++) {
+            //     if (gameEngine.projectiles[i].tag == "luke_laser") {
+            //         laserShot = true;
+            //     }
+            // }
             if (!laserShot) {
                 let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
                 audio.volume = sfxVolume * 0.5;
@@ -560,11 +512,11 @@ Luke.prototype.update = function () {
                 } else {
                     y = center_y + 30;
                 }
-                let playerCoor = {x: x, y: y};
+                let playerCoor = { x: x, y: y };
                 let endCoor = { x: this.game.clickx, y: this.game.clicky };
-                let luke_beam = new LaserBeam(playerCoor, endCoor, gameEngine);
+                let luke_beam = new LaserBeam(playerCoor, endCoor);
                 luke_beam.tag = "luke_laser";
-                gameEngine.addEntity(luke_beam);
+                // gameEngine.addEntity(luke_beam);
             }
         }
     }
@@ -572,14 +524,13 @@ Luke.prototype.update = function () {
 
     // Jumping
     if (this.jumping) {
-        this.crouching = false; this.attacking = false; this.switching = false; this.standing = false; blocking = false;
+        this.crouching = false; this.attacking = false; this.switching = false; blocking = false;
         if (primaryWeapon) {
             if (this.jumpRightAnim.isDone() || this.jumpLeftAnim.isDone()) {
                 this.jumpRightAnim.elapsedTime = 0;
                 this.jumpLeftAnim.elapsedTime = 0;
                 statusBars.pauseRegeneration = false;
                 this.jumping = false;
-                this.standing = true;
             }
         } else {
             if (this.gunJumpRightAnim.isDone() || this.gunJumpLeftAnim.isDone()) {
@@ -587,27 +538,23 @@ Luke.prototype.update = function () {
                 this.gunJumpLeftAnim.elapsedTime = 0;
                 statusBars.pauseRegeneration = false;
                 this.jumping = false;
-                this.standing = true;
             }
         }
     }
 
     // Attacking
     if (this.attacking) {
-        this.standing = false;
         if (this.attk1RightAnim.isDone() || this.attk1LefttAnim.isDone()) {
             this.attk1RightAnim.elapsedTime = 0;
             this.attk1LefttAnim.elapsedTime = 0;
             attkNumLuke = 2;
             this.attacking = false;
-            this.standing = true;
         }
         if (this.attk2RightAnim.isDone() || this.attk2LefttAnim.isDone()) {
             this.attk2RightAnim.elapsedTime = 0;
             this.attk2LefttAnim.elapsedTime = 0;
             attkNumLuke = 1;
             this.attacking = false;
-            this.standing = true;
         }
     }
 
@@ -618,25 +565,26 @@ Luke.prototype.update = function () {
         this.saberOnLeftAnim.elapsedTime = 0;
         this.saberOffLeftAnim.elapsedTime = 0;
         this.switching = false;
-        this.standing = true;
     }
 
     // Crouching
     if (this.crouching) {
         this.jumping = false;
         this.attacking = false;
-        this.standing = false;
     } // Could have else if (this.crouching && this.attacking) for crouch attack
 
     if (this.switching) {
         this.crouching = false;
-        this.standing = false;
         // this.jumping = false;
     }
+
+    if (!statusBars.checkStaminaUse(1)) {
+        blocking = false;
+    }
+
     // Blocking
     if (blocking) {
         statusBars.update(0, -1);
-        this.standing = false;
         this.crouching = false;
     }
     // statusBars.update((this.health - this.fullHealth), 0)
@@ -666,57 +614,44 @@ Luke.prototype.draw = function () {
 
 Luke.prototype.drawRight = function () { // FIX : ANIMATION OVERLAP, NEED IF ELSES OR BETTER BOOLEAN SETTINGS CUS SOMETIMES MULTIPLE ANIMATIONS PLAY AT THE SAME TIME
     if (primaryWeapon) { // If the character is using their primaryWeapon
-        if (blocking) {
+        if (this.switching) {
+            this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
+        } else if (this.crouching) {
+            this.crouchRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
+        } else if (this.attacking) {
+            if (attkNumLuke === 1) {
+                this.attk1RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
+            } else {
+                this.attk2RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
+            }
+        } else if (this.jumping) {
+            this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y, SCALE_LUKE);
+        } else if (this.dying) {
+            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
+        } else if (this.movingRight && !this.jumping && !this.attacking) {
+            this.runRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
+        } else if (this.movingLeft && !this.jumping && !this.attacking) {
+            this.runRightBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
+        } else if (blocking && statusBars.checkStaminaUse(1)) {
             this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 10, this.y, SCALE_LUKE);
         } else {
-            if (this.switching) {
-                this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-            }
-            if (this.standing) {
-                this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-            }
-            if (this.crouching) {
-                this.crouchRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-            }
-            if (this.attacking) {
-                if (attkNumLuke === 1) {
-                    this.attk1RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
-                } else {
-                    this.attk2RightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 32, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
-                }
-            }
-            if (this.jumping) {
-                this.jumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y, SCALE_LUKE);
-            }
-            if (this.dying) {
-                this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
-            }
-            if (this.movingRight && !this.jumping && !this.attacking) {
-                this.runRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-            } else if (this.movingLeft && !this.jumping && !this.attacking) {
-                this.runRightBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-            }
+            this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         }
     } else { // If the character is using their secondary weapon
         if (this.switching) {
             this.saberOffRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-        }
-        if (this.standing) {
-            this.drawGunStanding();
-        }
-        if (this.crouching) {
+        } else if (this.crouching) {
             this.drawGunCrouching();
-        }
-        if (this.jumping) {
+        } else if (this.jumping) {
             this.gunJumpRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-        }
-        if (this.dying) {
+        } else if (this.dying) {
             this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
-        }
-        if (this.movingRight && !this.jumping && !this.attacking) {
+        } else if (this.movingRight && !this.jumping && !this.attacking) {
             this.gunRunRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         } else if (this.movingLeft && !this.jumping && !this.attacking) {
             this.gunRunRightBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
+        } else {
+            this.drawGunStanding();
         }
     }
     Entity.prototype.draw.call(this);
@@ -724,57 +659,44 @@ Luke.prototype.drawRight = function () { // FIX : ANIMATION OVERLAP, NEED IF ELS
 
 Luke.prototype.drawLeft = function () {
     if (primaryWeapon) { // If the character is using their primaryWeapon
-        if (blocking) {
-            this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 50, this.y, SCALE_LUKE);
+        if (this.switching) {
+            this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
+        } else if (this.crouching) {
+            this.crouchLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
+        } else if (this.attacking) {
+            if (attkNumLuke === 1) {
+                this.attk1LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
+            } else {
+                this.attk2LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
+            }
+        } else if (this.jumping) {
+            this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y, SCALE_LUKE);
+        } else if (this.dying) {
+            this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
+        } else if (this.movingLeft && !this.jumping && !this.attacking) {
+            this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
+        } else if (this.movingRight && !this.jumping && !this.attacking) {
+            this.runLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
+        } else if (blocking && statusBars.checkStaminaUse(1)) {
+            this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 25, this.y, SCALE_LUKE);
         } else {
-            if (this.switching) {
-                this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-            }
-            if (this.standing) {
-                this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
-            }
-            if (this.crouching) {
-                this.crouchLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-            }
-            if (this.attacking) {
-                if (attkNumLuke === 1) {
-                    this.attk1LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
-                } else {
-                    this.attk2LefttAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 40, this.y + LUKE_2_HIGH_DIFF, SCALE_LUKE);
-                }
-            }
-            if (this.jumping) {
-                this.jumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x - 25, this.y, SCALE_LUKE);
-            }
-            if (this.dying) {
-                this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
-            }
-            if (this.movingLeft && !this.jumping && !this.attacking) {
-                this.runLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
-            } else if (this.movingRight && !this.jumping && !this.attacking) {
-                this.runLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
-            }
+            this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
         }
     } else { // If the character is using their secondary weapon
         if (this.switching) {
             this.saberOffLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-        }
-        if (this.standing) {
-            this.drawGunStanding();
-        }
-        if (this.crouching) {
+        } else if (this.crouching) {
             this.drawGunCrouching();
-        }
-        if (this.jumping) {
+        } else if (this.jumping) {
             this.gunJumpLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
-        }
-        if (this.dying) {
+        } else if (this.dying) {
             this.dyingRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 10, SCALE_LUKE);
-        }
-        if (this.movingLeft && !this.jumping && !this.attacking) {
+        } else if (this.movingLeft && !this.jumping && !this.attacking) {
             this.gunRunLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
         } else if (this.movingRight && !this.jumping && !this.attacking) {
             this.gunRunLeftBackwardsAnim.drawFrame(this.game.clockTick, this.ctx, this.x + rightToLeftOffset, this.y, SCALE_LUKE);
+        } else {
+            this.drawGunStanding();
         }
     }
     Entity.prototype.draw.call(this);
@@ -852,23 +774,5 @@ function aimDirection(event) {
         } else {
             degree = -180 - degree;
         }
-    }
-}
-
-function lightsaberThrow(e) {
-    if (statusBars.checkStaminaUse(50)) {
-        laserthrown = false;
-
-        if (primaryWeapon && e.code === "KeyE" && !laserthrown) {
-            var audio = AM.getSound('./sounds/LightsaberThrow.WAV').cloneNode();
-            audio.volume = sfxVolume;
-            audio.play();
-            playerCoor = { x: center_x, y: center_y };
-            const endCoor = {x: mouseCoor.x, y: mouseCoor.y};
-            gameEngine.addEntity(new LightsaberThrow(playerCoor, endCoor, gameEngine));
-            statusBars.update(0, -50);
-            primaryWeapon = !primaryWeapon;
-        } 
-        
     }
 }
