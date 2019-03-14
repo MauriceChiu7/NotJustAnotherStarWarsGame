@@ -34,6 +34,7 @@ AM.queueDownload("./img/trooper_right.png");
 AM.queueDownload("./img/trooper_left.png");
 AM.queueDownload("./img/background.png");
 AM.queueDownload("./img/background2.png");
+AM.queueDownload("./img/background3.png");
 AM.queueDownload("./img/obiwan_right.png");
 AM.queueDownload("./img/obiwan_left.png");
 AM.queueDownload("./img/blue_laser_small.png");
