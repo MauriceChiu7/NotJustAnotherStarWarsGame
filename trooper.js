@@ -16,7 +16,7 @@ function Trooper(game) {
     this.standLeftAnim = new Animation(this.spriteSheetLeft, 558, 74, 62, 74, frameDuration, 1, true, false);
     this.attackLeftAnim = new Animation(this.spriteSheetLeft, 124, 444, 62, 74, frameDuration, 9, true, true);
 
-    this.health = 1000; // added by maurice
+    this.health = 1000;
 
     this.x = 600;
     this.y = 400;
@@ -35,7 +35,7 @@ function Trooper(game) {
     this.currentDisplacementY = 75;
 
     this.speed = 100;
-    this.dead = false; // added by maurice    
+    this.dead = false;   
     this.walking = "walk";
     this.standing = "stand";
     this.attacking = "attack";
