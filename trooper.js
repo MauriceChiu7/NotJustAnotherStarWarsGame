@@ -335,7 +335,7 @@ Trooper.prototype.draw = function () {
 Trooper.prototype.drawRight = function () {
     switch (this.action) {
         case this.walking:         //walking
-            this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 5, SCALE_TROOPER);
+            this.walkRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
             break;
         case this.standing:         //standing
             this.standRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
@@ -351,11 +351,10 @@ Trooper.prototype.drawRight = function () {
 Trooper.prototype.drawLeft = function () {
     switch (this.action) {
         case this.walking:         //walking
-            this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y + 5, SCALE_TROOPER);
+            this.walkLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
             break;
         case this.standing:         //standing
             this.standLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_TROOPER);
-
             break;
         case this.attacking:         //attacking
             // console.log("attack left");

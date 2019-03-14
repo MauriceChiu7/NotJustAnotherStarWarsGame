@@ -28,9 +28,9 @@ function Vader() {
     this.jumpingRightAnim = new Animation(this.vaderRight, 1560, 780, -120, 100, 0.2, 5, true, false);
     this.blockRightAnim = new Animation(this.vaderRight, 950, 320, -120, 80, 1, 1, false, false);
     this.attackRightAnim = new Animation(this.vaderRight, 960, 450 , -120, 110, 0.1, 6, false, false);
-    this.dyingRightAnim = new Animation(this.vaderRight, 1560, 640, -120,  80, 50, 7, false, false);
+    this.dyingRightAnim = new Animation(this.vaderRight, 1560, 640, -120,  80, 0.3, 7, false, false);
 
-    this.deadAnim = new Animation(this.vaderRight, 720, 640, -120, 80, 1, 1, true, false);
+    this.deadAnim = new Animation(this.vaderRight, 730, 630, 120, 120, 1, 1, true, false);
 // left
     this.attackLeftAnim = new Animation(this.vaderLeft, 600, 450, 120, 110, 0.1, 6, false, false);
     this.blockLeftAnim = new Animation(this.vaderLeft, 590, 320, 120, 80, 1, 1, false, false);
@@ -115,123 +115,129 @@ Vader.prototype.update = function() {
         }
     }
 
-    // movement
-    if (this.distance > 130 && this.player.y - this.y == 0) { // player on the right
-        this.xAcceleration +=1;
-        this.block = false;
-        this.attacking = false;
-        this.jumping = false;
-        this.hurting = false;
-        this.dead = false;
+    if (this.dying && this.dyingRightAnim.isDone()){
+        this.dead = true;
+    }
 
-
-    } else if (this.distance < -50 && this.player.y - this.y == 0) { //player on the left
-        this.xAcceleration -=1;
-        this.block = false;
-        this.attacking = false;
-        this.jumping = false;
-        this.hurting = false;
-        this.dead = false;
-    } else if (this.distance > 0 && this.player.y - this.y > 0) {// player is lower && on the right
-        this.xAcceleration +=1;
-        this.block = false;
-        this.attacking = false;
-        this.jumping = false;
-        //this.hurting = false;
-    } else if (this.distance < -0 && this.player.y - this.y > 0) {// player is lower && on the left
-        this.xAcceleration -=1;
-        this.block = false;
-        this.attacking = false;
-        this.jumping = false;
-    } else if (!this.block && !this.attacking && Math.abs(this.player.y - this.y) < 40
-        && (this.distance <= 130 && this.distance >= -50) && collisionBottom != null) {
-        console.log("try to block or attack");
-        this.chanceToBlock = Math.round(Math.random() * 5); this.blocking = false; this.attacking = false; this.jumping = false;
-        if (this.chanceToBlock === 1) {
-            this.block = true;
-            this.energy -= 10;
-        } else if (this.chanceToBlock === 0 && this.energy > 150) {
-            this.attacking = true;
-            this.energy -= 100;
-        }
-        if (this.player.attacking) {
-            // this.blocking =false;
-            this.chanceToBlock = -1;
-            this.hurting = true;
-            this.lives--;
-            if (this.lives === 0) {
-                this.dead = true;
+    if (!this.dying) {
+        // movement
+        if (this.distance > 130 && this.player.y - this.y == 0) { // player on the right
+            this.xAcceleration +=1;
+            this.block = false;
+            this.attacking = false;
+            this.jumping = false;
+            this.hurting = false;
+            this.dead = false;
+        } else if (this.distance < -50 && this.player.y - this.y == 0) { //player on the left
+            this.xAcceleration -=1;
+            this.block = false;
+            this.attacking = false;
+            this.jumping = false;
+            this.hurting = false;
+            this.dead = false;
+        } else if (this.distance > 0 && this.player.y - this.y > 0) {// player is lower && on the right
+            this.xAcceleration +=1;
+            this.block = false;
+            this.attacking = false;
+            this.jumping = false;
+            //this.hurting = false;
+        } else if (this.distance < -0 && this.player.y - this.y > 0) {// player is lower && on the left
+            this.xAcceleration -=1;
+            this.block = false;
+            this.attacking = false;
+            this.jumping = false;
+        } else if (!this.block && !this.attacking && Math.abs(this.player.y - this.y) < 40
+            && (this.distance <= 130 && this.distance >= -50) && collisionBottom != null) {
+            console.log("try to block or attack");
+            this.chanceToBlock = Math.round(Math.random() * 5); this.blocking = false; this.attacking = false; this.jumping = false;
+            if (this.chanceToBlock === 1) {
+                this.block = true;
+                this.energy -= 10;
+            } else if (this.chanceToBlock === 0 && this.energy > 150) {
+                this.attacking = true;
+                this.energy -= 100;
             }
-        }
-    } else if (this.player.y - this.y < -100 && collisionBottom != null) { // player is higher
-        var collisionCheck = this.getMapCollisions2(this.x, this.y - 13);
-        var canJump = true;
-        for (var i = 0; i < collisionCheck.length; i++) {
-            if (collisionCheck[i].direction == "bottom") {
-                    canJump = false;
+            if (this.player.attacking) {
+                // this.blocking =false;
+                this.chanceToBlock = -1;
+                this.hurting = true;
+                this.lives--;
+                if (this.lives === 0) {
+                    // this.dead = true;
+                    this.dying = true;
+                }
             }
-        }
-        if (canJump) {
-            this.jumping = true;
-            this.yAcceleration -= 13;
+        } else if (this.player.y - this.y < -100 && collisionBottom != null) { // player is higher
+            var collisionCheck = this.getMapCollisions2(this.x, this.y - 13);
+            var canJump = true;
+            for (var i = 0; i < collisionCheck.length; i++) {
+                if (collisionCheck[i].direction == "bottom") {
+                        canJump = false;
+                }
+            }
+            if (canJump) {
+                this.jumping = true;
+                this.yAcceleration -= 13;
+                if (this.distance > 0) {
+                    this.xAcceleration += 5;
+                } else if (this.distance < 0) {
+                    this.xAcceleration -= 5;
+                }
+            }
+            this.block = false;
+            this.attacking = false;
+            this.hurting = false;
+            this.dead = false;    
+            if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
+                this.jumpingRightAnim.elapsedTime = 0;
+                this.jumpingLeftAnim.elapsedTime = 0;
+                this.jumping = false;
+            }
+        } else if (Math.abs(this.player.y - this.y) < 10 && (this.distance < 110 && this.distance > -20) && !this.jumping) { // avoiding the player getting too close
+            console.log("too close");
+            var random = Math.round(Math.random());
+            console.log(random);
             if (this.distance > 0) {
-                this.xAcceleration += 5;
-            } else if (this.distance < 0) {
-                this.xAcceleration -= 5;
+            this.xAcceleration -= random;
+            } else {
+            this.xAcceleration += random;
             }
-        }
-        this.block = false;
-        this.attacking = false;
-        this.hurting = false;
-        this.dead = false;    
-        if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
-            this.jumpingRightAnim.elapsedTime = 0;
-            this.jumpingLeftAnim.elapsedTime = 0;
+        } else {
             this.jumping = false;
         }
-    } else if (Math.abs(this.player.y - this.y) < 10 && (this.distance < 110 && this.distance > -20) && !this.jumping) { // avoiding the player getting too close
-        console.log("too close");
-        var random = Math.round(Math.random());
-        console.log(random);
-        if (this.distance > 0) {
-           this.xAcceleration -= random;
-        } else {
-           this.xAcceleration += random;
+        
+        //console.log(this.attackRightAnim.isDone() || this.attackLeftAnim.isDone());
+        if (this.attacking && this.attackCollide) {
+            if (!blocking) {
+                this.player.health -= 0.5;
+                statusBars.update(-0.5,0);
+            }
+            if (this.attackRightAnim.isDone() || this.attackLeftAnim.isDone()) {
+                this.attackRightAnim.elapsedTime = 0;
+                this.attackLeftAnim.elapsedTime = 0;
+                this.attacking = false;
+            }
         }
-    } else {
-        this.jumping = false;
-    }
-    
-    //console.log(this.attackRightAnim.isDone() || this.attackLeftAnim.isDone());
-    if (this.attacking && this.attackCollide) {
-        if (!blocking) {
-            this.player.health -= 0.5;
-            statusBars.update(-0.5,0);
-        }
-        if (this.attackRightAnim.isDone() || this.attackLeftAnim.isDone()) {
-            this.attackRightAnim.elapsedTime = 0;
-            this.attackLeftAnim.elapsedTime = 0;
-            this.attacking = false;
-        }
-    }
-    if (this.blockLeftAnim.isDone() || this.blockRightAnim.isDone()) {
-        this.blockLeftAnim.elapsedTime = 0;
-        this.blockRightAnim.elapsedTime = 0;
-        this.block = false;
-    }
-
-    if (this.player.attacking) {
-        if (!this.block && this.attackCollide()) {
-            this.health -= 40;
-        } else if (this.block) {
-            this.energy +=20;
+        if (this.blockLeftAnim.isDone() || this.blockRightAnim.isDone()) {
+            this.blockLeftAnim.elapsedTime = 0;
+            this.blockRightAnim.elapsedTime = 0;
+            this.block = false;
         }
 
+        if (this.player.attacking) {
+            if (!this.block && this.attackCollide()) {
+                this.health -= 40;
+            } else if (this.block) {
+                this.energy +=20;
+            }
+        }
     }
-
     if (this.health <= 0) {
-        this.dying = true; blocking = false;this.jumping = false; this.attacking = false;
-        this.dead = true;
+        this.dying = true; 
+        blocking = false; 
+        this.jumping = false; 
+        this.attacking = false;
+        // this.dead = true;
         this.attacking = false;
         this.jumping = false;
     }
@@ -278,9 +284,9 @@ Vader.prototype.drawRight = function () {
     if (this.collisionBottom == null) {
         this.jumpingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 95, this.y - 10, this.scale);
     } else {
-        if (this.dead) {
+        if (this.dying) {
             this.dyingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90, this.y + 5, this.scale);
-        } else if (this.dead && this.dyingRightAnim.isDone()) {
+        } else if (this.dead) {
             this.deadAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90, this.y + 5, this.scale);
         } else if (this.block) {
             this.blockRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90 , this.y + 5, this.scale);
@@ -315,9 +321,9 @@ Vader.prototype.drawLeft = function() {
     if (this.collisionBottom == null) {
         this.jumpingLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y, this.scale);
     } else {
-        if (this.dead) {
+        if (this.dying) {
             this.dyingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y + 5, this.scale);
-        } else if (this.dead && this.dyingRightAnim.isDone()) {
+        } else if (this.dead) {
             this.deadAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y + 5, this.scale);
         } else if (this.block) {
             this.blockLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y + 5, this.scale);

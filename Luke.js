@@ -486,7 +486,9 @@ Luke.prototype.update = function () {
                         }
                     }
                 }
-                lukeClick();
+                if (!this.attacking) {
+                    lukeClick();
+                }
                 this.attacking = true;
                 this.switching = false;
             }
