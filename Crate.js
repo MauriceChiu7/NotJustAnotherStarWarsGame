@@ -77,20 +77,19 @@ Crate.prototype.getMapCollisions = function () {
                 	this.xAcceleration = tempXAcceleration * 0.6;
                 	this.yAcceleration = tempYAcceleration * 0.6;
             	}
-            } else {
+            } else if (!current.dead) {
                 // if (this.x + this.xAcceleration <= current.x + current.width && this.x + this.xAcceleration + this.width >= current.x &&
                 //     this.y + this.yAcceleration + this.height <= current.y + current.height && this.y + this.yAcceleration + this.height >= current.y) {
                 // console.log("CRATE X,Y : " + this.x + ", " + this.y);
                 // console.log("LUKE X,Y : " + current.x + ", " + current.y);
-                if (this.x <= current.x + current.width + 16 && this.x >= current.x && this.y <= current.y + current.height && this.y + this.height >= current.y) {
-                    // console.log("HERE");
+                if (!(current instanceof Luke) && this.x <= current.x + current.width + 16 && this.x >= current.x && this.y <= current.y + current.height && this.y + this.height >= current.y) {
+                    // if (current instanceof Luke) {
+                    //     console.log("HERE");
+                    // }
                     this.y -= this.yAcceleration;
                     this.x -= this.xAcceleration;
                     current.y -= current.yAcceleration;
                     current.x -= current.xAcceleration;
-                    if (this.y <= current.y && this.y + this.width + this.yAcceleration <= current.y + current.width && current.grabbed) {
-                        this.y--;
-                    }
                     var tempXAcceleration = current.xAcceleration;
                     var tempYAcceleration = current.yAcceleration;
                     if (Math.sqrt(this.xAcceleration * this.xAcceleration + this.yAcceleration * this.yAcceleration) > 10) {
@@ -104,10 +103,34 @@ Crate.prototype.getMapCollisions = function () {
                     current.yAcceleration = this.yAcceleration * 0.6;
                     this.xAcceleration = tempXAcceleration * 0.6;
                     this.yAcceleration = tempYAcceleration * 0.6;
-                } else if (this.x <= current.x + current.width + 16 && this.x >= current.x && 
-                           this.y + this.height + 1 > current.y + current.height && this.y < current.y + 16) {
-                    // console.log("TOP COLLISION");6
+                } else if (current instanceof Luke) {
+                    if (this.x <= current.x + current.currentDisplacementX && this.x >= current.x && this.y <= current.y + current.currentDisplacementY && this.y + this.currentDisplacementY >= current.y) {
+                        // console.log("HERE2");
+                    current.crateCollision = true;
+                    // console.log(current.crateCollision);
+                    this.y -= this.yAcceleration;
+                    this.x -= this.xAcceleration;
                     current.y -= current.yAcceleration;
+                    current.x -= current.xAcceleration;
+                    var tempXAcceleration = current.xAcceleration;
+                    var tempYAcceleration = current.yAcceleration;
+                    if (Math.sqrt(this.xAcceleration * this.xAcceleration + this.yAcceleration * this.yAcceleration) > 10) {
+                        if (current instanceof Luke) {
+                            current.health -= 20;
+                        } else {
+                            current.health -= 400;
+                        }
+                    }
+                    current.xAcceleration = this.xAcceleration * 0.6;
+                    current.yAcceleration = this.yAcceleration * 0.6;
+                    this.xAcceleration = tempXAcceleration * 0.6;
+                    this.yAcceleration = tempYAcceleration * 0.6;
+                    // console.log("TOP COLLISION");6
+                    // current.y -= current.yAcceleration;\
+                    } else if (Math.abs(current.yAcceleration) > 0.5) {
+                        current.crateCollision = false;
+                    }
+                    // console.log(current.crateCollision);
                 }
             }
 	    }

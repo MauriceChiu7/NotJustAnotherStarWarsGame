@@ -153,6 +153,7 @@ function Luke() {
     this.collisionLeft;
     this.collisionTop;
     this.collisionBottom;
+    this.crateCollision;
     this.currentDisplacementX = LUKE_COLLISION_WIDTH + LUKE_HITBOX_X_OFFSET;
     this.currentDisplacementY = LUKE_COLLISION_HEIGHT + LUKE_HITBOX_Y_OFFSET;
 
@@ -379,9 +380,9 @@ Luke.prototype.update = function () {
             this.xAcceleration = 0;
         }
     }
-
+    // console.log(this.crateCollision);
     // movement
-    if (gameEngine.w && collisionBottom != null && !this.dead) {
+    if (gameEngine.w && (collisionBottom != null || this.crateCollision) && !this.dead) {
         var collisionCheck = this.getMapCollisions2(this.x, this.y - 13);
         var canJump = true;
         for (var i = 0; i < collisionCheck.length; i++) {

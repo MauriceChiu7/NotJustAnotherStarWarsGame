@@ -63,14 +63,10 @@ function LevelManager() {
     var map3BottColl = bottomOnlyCollisions;
 
     // Un-comment this section if you want to test with 2 levels
-    // this.levels = [map1, map3, map2];
-    this.levels = [map2];
-    // this.currentMaps = [AM.getAsset("./img/background.png"), AM.getAsset("./img/background3.png"), AM.getAsset("./img/background2.png")]
-    // this.fullCollisions = [map1FullColl, map3FullColl, map2FullColl];
-    // this.bottomOnlyCollisions = [map1BottColl, map3BottColl, map2BottColl];
-    this.currentMaps = [AM.getAsset("./img/background2.png")];
-    this.fullCollisions = [map2FullColl];
-    this.bottomOnlyCollisions = [map2BottColl];
+    this.levels = [map1, map3, map2];
+    this.currentMaps = [AM.getAsset("./img/background.png"), AM.getAsset("./img/background3.png"), AM.getAsset("./img/background2.png")]
+    this.fullCollisions = [map1FullColl, map3FullColl, map2FullColl];
+    this.bottomOnlyCollisions = [map1BottColl, map3BottColl, map2BottColl];
 
     // Comment this out if you are using the code above
     // this.levels = [map2];
@@ -278,27 +274,27 @@ Map.prototype.makeLevel_2 = function () {
     this.addEnemy(vader);
 
     // var crate = new Crate(gameEngine, 600, 400, true);
-    var crate0 = new Crate(400, 400);
-    var crate1 = new Crate(400, 350);
+    // var crate0 = new Crate(400, 400);
+    // var crate1 = new Crate(400, 350);
     var crate2 = new Crate(800, 400);
     var crate3 = new Crate(700, 400);
     var crate4 = new Crate(700, 300);
     var crate9 = new Crate(700, 250);
     var crate5 = new Crate(200, 100);
-    var crate6 = new Crate(100, 100);
+    // var crate6 = new Crate(100, 100);
     var crate7 = new Crate(900, 100);
     var crate8 = new Crate(500, 300);
 
     // this.addCrate(crate);
-    this.addCrate(crate0);
+    // this.addCrate(crate0);
     // this.addCrate(crate1);
-    // this.addCrate(crate2);
-    // this.addCrate(crate3);
-    // this.addCrate(crate4);
-    // this.addCrate(crate5);
+    this.addCrate(crate2);
+    this.addCrate(crate3);
+    this.addCrate(crate4);
+    this.addCrate(crate5);
     // this.addCrate(crate6);
-    // this.addCrate(crate7);
-    // this.addCrate(crate8);
+    this.addCrate(crate7);
+    this.addCrate(crate8);
 
     // this.addEnemy(new Dummy());
 }

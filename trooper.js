@@ -251,6 +251,9 @@ Trooper.prototype.update = function () {
     } else if (this.x < 40) {
         this.x = 40;
     }
+    if (this.y > 600) {
+        this.health = 0;
+    }
 
 
     Entity.prototype.update.call(this);
