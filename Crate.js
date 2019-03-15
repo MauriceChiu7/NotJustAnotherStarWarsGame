@@ -117,6 +117,7 @@ Crate.prototype.getMapCollisions = function () {
                     if (Math.sqrt(this.xAcceleration * this.xAcceleration + this.yAcceleration * this.yAcceleration) > 10) {
                         if (current instanceof Luke) {
                             current.health -= 20;
+                            statusBars.update(-20, 0);
                         } else {
                             current.health -= 400;
                         }
