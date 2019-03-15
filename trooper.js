@@ -22,6 +22,9 @@ function Trooper(game) {
     this.y = 400;
     this.width = 30;
     this.height = 80;
+    this.center_x;
+    this.center_y;
+    this.mass = 2;
     this.xAcceleration = 0;
     this.yAcceleration = 0;
 
@@ -102,33 +105,6 @@ Trooper.prototype.getMapCollision = function (direction) {
     return null;
 }
 
-Trooper.prototype.collide = function (xDisplacement, yDisplacement, tag) {
-    var collisions = [];
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        let theTag = gameEngine.entities[i].tag;
-        let current = gameEngine.entities[i];
-        if (theTag == tag) {
-            if (this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX &&
-                this.y + yDisplacement < current.collisionY + current.collisionHeight && this.y + yDisplacement > current.collisionY) {
-                var direction = 'bottom';
-                if (this.y > current.collisionY + current.collisionHeight) {
-                    direction = "top";
-                } else if (this.y + this.height > current.collisionY) {
-                    direction = "bottom";
-                }
-                if (this.x > current.collisionX + current.collisionWidth && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                    direction = "right";
-                } else if (this.x < current.collisionX && this.x + xDisplacement < current.collisionX + current.collisionWidth && this.x + xDisplacement > current.collisionX) {
-                    direction = "left";
-                }
-                collisions.push({ entity: current, direction: direction });
-            }
-        }
-    }
-    // console.log(collisions);
-    return collisions;
-}
-
 Trooper.prototype.getDistance = function (ent) {
     let dx = this.x - this.player.x;
     let dy = this.y - this.player.y;
@@ -141,30 +117,15 @@ Trooper.prototype.attackCollide = function () {
 }
 
 Trooper.prototype.update = function () {
-    //this.health = 0; //for testing
+    this.center_x = this.x + this.width / 2;
+    this.center_y = this.y + this.height / 2;
+
     for (let i = 0; i < gameEngine.entities.length; i++) {
         let object = this.game.entities[i];
         if (object.tag === 'player') {
             this.player = object;
         }
     }
-
-    let trooperList = [];
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        if (gameEngine.entities[i] instanceof Trooper) {    // already a trooper so make new id (add 1 to existing id)
-            trooperList.push(gameEngine.entities[i].id);
-        }
-    }
-    if (trooperList.length == 0) {
-        this.id = 1;
-    } else {
-        let otherId = trooperList[trooperList.length - 1];
-        this.id = 1 + otherId;
-    }
-
-    // console.log('Trooper ID'+ this.id+' health: ' + this.health);
-    // this.platformCollisions = this.collide(this.xAcceleration, this.yAcceleration, "Platform");
-    // this.playerCollisions = this.collide(this.xAcceleration, this.yAcceleration, 'player');
 
     this.distance = this.player.x + 50 - this.x;
 
@@ -175,11 +136,13 @@ Trooper.prototype.update = function () {
         this.attacking = false;       
 
         if (this.healthPackOut) {
-            gameEngine.addEntity(new HealthPack(
-                    (this.x + this.x + this.width) / 2,
-                    (this.y + this.y + this.height) / 2));
+            if (Math.random() > 0.5) {
+                gameEngine.addEntity(new HealthPack(
+                        (this.x + this.x + this.width) / 2,
+                        (this.y + this.y + this.height) / 2));
+            }
             this.healthPackOut = false;
-        }
+        } 
 
         this.width = -100;
         this.height = -100;
@@ -187,15 +150,9 @@ Trooper.prototype.update = function () {
     }
 
     if (!this.dead) {
-        // this.action = this.standing;
         if (Math.abs(this.distance) > 30) {
             if (this.isCharger) {
                 this.walk = true;
-                // if (Math.abs(this.distance) < 40) {
-                //     this.action = this.standing;
-                // } else {
-                //     this.action = this.walking;
-                // }
                 if (this.player.x + 50 > this.x && Math.abs(this.player.y - this.y) < 50) {
                     this.x += 1;
                     this.action = this.walking;
@@ -235,15 +192,6 @@ Trooper.prototype.update = function () {
         }
 
     }
-    // else {
-    //     if (this.deadRightAnim.isDone()) {
-    //         // for (var i = 0; i < this.game.entities.length; i++) {
-    //         //     if (this.game.entities[i] instanceof Trooper && this.game.entities[i].dead) {
-    //         //         this.game.entities.splice(i, 1);
-    //         //     }
-    //         // }
-    //     }
-    // }
 
     this.getMapCollisions();
     collisionRight = this.getMapCollision("right");
@@ -274,12 +222,12 @@ Trooper.prototype.update = function () {
 
     // friction
     if (this.xAcceleration > 0) {
-        this.xAcceleration -= 0.5;
+        this.xAcceleration -= 0.2;
         if (this.xAcceleration < 0) {
             this.xAcceleration = 0;
         }
     } else if (this.xAcceleration < 0) {
-        this.xAcceleration += 0.5;
+        this.xAcceleration += 0.2;
         if (this.xAcceleration > 0) {
             this.xAcceleration = 0;
         }
@@ -326,7 +274,6 @@ Trooper.prototype.draw = function () {
     if (this.player.x + 50 > this.x) {
         this.drawRight();
     } else if (this.player.x + 50 < this.x) {
-        // console.log(this.player.x + 70 +" < "+ this.x);
         this.drawLeft();
     }
     Entity.prototype.draw.call(this);
@@ -376,9 +323,6 @@ Trooper.prototype.shoot = function () {
     let trooperLaser = new LaserBeam(startCoor, endCoor);
     trooperLaser.tag = "trooperLaser";
     trooperLaser.enemyTag = "jedi";
-    // trooperLaser.setID(this.id);
-    // console.log("trooper laser id: " + trooperLaser.laserID);
-    // gameEngine.addEntity(trooperLaser);
 }
 
 Trooper.prototype.shootCharger = function () {
@@ -425,61 +369,4 @@ function getAngle(xCoor, yCoor) {
         }
     }
     return theDegree;
-}
-
-var SCALE_HEALTH = 0.07;
-function HealthPack(x, y) {
-    this.floatingAnim = new Animation(AM.getAsset("./img/health_pack.png"), 80, 80, 265, 265, 10, 1, true, false);
-    this.x = x;
-    this.y = y;
-    this.width = 30;
-    this.height = 30;
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        let currentEnt = gameEngine.entities[i];
-        if (currentEnt instanceof Luke) {
-            this.player = currentEnt;
-        }
-    }
-    this.top = y - 20;
-    this.bottom = y + 10;
-    this.floatup = true;
-    this.floatSpeed = 0.5;
-    this.tag = "healthpack";
-
-    Entity.call(this, gameEngine, this.x, this.y, this.width, this.height);
-}
-HealthPack.prototype = new Entity();
-HealthPack.prototype.constructor = HealthPack;
-
-HealthPack.prototype.update = function () {    
-    if (this.floatup){
-        this.y -= this.floatSpeed;
-    } else {
-        this.y += this.floatSpeed;
-    }
-    if (this.y < this.top) {        
-        this.floatup = false;
-    } else if (this.y > this.bottom) {        
-        this.floatup = true;
-    }
-    if (getDistance(this, this.player) < 50) {
-        this.player.health += 15;
-        statusBars.update(15, 0);
-        this.deleteHealthPack();
-    }
-    Entity.prototype.update.call(this);
-}
-
-HealthPack.prototype.draw = function () {
-    this.floatingAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, SCALE_HEALTH);
-    Entity.prototype.draw.call(this);
-}
-
-HealthPack.prototype.deleteHealthPack = function () {
-    for (var i = 0; i < gameEngine.entities.length; i++) {
-        if (gameEngine.entities[i] == this) {
-            console.log("delete health pack");
-            gameEngine.entities.splice(i, 1);
-        }
-    }
 }

@@ -6,8 +6,10 @@ var transition = false;
 var frameId;
 var transitionCounter = 0;
 var menuSelection;
-var musicVolume = 0.4;
-var sfxVolume = 0.8;
+// var musicVolume = 0.4;
+// var sfxVolume = 0.8;
+var musicVolume = 0.0;
+var sfxVolume = 0.0;
 var playerName = "<PLAYER NAME>";
 var tempName = "";
 var searching = false;
@@ -15,6 +17,9 @@ var searchingCounter = 0;
 var editingName = false;
 var mainMenuMusic;
 var SHOWBOX = false;
+
+var mouseX;
+var mouseY;
 
 // var testingVader = false;
 // var testingMace = false;
@@ -56,6 +61,7 @@ AM.queueSound("./sounds/LightsaberTurnOn.wav");
 AM.queueSound("./sounds/LightsaberTurnOff.wav");
 AM.queueSound("./sounds/StarWarsMainTheme.wav");
 AM.queueSound("./sounds/lasrhit2.WAV");
+AM.queueSound("./sounds/ForcePush.wav");
 AM.queueSound("./sounds/StarWarsMainTheme2.mp3");
 
 AM.downloadAll(function () {

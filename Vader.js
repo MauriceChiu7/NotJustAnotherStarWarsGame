@@ -16,6 +16,10 @@ function Vader() {
     this.game = gameEngine;
     this.health = 1000;
 
+    this.center_x;
+    this.center_y;
+    this.mass = 2.5;
+
     this.currentDisplacementX = VADER_COLLISION_WIDTH + VADER_HITBOX_X_OFFSET;
     this.currentDisplacementY = VADER_COLLISION_HEIGHT + VADER_HITBOX_Y_OFFSET;
 
@@ -61,6 +65,8 @@ Vader.prototype = new Entity();
 Vader.prototype.constructor = Vader;
 
 Vader.prototype.update = function() {
+    this.center_x = this.x + this.width / 2;
+    this.center_y = this.y + this.height / 2;
 
     this.getMapCollisions();
     var collisionRight = this.getMapCollision("right");
@@ -104,12 +110,12 @@ Vader.prototype.update = function() {
 
     // friction
     if (this.xAcceleration > 0) {
-        this.xAcceleration -= 0.5;
+        this.xAcceleration -= 0.1;
         if (this.xAcceleration < 0) {
             this.xAcceleration = 0;
         }
     } else if (this.xAcceleration < 0) {
-        this.xAcceleration += 0.5;
+        this.xAcceleration += 0.1;
         if (this.xAcceleration > 0) {
             this.xAcceleration = 0;
         }
@@ -148,7 +154,7 @@ Vader.prototype.update = function() {
             this.jumping = false;
         } else if (!this.block && !this.attacking && Math.abs(this.player.y - this.y) < 40
             && (this.distance <= 130 && this.distance >= -50) && collisionBottom != null) {
-            console.log("try to block or attack");
+            // console.log("try to block or attack");
             this.chanceToBlock = Math.round(Math.random() * 5); this.blocking = false; this.attacking = false; this.jumping = false;
             if (this.chanceToBlock === 1) {
                 this.block = true;
@@ -194,9 +200,9 @@ Vader.prototype.update = function() {
                 this.jumping = false;
             }
         } else if (Math.abs(this.player.y - this.y) < 10 && (this.distance < 110 && this.distance > -20) && !this.jumping) { // avoiding the player getting too close
-            console.log("too close");
+            // console.log("too close");
             var random = Math.round(Math.random());
-            console.log(random);
+            // console.log(random);
             if (this.distance > 0) {
             this.xAcceleration -= random;
             } else {
@@ -226,7 +232,7 @@ Vader.prototype.update = function() {
 
         if (this.player.attacking) {
             if (!this.block && this.attackCollide()) {
-                this.health -= 40;
+                this.health -= 100;
             } else if (this.block) {
                 this.energy +=20;
             }
@@ -248,10 +254,10 @@ Vader.prototype.update = function() {
     } else if (this.xAcceleration < -7) {
         this.xAcceleration = -7;
     }
-    if (this.yAcceleration > 15) {
-        this.yAcceleration = 15;
-    } else if (this.yAcceleration < -15) {
-        this.yAcceleration = -15;
+    if (this.yAcceleration > 12) {
+        this.yAcceleration = 12;
+    } else if (this.yAcceleration < -12) {
+        this.yAcceleration = -12;
     }
 
     this.y += this.yAcceleration;
