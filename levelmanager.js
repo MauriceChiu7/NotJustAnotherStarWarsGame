@@ -113,6 +113,9 @@ LevelManager.prototype.startLevel = function (levelNum) {
     for (var i = 0; i < this.levels[levelNum].enemies.length; i++) {
         gameEngine.addEntity(this.levels[levelNum].enemies[i]);
     }
+    for (var i = 0; i < this.levels[levelNum].crates.length; i++) {
+        gameEngine.addEntity(this.levels[levelNum].crates[i]);
+    }
 
     ctx.font = "25px monospace";
     ctx.fillStyle = "WHITE";
@@ -179,6 +182,7 @@ LevelManager.prototype.draw = function () {
 function Map(mapNumber) {
     this.enemies = [];
     this.players = [];
+    this.crates = [];
     switch(mapNumber) {
         case 0:
             this.makeLevel_1();
@@ -200,6 +204,10 @@ Map.prototype.addEnemy = function (enemy) {
 
 Map.prototype.addPlayer = function (player) {
     this.players.push(player);
+}
+
+Map.prototype.addCrate = function (crate) {
+    this.crates.push(crate);
 }
 
 Map.prototype.makeLevel_1 = function () {
@@ -264,6 +272,30 @@ Map.prototype.makeLevel_2 = function () {
     // this.addEnemy(trooper4);
     // this.addEnemy(trooper5);
     this.addEnemy(vader);
+
+    // var crate = new Crate(gameEngine, 600, 400, true);
+    var crate0 = new Crate(gameEngine, 400, 400, false);
+    var crate1 = new Crate(gameEngine, 400, 350, false);
+    var crate2 = new Crate(gameEngine, 800, 400, false);
+    var crate3 = new Crate(gameEngine, 700, 400, false);
+    var crate4 = new Crate(gameEngine, 700, 300, false);
+    var crate9 = new Crate(gameEngine, 700, 250, false);
+    var crate5 = new Crate(gameEngine, 200, 100, false);
+    var crate6 = new Crate(gameEngine, 100, 100, false);
+    var crate7 = new Crate(gameEngine, 900, 100, false);
+    var crate8 = new Crate(gameEngine, 500, 300, false);
+
+    // this.addCrate(crate);
+    this.addCrate(crate0);
+    this.addCrate(crate1);
+    this.addCrate(crate2);
+    this.addCrate(crate3);
+    this.addCrate(crate4);
+    this.addCrate(crate5);
+    this.addCrate(crate6);
+    this.addCrate(crate7);
+    this.addCrate(crate8);
+    this.addCrate(crate9);
 
     // this.addEnemy(new Dummy());
 }

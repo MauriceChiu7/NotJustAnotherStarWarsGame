@@ -384,7 +384,11 @@ Luke.prototype.update = function () {
         this.dropping = true;
     }
     if (gameEngine.keyup && !this.dead) {
-        if (gameEngine.keyReleased == 'd') {
+        if (this.game.keyReleased == 'q') {
+        	if (this.isPlayer) {
+        		this.push();
+            }
+        } else if (gameEngine.keyReleased == 'd') {
             this.movingRight = false;
         } else if (gameEngine.keyReleased == 'a') {
             this.movingLeft = false;

@@ -77,6 +77,13 @@ GameEngine.prototype.startInput = function () {
         e.preventDefault();
     }, false);
 
+    // this.ctx.canvas.addEventListener("keypress", function (e) {
+        
+    //     } else if (e.code === "KeyQ") {
+    //         that.q = true;
+    //     }
+    // }, false);
+
     this.ctx.canvas.addEventListener("mousemove", function (e) {
         var rect = that.ctx.canvas.getBoundingClientRect();
         that.mouse = getXandY(e);
@@ -133,6 +140,24 @@ GameEngine.prototype.startInput = function () {
         }
         if (e.code === "KeyI") {
             that.i = true;
+        }
+        if (e.code === "KeyF") {
+            if (!that.grabbing) {
+                var rect = canvas.getBoundingClientRect();
+                var grabX = xMouse;
+                var grabY = yMouse;
+                for (var i = 0; i < that.entities.length; i++) {
+                    var current = that.entities[i];
+                    var centerX = (current.x + current.width / 2);
+                    var centerY = (current.y + current.height / 2);
+                    if (grabX < current.x + current.width + current.width / 2 && grabX > current.x - current.width / 2 && 
+                        grabY < current.y + current.height + current.height / 2 && grabY > current.y - current.height / 2) {
+                        that.grabbing = true;
+                        current.grabbed = true;
+                        i = that.entities.length;
+                    }
+                }
+            }
         }
         // that.chars[e.code] = true;
         // console.log(e);
