@@ -232,9 +232,9 @@ Map.prototype.makeLevel_1 = function () {
     trooper4.y = 70;
 
     this.addEnemy(trooper1);
-    // this.addEnemy(trooper2);
-    // this.addEnemy(trooper3);
-    // this.addEnemy(trooper4);
+    this.addEnemy(trooper2);
+    this.addEnemy(trooper3);
+    this.addEnemy(trooper4);
 
     // this.addEnemy(new Dummy());
 }
@@ -267,10 +267,10 @@ Map.prototype.makeLevel_2 = function () {
     vader.y = 450;
 
     this.addEnemy(trooper1);
-    // this.addEnemy(trooper2);
-    // this.addEnemy(trooper3);
-    // this.addEnemy(trooper4);
-    // this.addEnemy(trooper5);
+    this.addEnemy(trooper2);
+    this.addEnemy(trooper3);
+    this.addEnemy(trooper4);
+    this.addEnemy(trooper5);
     this.addEnemy(vader);
 
     // var crate = new Crate(gameEngine, 600, 400, true);
@@ -326,10 +326,10 @@ Map.prototype.makeLevel_3 = function () {
     trooper5.charger();
 
     this.addEnemy(trooper1);
-//     this.addEnemy(trooper2);
-//     this.addEnemy(trooper3);
-//     this.addEnemy(trooper4);
-//     this.addEnemy(trooper5);
+    this.addEnemy(trooper2);
+    this.addEnemy(trooper3);
+    this.addEnemy(trooper4);
+    this.addEnemy(trooper5);
 }
 
 function reload () {
