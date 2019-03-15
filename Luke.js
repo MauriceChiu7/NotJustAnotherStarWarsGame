@@ -36,7 +36,7 @@ function Luke() {
     this.xAcceleration = 0;
     this.yAcceleration = 0;
     this.tag = "player";
-    this.health = 1000; //100
+    this.health = 100; //100
     this.fullHealth = 100;
 
     // Animation object: spriteSheet, startX, startY, frameWidth, frameHeight, frameDuration, frames, loop, reverse
