@@ -15,6 +15,7 @@ function Vader() {
     this.scale = 0.8;
     this.game = gameEngine;
     this.health = 1000;
+    this.oldHealth = this.health;
 
     this.currentDisplacementX = VADER_COLLISION_WIDTH + VADER_HITBOX_X_OFFSET;
     this.currentDisplacementY = VADER_COLLISION_HEIGHT + VADER_HITBOX_Y_OFFSET;
@@ -29,14 +30,15 @@ function Vader() {
     this.blockRightAnim = new Animation(this.vaderRight, 950, 320, -120, 80, 1, 1, false, false);
     this.attackRightAnim = new Animation(this.vaderRight, 960, 450 , -120, 110, 0.1, 6, false, false);
     this.dyingRightAnim = new Animation(this.vaderRight, 1560, 640, -120,  80, 50, 7, false, false);
+    this.hurtRightAnim = new Animation(this.vaderRight, 1520, 970, -50, 70, 0.5, 1, false, false);
 
     this.deadAnim = new Animation(this.vaderRight, 720, 640, -120, 80, 1, 1, true, false);
 // left
     this.attackLeftAnim = new Animation(this.vaderLeft, 600, 450, 120, 110, 0.1, 6, false, false);
     this.blockLeftAnim = new Animation(this.vaderLeft, 590, 320, 120, 80, 1, 1, false, false);
-    //this.attack2Anim = new Animation(this.vaderLeft, 0, 480, 120, 80, 0.05, 11, false, false);
     this.jumpingLeftAnim = new Animation(this.vaderLeft, 0, 780, 120, 100, 0.2, 5, true, false);
     this.walkLeftAnim = new Animation(this.vaderLeft, 0, 890, 120, 70, 0.15, 9, true, false);
+    this.hurtLeftAnim = new Animation(this.vaderLeft, 40, 970, 50, 70, 0.5, 1, false, false);
     // this.deadLeftAnim = new Animation(this.vaderLeft, 0, 640, 120,  80, 0.2, 7, false, false);
     
     this.attacking = false;
@@ -46,7 +48,6 @@ function Vader() {
     this.movingLeft = false;
     this.dying = false;
     this.dead = false;
-    //this.crouching = false;
     this.dropping = false;
     this.fullMCollisions = [];
     this.bottomMCollisions = [];
@@ -73,6 +74,10 @@ Vader.prototype.update = function() {
 
     if (this.energy < 200)
         this.energy ++;
+
+    if (this.oldHealth != this.health) {
+        this.hurting = true;
+    }
     
     // stops movement if collision encountered
     if (collisionRight != null) {
@@ -121,28 +126,26 @@ Vader.prototype.update = function() {
         this.block = false;
         this.attacking = false;
         this.jumping = false;
-        this.hurting = false;
+        // this.hurting = false;
         this.dead = false;
-
-
     } else if (this.distance < -50 && this.player.y - this.y == 0) { //player on the left
         this.xAcceleration -=1;
         this.block = false;
         this.attacking = false;
         this.jumping = false;
-        this.hurting = false;
+        // this.hurting = false;
         this.dead = false;
     } else if (this.distance > 0 && this.player.y - this.y > 0) {// player is lower && on the right
         this.xAcceleration +=1;
         this.block = false;
         this.attacking = false;
         this.jumping = false;
-        //this.hurting = false;
+        // this.hurting = false;
     } else if (this.distance < -0 && this.player.y - this.y > 0) {// player is lower && on the left
         this.xAcceleration -=1;
         this.block = false;
         this.attacking = false;
-        this.jumping = false;
+        // this.jumping = false;
     } else if (!this.block && !this.attacking && Math.abs(this.player.y - this.y) < 40
         && (this.distance <= 130 && this.distance >= -50) && collisionBottom != null) {
         console.log("try to block or attack");
@@ -173,7 +176,7 @@ Vader.prototype.update = function() {
         }
         if (canJump) {
             this.jumping = true;
-            this.yAcceleration -= 13;
+            this.yAcceleration -= 12;
             if (this.distance > 0) {
                 this.xAcceleration += 5;
             } else if (this.distance < 0) {
@@ -182,7 +185,7 @@ Vader.prototype.update = function() {
         }
         this.block = false;
         this.attacking = false;
-        this.hurting = false;
+        // this.hurting = false;
         this.dead = false;    
         if (this.jumpingRightAnim.isDone() || this.jumpingLeftAnim.isDone()) {
             this.jumpingRightAnim.elapsedTime = 0;
@@ -198,11 +201,11 @@ Vader.prototype.update = function() {
         }
     } else {
         if (this.distance > 0) {
-            this.xAcceleration += 5;
+            this.xAcceleration += 1.5;
         } else if (this.distance < 0) {
-            this.xAcceleration -= 5;
+            this.xAcceleration -= 1.5;
         }
-        //this.jumping = false;
+        // this.hurting = false;
     }
     
     //console.log(this.attackRightAnim.isDone() || this.attackLeftAnim.isDone());
@@ -224,13 +227,21 @@ Vader.prototype.update = function() {
     }
 
     if (this.player.attacking) {
-        if (!this.block && this.attackCollide()) {
+        if (!this.block && this.attackCollide() && this.hurting) {
             console.log("get attacK");
             this.health -= 40;
+            this.hurting = true;
         } else if (this.block) {
             this.energy += 20;
         }
 
+    }
+    if (this.hurting) {
+        if (this.hurtLeftAnim.isDone() || this.hurtRightAnim.isDone()) {
+            this.hurtLeftAnim.elapsedTime = 0;
+            this.hurtRightAnim.elapsedTime = 0;
+            this.hurting = false;
+        }
     }
 
     if (this.health <= 0) {
@@ -241,15 +252,15 @@ Vader.prototype.update = function() {
     }
 
     // speed limits
-    if (this.xAcceleration > 7) {
-        this.xAcceleration = 7;
-    } else if (this.xAcceleration < -7) {
-        this.xAcceleration = -7;
+    if (this.xAcceleration > 5) {
+        this.xAcceleration = 5;
+    } else if (this.xAcceleration < -5) {
+        this.xAcceleration = -5;
     }
-    if (this.yAcceleration > 15) {
-        this.yAcceleration = 15;
-    } else if (this.yAcceleration < -15) {
-        this.yAcceleration = -15;
+    if (this.yAcceleration > 13) {
+        this.yAcceleration = 13;
+    } else if (this.yAcceleration < -13) {
+        this.yAcceleration = -13;
     }
 
     this.y += this.yAcceleration;
@@ -257,6 +268,7 @@ Vader.prototype.update = function() {
     if (this.y > 600) {
         this.health = 0;
     }
+    this.oldHealth = this.health;
     // World Boundary
     if (this.x > 1140) {
         this.x = 1140;
@@ -286,6 +298,8 @@ Vader.prototype.drawRight = function () {
             this.dyingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90, this.y + 5, this.scale);
         } else if (this.dead && this.dyingRightAnim.isDone()) {
             this.deadAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90, this.y + 5, this.scale);
+        } else if (this.hurting) {
+            this.hurtRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 60, this.y + 13, this.scale);
         } else if (this.block) {
             this.blockRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 90 , this.y + 5, this.scale);
         } else if (this.attacking) {
@@ -323,7 +337,9 @@ Vader.prototype.drawLeft = function() {
             this.dyingRightAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y + 5, this.scale);
         } else if (this.dead && this.dyingRightAnim.isDone()) {
             this.deadAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y + 5, this.scale);
-        } else if (this.block) {
+        } else if (this.hurting) {
+            this.hurtLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x + 27, this.y + 13, this.scale);
+        }else if (this.block) {
             this.blockLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x , this.y + 5, this.scale);
         } else if (this.attacking) {
             this.attackLeftAnim.drawFrame(gameEngine.clockTick, ctx, this.x, this.y - 20, this.scale);
