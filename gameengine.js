@@ -17,6 +17,7 @@ function GameEngine() {
     this.ctx = null;
     this.surfaceWidth = null;
     this.surfaceHeight = null;
+    this.grabbing = false;
 }
 
 GameEngine.prototype.init = function (ctx) {
@@ -25,21 +26,16 @@ GameEngine.prototype.init = function (ctx) {
     this.surfaceHeight = this.ctx.canvas.height;
     this.timer = new Timer();
     this.startInput();
-    // let levelManager = new LevelManager();
-    // gameEngine.addEntity(levelManager);
     console.log('game initialized');
 }
 
 GameEngine.prototype.start = function () {
     console.log("starting game");
     var that = this;
-    // if (!paused) {
     (function gameLoop() {
-        // console.log('loopping');
         that.loop();
         requestAnimFrame(gameLoop, that.ctx.canvas);
     })();
-    // }
 }
 
 GameEngine.prototype.startInput = function () {
@@ -59,20 +55,18 @@ GameEngine.prototype.startInput = function () {
         that.click = true;
         that.clickx = e.clientX - that.ctx.canvas.getBoundingClientRect().left;
         that.clicky = e.clientY - that.ctx.canvas.getBoundingClientRect().top;
-        // console.log("Left Click Event - X,Y " + getXandY(e).x + ", " + getXandY(e).y);
     }, false);
 
     this.ctx.canvas.addEventListener("mouseup", function (e) {
         that.clickPos = getXandY(e);
         that.mouseup = true;
-        // console.log(e);
-        // console.log("MOUSE UP EVENT - X,Y " + e.clientX + ", " + e.clientY);
+        var rect = canvas.getBoundingClientRect();
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
     }, false);
 
     this.ctx.canvas.addEventListener("contextmenu", function (e) {
         that.clickPos = getXandY(e);
-        // console.log(e);
-        // console.log("Right Click Event - X,Y " + e.clientX + ", " + e.clientY);
         that.rightclick = true;
         e.preventDefault();
     }, false);
@@ -84,14 +78,12 @@ GameEngine.prototype.startInput = function () {
         that.mouseMoveY = getXandY(e).y;
         that.saveX = that.mouseMoveX;
         that.saveY = that.mouseMoveY;
-        // console.log(that.mouse);
-        //console.log("MOUSE MOVE Event - X,Y " + e.clientX + ", " + e.clientY);
+        mouseX = e.clientX - rect.left;
+        mouseY = e.clientY - rect.top;
     }, false);
 
     this.ctx.canvas.addEventListener("mousewheel", function (e) {
-        // console.log(e);
         that.wheel = e;
-        // console.log("Click Event - X,Y " + e.clientX + ", " + e.clientY + " Delta " + e.deltaY);
     }, false);
 
     this.ctx.canvas.addEventListener("keydown", function (e) {
@@ -101,15 +93,9 @@ GameEngine.prototype.startInput = function () {
         if (e.code === "KeyA") {
             that.a = true;
         }
-        // console.log(e);
-        // console.log("Key Down Event - Char " + e.code + " Code " + e.keyCode);
     }, false);
 
     this.ctx.canvas.addEventListener("keypress", function (e) {
-        // if (e.code === "KeyE"){
-        //   var rect = that.ctx.canvas.getBoundingClientRect();
-        //   that.e = {pressed: true, x: event.clientX - rect.left, y: event.clientY - rect.top}
-        // }
         if (e.code === "KeyE") {
             that.e = true;
         }
@@ -134,14 +120,25 @@ GameEngine.prototype.startInput = function () {
         if (e.code === "KeyI") {
             that.i = true;
         }
-        // that.chars[e.code] = true;
-        // console.log(e);
-        // console.log("Key Pressed Event - Char " + e.charCode + " Code " + e.keyCode);
+        if (e.code === "KeyF") {
+            if (!that.grabbing) {
+                for (var i = 0; i < that.entities.length; i++) {
+                    var current = that.entities[i];
+                    if (current instanceof Crate) {
+                        if (mouseX < current.x + current.width + current.width / 2 && mouseX > current.x - current.width / 2 && 
+                            mouseY < current.y + current.height + current.height / 2 && mouseY > current.y - current.height / 2) {
+                            that.grabbing = true;
+                            current.grabbed = true;
+                            i = that.entities.length;
+                            // console.log("GRABBED");
+                        }
+                    }
+                }
+            }
+        }
     }, false);
 
     this.ctx.canvas.addEventListener("keyup", function (e) {
-        // console.log(e);
-        // console.log("KEY UP EVENT - Char " + e.code + " Code " + e.keyCode);
         that.keyup = true;
         that.keyReleased = e.key;
     }, false);
@@ -157,7 +154,6 @@ GameEngine.prototype.addEntity = function (entity) {
 GameEngine.prototype.draw = function () {
     this.ctx.clearRect(0, 0, this.surfaceWidth, this.surfaceHeight);
     this.ctx.save();
-    // console.log(currentMap);
     this.ctx.drawImage(currentMap,
         0, 0,  // source from sheet
         1200, 600, // width and height of source
@@ -191,6 +187,14 @@ GameEngine.prototype.draw = function () {
 
 
 GameEngine.prototype.update = function () {
+    if (this.grabbing) {
+        if (statusBars.checkStaminaUse(1)) {
+            statusBars.update(0, -1);
+        } else {
+            console.log("HERE");
+            this.grabbing = false;
+        }
+    }
     var entitiesCount = this.entities.length;
 
     for (var i = 0; i < entitiesCount; i++) {
@@ -282,8 +286,6 @@ Entity.prototype.rotateAndCache = function (image, angle) {
     offscreenCtx.translate(0, 0);
     offscreenCtx.drawImage(image, -(image.width / 2), -(image.height / 2));
     offscreenCtx.restore();
-    //offscreenCtx.strokeStyle = "red";
-    //offscreenCtx.strokeRect(0,0,size,size);
     return offscreenCanvas;
 }
 
@@ -349,12 +351,3 @@ function getDistance(thisEnt, otherEnt) {
     // console.log("Distance: " + theDist + ", " +otherEnt.x + ", "+(thisEnt.x + thisEnt.width));
     return theDist;
 }
-
-
-// function pause () {
-//     paused = true;
-// }
-
-// function unpause () {
-//     paused = false;
-// }

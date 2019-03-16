@@ -31,6 +31,8 @@ function Luke() {
     this.y = 100;
     this.width = 30;
     this.height = 50;
+    this.center_x = this.x + this.width / 2;
+    this.center_y = this.y + this.height / 2;
     this.xAcceleration = 0;
     this.yAcceleration = 0;
     this.tag = "player";
@@ -151,6 +153,7 @@ function Luke() {
     this.collisionLeft;
     this.collisionTop;
     this.collisionBottom;
+    this.crateCollision;
     this.currentDisplacementX = LUKE_COLLISION_WIDTH + LUKE_HITBOX_X_OFFSET;
     this.currentDisplacementY = LUKE_COLLISION_HEIGHT + LUKE_HITBOX_Y_OFFSET;
 
@@ -249,6 +252,49 @@ Luke.prototype.getMapCollision = function (direction) {
     return null;
 }
 
+Luke.prototype.push = function() {
+    var audio = AM.getSound('./sounds/ForcePush.wav').cloneNode();
+    audio.volume = sfxVolume;
+    audio.play();
+    var delta_x = (mouseX - this.center_x);
+    var delta_y = (mouseY - this.center_y);
+    // console.log("CENTER X : " + this.center_x + " CENTER Y : " + this.center_y + " mouseX : " + mouseX + " mouseY : " + mouseY);
+    var hypotenuse = Math.sqrt((delta_x * delta_x) + (delta_y * delta_y));
+    var angle = Math.asin(delta_x / hypotenuse);
+    var xMagnitude = Math.sin(angle) * 400;
+    var yMagnitude;
+    if (delta_y < 0) {
+        yMagnitude = -Math.cos(angle) * 400;
+    } else {
+        yMagnitude = Math.cos(angle) * 400;
+    }
+    var pushDistance = pointsDistance(this.center_x, this.center_y, this.center_x + xMagnitude, this.center_y + yMagnitude);
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        var current = gameEngine.entities[i];
+        // if (current instanceof Crate) {
+        if (this != current) {
+            var distToCurrent = pointsDistance(this.center_x, this.center_y, current.center_x, current.center_y);
+            var distCurrentToMag = pointsDistance(current.center_x, current.center_y, this.center_x + xMagnitude, this.center_y + yMagnitude);
+            var sumDistance = distToCurrent + distCurrentToMag;
+
+            var delta_x2 = (current.center_x - this.center_x);
+            var delta_y2 = (current.center_y - this.center_y);
+            var hypotenuse2 = Math.sqrt((delta_x2 * delta_x2) + (delta_y2 * delta_y2));
+            var angle2 = Math.asin(delta_x2 / hypotenuse2);
+            // console.log(angle);
+            // console.log(angle2);
+            if (sumDistance + 50 >= pushDistance && sumDistance - 50 <= pushDistance) {
+                accelModifier = (1 - distToCurrent / pushDistance);
+                if (accelModifier > 0) {
+                    current.xAcceleration += xMagnitude * accelModifier * 0.1 * (1 + (angle2 - angle));
+                    current.yAcceleration += yMagnitude * accelModifier * 0.1 * (1 - (angle2 - angle));
+                    current.health -= 100;
+                }
+            }
+        }
+    }
+}
+
 Luke.prototype.getDistance = function (thisEnt, otherEnt) {
     let dx, dy;
     dx = thisEnt.x - otherEnt.x;
@@ -276,6 +322,8 @@ Luke.prototype.collideLeft = function (thisEnt, otherEnt) {
 }
 
 Luke.prototype.update = function () {
+    this.center_x = this.x + this.width / 2;
+    this.center_y = this.y + this.height / 2;
     // console.log(this.health);
     this.getMapCollisions();
     collisionRight = this.getMapCollision("right");
@@ -332,9 +380,9 @@ Luke.prototype.update = function () {
             this.xAcceleration = 0;
         }
     }
-
+    // console.log(this.crateCollision);
     // movement
-    if (gameEngine.w && collisionBottom != null && !this.dead) {
+    if (gameEngine.w && (collisionBottom != null || this.crateCollision) && !this.dead) {
         var collisionCheck = this.getMapCollisions2(this.x, this.y - 13);
         var canJump = true;
         for (var i = 0; i < collisionCheck.length; i++) {
@@ -384,7 +432,12 @@ Luke.prototype.update = function () {
         this.dropping = true;
     }
     if (gameEngine.keyup && !this.dead) {
-        if (gameEngine.keyReleased == 'd') {
+        if (this.game.keyReleased == 'q') {
+            if (statusBars.checkStaminaUse(30)) {
+    		  this.push();
+              statusBars.update(0, -30);
+            }
+        } else if (gameEngine.keyReleased == 'd') {
             this.movingRight = false;
         } else if (gameEngine.keyReleased == 'a') {
             this.movingLeft = false;
@@ -484,9 +537,13 @@ Luke.prototype.update = function () {
                         if (!ent.dead) {
                             createSparks(ent.x + ent.width, ent.y + ent.height / 2);
                         }
+                    } else if (ent instanceof Vader && this.attackCollide(this, ent)) {
+                        createSparks(ent.x + ent.width, ent.y + ent.height / 2);
                     }
                 }
-                lukeClick();
+                if (!this.attacking) {
+                    lukeClick();
+                }
                 this.attacking = true;
                 this.switching = false;
             }
@@ -614,7 +671,9 @@ Luke.prototype.draw = function () {
 
 Luke.prototype.drawRight = function () { // FIX : ANIMATION OVERLAP, NEED IF ELSES OR BETTER BOOLEAN SETTINGS CUS SOMETIMES MULTIPLE ANIMATIONS PLAY AT THE SAME TIME
     if (primaryWeapon) { // If the character is using their primaryWeapon
-        if (this.switching) {
+        if (blocking && statusBars.checkStaminaUse(1)) {
+            this.blockRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 10, this.y, SCALE_LUKE);
+        } else if (this.switching) {
             this.saberOnRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         } else if (this.crouching) {
             this.crouchRightAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
@@ -659,7 +718,9 @@ Luke.prototype.drawRight = function () { // FIX : ANIMATION OVERLAP, NEED IF ELS
 
 Luke.prototype.drawLeft = function () {
     if (primaryWeapon) { // If the character is using their primaryWeapon
-        if (this.switching) {
+        if (blocking && statusBars.checkStaminaUse(1)) {
+            this.blockLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x + 25, this.y, SCALE_LUKE);
+        } else if (this.switching) {
             this.saberOnLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);
         } else if (this.crouching) {
             this.crouchLeftAnim.drawFrame(this.game.clockTick, this.ctx, this.x, this.y, SCALE_LUKE);

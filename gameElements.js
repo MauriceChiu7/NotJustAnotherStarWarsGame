@@ -103,6 +103,11 @@ function initializeCreditsItems() {
     menuItemBack = new MenuItem("BACK", 600, 550, 20);
 }
 
+function initializeControlsItems() {
+    menuItems = [];
+    menuItemBack = new MenuItem("BACK", 600, 550, 20);
+}
+
 function StartScreenPrompt() {
     this.alpha = 1;
     this.decreasing = true;
@@ -336,7 +341,7 @@ Particle.prototype.bounce = function () {
 Particle.prototype.draw = function () {
     ctx.beginPath();
     ctx.strokeStyle = '#ffffff';
-    ctx.lineWidth = 3;
+    ctx.lineWidth = 2;
     ctx.moveTo(this.oldX, this.oldY);
     ctx.lineTo(this.x, this.y);
     ctx.stroke();
@@ -412,6 +417,8 @@ function drawStars() {
     }
 }
 
+// --------------------- COLLISIONS ----------------------------
+
 function FullCollision(x, y, width, height) {
     this.x = x;
     this.y = y;
@@ -434,7 +441,61 @@ function BottomOnlyCollision(x, y, width) {
     // this.smallCrateFrame = new Animation(this.mapAsset, 160, 125, 64, 64, 1, 1, true, false);
     // this.bigCrateFrame = new Animation(this.mapAsset, 576, 254, 96, 96, 1, 1, true, false);
 
-function initializeControlsItems() {
-    menuItems = [];
-    menuItemBack = new MenuItem("BACK", 600, 550, 20);
+// --------------------- HEALTH PACKS ----------------------------
+var SCALE_HEALTH = 0.07;
+function HealthPack(x, y) {
+    this.floatingAnim = new Animation(AM.getAsset("./img/health_pack.png"), 80, 80, 265, 265, 10, 1, true, false);
+    this.x = x;
+    this.y = y;
+    this.width = 30;
+    this.height = 30;
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        let currentEnt = gameEngine.entities[i];
+        if (currentEnt instanceof Luke) {
+            this.player = currentEnt;
+        }
+    }
+    this.top = y - 20;
+    this.bottom = y + 10;
+    this.floatup = true;
+    this.floatSpeed = 0.5;
+    this.tag = "healthpack";
+
+    Entity.call(this, gameEngine, this.x, this.y, this.width, this.height);
+}
+
+HealthPack.prototype = new Entity();
+HealthPack.prototype.constructor = HealthPack;
+
+HealthPack.prototype.update = function () {    
+    if (this.floatup){
+        this.y -= this.floatSpeed;
+    } else {
+        this.y += this.floatSpeed;
+    }
+    if (this.y < this.top) {        
+        this.floatup = false;
+    } else if (this.y > this.bottom) {        
+        this.floatup = true;
+    }
+    if (getDistance(this, this.player) < 50) {
+        this.player.health += 15;
+        statusBars.update(15, 0);
+        this.deleteHealthPack();
+    }
+    Entity.prototype.update.call(this);
+}
+
+HealthPack.prototype.draw = function () {
+    this.floatingAnim.drawFrame(gameEngine.clockTick, gameEngine.ctx, this.x, this.y, SCALE_HEALTH);
+    Entity.prototype.draw.call(this);
+}
+
+HealthPack.prototype.deleteHealthPack = function () {
+    for (var i = 0; i < gameEngine.entities.length; i++) {
+        if (gameEngine.entities[i] == this) {
+            // console.log("delete health pack");
+            gameEngine.entities.splice(i, 1);
+        }
+    }
 }
