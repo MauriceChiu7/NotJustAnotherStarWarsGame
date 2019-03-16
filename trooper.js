@@ -369,7 +369,6 @@ Trooper.prototype.shoot = function () {
     let audio = AM.getSound('./sounds/laser_blaster_sound.wav').cloneNode();
     audio.volume = 0.2 * sfxVolume;
     audio.play();
-    let rect = canvas.getBoundingClientRect();
     let startCoor = { x: (this.x + 10 + this.x) / 2, y: (this.y + this.height + this.y) / 2 };
     const xend = center_x;
     const yend = center_y + 20;
@@ -377,9 +376,6 @@ Trooper.prototype.shoot = function () {
     let trooperLaser = new LaserBeam(startCoor, endCoor);
     trooperLaser.tag = "trooperLaser";
     trooperLaser.enemyTag = "jedi";
-    // trooperLaser.setID(this.id);
-    // console.log("trooper laser id: " + trooperLaser.laserID);
-    // gameEngine.addEntity(trooperLaser);
 }
 
 Trooper.prototype.shootCharger = function () {
@@ -393,15 +389,15 @@ Trooper.prototype.shootCharger = function () {
     var xend = center_x;
     var yend = center_y + 20;
     let endCoor = { x: xend, y: yend };
-    let trooperLaser1 = this.shotgun(startCoor, endCoor);
+    this.shotgun(startCoor, endCoor);
     xend = center_x;
     yend = center_y + 100;
     endCoor = { x: xend, y: yend };
-    let trooperLaser2 = this.shotgun(startCoor, endCoor);
+    this.shotgun(startCoor, endCoor);
     xend = center_x;
     yend = center_y - 60;
     endCoor = { x: xend, y: yend };
-    let trooperLaser3 = this.shotgun(startCoor, endCoor);
+    this.shotgun(startCoor, endCoor);
 }
 
 Trooper.prototype.shotgun = function (startCoor, endCoor) {
@@ -444,6 +440,7 @@ function HealthPack(x, y) {
     this.top = y - 20;
     this.bottom = y + 10;
     this.floatup = true;
+    
     this.floatSpeed = 0.5;
     this.tag = "healthpack";
 
